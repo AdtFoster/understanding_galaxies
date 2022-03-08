@@ -59,7 +59,7 @@ $PYTHON $ZOOBOT_DIR/creating_images_semester_two.py \
     --fits-dir $FITS_DIR \
     --save-dir $SCALED_IMG_DIR \
     --max-redshift 0.15 \
-    --step-szie 0.004
+    --step-szie 0.002
     
 $PYTHON $ZOOBOT_DIR/make_predictions.py \
     --batch-size 128 \
