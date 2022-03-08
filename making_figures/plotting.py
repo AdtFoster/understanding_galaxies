@@ -68,4 +68,6 @@ if __name__ == '__main__':
     delta_p = temp[1][0]
     delta_mag = temp[2][0]
     
+    pd.DataFrame(temp).to_csv('deltas.csv')
+    
     print("The best delta values are delta z =  ", delta_z, ", delta p = ", delta_p, " and delta mag = ", delta_mag)
