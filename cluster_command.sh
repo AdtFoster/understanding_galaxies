@@ -84,3 +84,13 @@ $PYTHON $ZOOBOT_DIR/sampling_galaxies.py \
     --step-delta-mag 0.1
     
 $PYTHON $ZOOBOT_DIR/plotting.py \
+
+$PYTHON $ZOOBOT_DIR/cluster_conf_matrix_code.py \
+    --min-gal 100 \
+    --max-gal 105 \
+    --update-interval 50 \
+    --pred-z 0.1 \
+    --threshold-val 0.8 \
+    --delta-z 0.006 \
+    --delta-p 0.016 \
+    --delta-mag 0.5
