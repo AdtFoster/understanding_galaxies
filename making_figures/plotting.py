@@ -45,7 +45,7 @@ if __name__ == '__main__':
     plt.ylim([0, error_array_perm[0,0,1]*10])
     #plt.legend()
     plt.title("Number of galaxies with percentage", fontsize = 14, wrap = True)
-    plt.savefig("Total linear")
+    plt.savefig("Total linear.png")
     plt.close()
     
     for i in range(len(residual_array[:,0,0])):
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     plt.axhline(0, color='black')
     #plt.legend()
     plt.title("Difference in galaxies from percentage", fontsize = 14, wrap = True)
-    plt.savefig("Total linear residual")
+    plt.savefig("Total linear residual.png")
     plt.close()
     
     temp = pd.DataFrame(standard_deviation_array[:,0,:])
