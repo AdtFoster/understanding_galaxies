@@ -53,7 +53,10 @@ PYTHON=/share/nas/walml/miniconda3/envs/zoobot/bin/python
 
 FITS_DIR=/share/nas/walml/galaxy_zoo/decals/dr5/fits_native/J000
 
-SCALED_IMG_DIR=/share/nas/walml/repos/understanding_galaxies/scaled_$SCALE_FACTOR
+SCALED_IMG_DIR=/share/nas/walml/repos/understanding_galaxies/scaled
+
+MIN_GAL = 100
+MAX_GAL = 105
 
 $PYTHON $ZOOBOT_DIR/creating_images_semester_two.py \
     --fits-dir $FITS_DIR \
@@ -68,11 +71,11 @@ $PYTHON $ZOOBOT_DIR/make_predictions.py \
     --save-loc /share/nas/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv
     
 $PYTHON $ZOOBOT_DIR/create_dataframe.py \
-    --file-name scaled_image_predictions.csv
+    --file-name /share/nas/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv
 
 $PYTHON $ZOOBOT_DIR/sampling_galaxies.py \
-    --min-gal 100 \
-    --max-gal 105 \
+    --min-gal $MIN_GAL \
+    --max-gal $MAX_GAL \
     --min-delta-z 0.005 \
     --max-delta-z 0.007 \
     --step-delta-z 0.001 \
@@ -86,8 +89,8 @@ $PYTHON $ZOOBOT_DIR/sampling_galaxies.py \
 $PYTHON $ZOOBOT_DIR/plotting.py \
 
 $PYTHON $ZOOBOT_DIR/cluster_conf_matrix_code.py \
-    --min-gal 100 \
-    --max-gal 105 \
+    --min-gal $MIN_GAL \
+    --max-gal $MAX_GAL \
     --update-interval 50 \
     --pred-z 0.1 \
     --threshold-val 0.8 \
