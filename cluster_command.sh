@@ -58,11 +58,32 @@ SCALED_IMG_DIR=/share/nas/walml/repos/understanding_galaxies/scaled
 MIN_GAL = 100
 MAX_GAL = 105
 
+PRED_Z = 0.03
+MAX_Z = 0.15
+STEP_SIZE = 0.002
+
+MIN_DELTA_Z = 0.005
+MAX_DELTA_Z = 0.007
+STEP_DELTA_Z = 0.001
+MIN_DELTA_P = 0.015
+MAX_DELTA_P = 0.017
+STEP_DELTA_P = 0.001
+MIN_DELTA_MAG = 0.4
+MAX_DELTA_MAG = 0.6
+STEP_DELTA_MAG = 0.1
+
+UPDATE_INTERVAL = 50
+THRESHOLD_VAL = 0.8
+
+DELTA_Z = 0.006
+DELTA_P = 0.016
+DELTA_MAG = 0.5
+
 $PYTHON $ZOOBOT_DIR/creating_images_semester_two.py \
     --fits-dir $FITS_DIR \
     --save-dir $SCALED_IMG_DIR \
-    --max-redshift 0.15 \
-    --step-szie 0.002
+    --max-redshift $MAX_Z \
+    --step-size $STEP_SIZE
     
 $PYTHON $ZOOBOT_DIR/make_predictions.py \
     --batch-size 128 \
@@ -76,24 +97,24 @@ $PYTHON $ZOOBOT_DIR/create_dataframe.py \
 $PYTHON $ZOOBOT_DIR/sampling_galaxies.py \
     --min-gal $MIN_GAL \
     --max-gal $MAX_GAL \
-    --min-delta-z 0.005 \
-    --max-delta-z 0.007 \
-    --step-delta-z 0.001 \
-    --min-delta-p 0.015 \
-    --max-delta-p 0.017 \
-    --step-delta-p 0.001 \
-    --min-delta-mag 0.4 \
-    --max-delta-mag 0.6 \
-    --step-delta-mag 0.1
+    --min-delta-z $MIN_DELTA_Z \
+    --max-delta-z $MAX_DELTA_Z \
+    --step-delta-z $STEP_DELTA_Z \
+    --min-delta-p $MIN_DELTA_P \
+    --max-delta-p $MAX_DELTA_P \
+    --step-delta-p $STEP_DELTA_P \
+    --min-delta-mag $MIN_DELTA_MAG \
+    --max-delta-mag $MAX_DELTA_MAG \
+    --step-delta-mag $STEP_DELTA_MAG
     
 $PYTHON $ZOOBOT_DIR/plotting.py \
 
 $PYTHON $ZOOBOT_DIR/cluster_conf_matrix_code.py \
     --min-gal $MIN_GAL \
     --max-gal $MAX_GAL \
-    --update-interval 50 \
-    --pred-z 0.1 \
-    --threshold-val 0.8 \
-    --delta-z 0.006 \
-    --delta-p 0.016 \
-    --delta-mag 0.5
+    --update-interval $UPDATE_INTERVAL \
+    --pred-z $PRED_Z \
+    --threshold-val $THRESHOLD_VAL \
+    --delta-z $DELTA_Z \
+    --delta-p $DELTA_P \
+    --delta-mag DELTA_MAG
