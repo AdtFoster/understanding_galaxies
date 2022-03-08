@@ -58,7 +58,7 @@ SCALED_IMG_DIR=/share/nas/walml/repos/understanding_galaxies/scaled_$SCALE_FACTO
 $PYTHON $ZOOBOT_DIR/creating_images_semester_two.py \
     --fits-dir $FITS_DIR \
     --save-dir $SCALED_IMG_DIR \
-    --max-redshift 0.2 \
+    --max-redshift 0.15 \
     --step-szie 0.004
     
 $PYTHON $ZOOBOT_DIR/make_predictions.py \
