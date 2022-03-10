@@ -64,55 +64,55 @@ $PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
     --max-redshift $MAX_Z \
     --step-size $STEP_SIZE
     
-$PYTHON $THIS_REPO_DIR/make_predictions.py \
-    --batch-size 128 \
-    --input-dir $SCALED_IMG_DIR \
-    --checkpoint-loc /share/nas2/walml/repos/zoobot_test/data/pretrained_models/decals_dr_train_set_only_replicated/checkpoint \
-    --save-loc /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv
-# should still support CSV, lets see TODO
+# $PYTHON $THIS_REPO_DIR/make_predictions.py \
+#     --batch-size 128 \
+#     --input-dir $SCALED_IMG_DIR \
+#     --checkpoint-loc /share/nas2/walml/repos/zoobot_test/data/pretrained_models/decals_dr_train_set_only_replicated/checkpoint \
+#     --save-loc /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv
+# # should still support CSV, lets see TODO
 
-# load predictions in convenient dataframe
-$PYTHON $THIS_REPO_DIR/create_dataframe.py \
-    --file-name /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv \
-    --min-allow-z $MIN_ALLOW_Z \
-    --max-allow-z $MAX_ALLOW_Z
+# # load predictions in convenient dataframe
+# $PYTHON $THIS_REPO_DIR/create_dataframe.py \
+#     --file-name /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv \
+#     --min-allow-z $MIN_ALLOW_Z \
+#     --max-allow-z $MAX_ALLOW_Z
 
-# apply debiasing method, to each galaxy, by sampling nearby galaxies
-$PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
-    --min-gal $MIN_GAL \
-    --max-gal $MAX_GAL \
-    --min-delta-z $MIN_DELTA_Z \
-    --max-delta-z $MAX_DELTA_Z \
-    --step-delta-z $STEP_DELTA_Z \
-    --min-delta-p $MIN_DELTA_P \
-    --max-delta-p $MAX_DELTA_P \
-    --step-delta-p $STEP_DELTA_P \
-    --min-delta-mag $MIN_DELTA_MAG \
-    --max-delta-mag $MAX_DELTA_MAG \
-    --step-delta-mag $STEP_DELTA_MAG \
-    --min-delta-mass $MIN_DELTA_MASS \
-    --max-delta-mass $MAX_DELTA_MASS \
-    --step-delta-mass $STEP_DELTA_MASS
+# # apply debiasing method, to each galaxy, by sampling nearby galaxies
+# $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
+#     --min-gal $MIN_GAL \
+#     --max-gal $MAX_GAL \
+#     --min-delta-z $MIN_DELTA_Z \
+#     --max-delta-z $MAX_DELTA_Z \
+#     --step-delta-z $STEP_DELTA_Z \
+#     --min-delta-p $MIN_DELTA_P \
+#     --max-delta-p $MAX_DELTA_P \
+#     --step-delta-p $STEP_DELTA_P \
+#     --min-delta-mag $MIN_DELTA_MAG \
+#     --max-delta-mag $MAX_DELTA_MAG \
+#     --step-delta-mag $STEP_DELTA_MAG \
+#     --min-delta-mass $MIN_DELTA_MASS \
+#     --max-delta-mass $MAX_DELTA_MASS \
+#     --step-delta-mass $STEP_DELTA_MASS
     
-$PYTHON $THIS_REPO_DIR/plotting.py \
+# $PYTHON $THIS_REPO_DIR/plotting.py \
 
-$PYTHON $THIS_REPO_DIR/cluster_conf_matrix_code.py \
-    --min-gal $MIN_GAL \
-    --max-gal $MAX_GAL \
-    --update-interval $UPDATE_INTERVAL \
-    --pred-z $PRED_Z \
-    --threshold-val $THRESHOLD_VAL \
-    --delta-z $DELTA_Z \
-    --delta-p $DELTA_P \
-    --delta-mag $DELTA_MAG 
+# $PYTHON $THIS_REPO_DIR/cluster_conf_matrix_code.py \
+#     --min-gal $MIN_GAL \
+#     --max-gal $MAX_GAL \
+#     --update-interval $UPDATE_INTERVAL \
+#     --pred-z $PRED_Z \
+#     --threshold-val $THRESHOLD_VAL \
+#     --delta-z $DELTA_Z \
+#     --delta-p $DELTA_P \
+#     --delta-mag $DELTA_MAG 
 
-# evolution tracks
-$PYTHON $THIS_REPO_DIR/squid_diagrams.py \
-    --min-gal $MIN_GAL_SQUID \
-    --max-gal $MAX_GAL_SQUID \
-    --delta-z $DELTA_Z \
-    --delta-p $DELTA_P \
-    --delta-mag $DELTA_MAG \
-    --delta-mass $DELTA_MASS \
-    --min_z $PRED_Z \
-    --percent $PERCENT
+# # evolution tracks
+# $PYTHON $THIS_REPO_DIR/squid_diagrams.py \
+#     --min-gal $MIN_GAL_SQUID \
+#     --max-gal $MAX_GAL_SQUID \
+#     --delta-z $DELTA_Z \
+#     --delta-p $DELTA_P \
+#     --delta-mag $DELTA_MAG \
+#     --delta-mass $DELTA_MASS \
+#     --min_z $PRED_Z \
+#     --percent $PERCENT
