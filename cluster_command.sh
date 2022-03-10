@@ -67,6 +67,9 @@ PRED_Z = 0.03
 MAX_Z = 0.12
 STEP_SIZE = 0.002
 
+MIN_ALLOW_Z = 0.05
+MAX_ALLOW_Z = 0.02
+
 MIN_DELTA_Z = 0.005
 MAX_DELTA_Z = 0.007
 STEP_DELTA_Z = 0.001
@@ -100,7 +103,9 @@ $PYTHON $ZOOBOT_DIR/make_predictions.py \
     --save-loc /share/nas/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv
     
 $PYTHON $ZOOBOT_DIR/create_dataframe.py \
-    --file-name /share/nas/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv
+    --file-name /share/nas/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv \
+    --min-allow-z $MIN_ALLOW_Z \
+    --max-allow-z $MAX_ALLOW_Z
 
 $PYTHON $ZOOBOT_DIR/sampling_galaxies.py \
     --min-gal $MIN_GAL \
