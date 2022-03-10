@@ -74,8 +74,11 @@ if __name__ == '__main__':
     If you're just using the full pretrained Galaxy Zoo model, without finetuning, you can just use include_top=True.
     """
 
+    label_cols = label_metadata.decals_all_campaigns_ortho_label_cols  
+
     model = define_model.load_model(
         checkpoint_loc=args.checkpoint_loc,
+        output_dim=len(label_cols)
         include_top=True,
         input_size=initial_size,
         crop_size=crop_size,
@@ -83,7 +86,6 @@ if __name__ == '__main__':
         expect_partial=True  # optimiser state will not load as we're not using it for predictions
     )
 
-    label_cols = label_metadata.decals_all_campaigns_ortho_label_cols  
 
     """
     If you have done finetuning, use include_top=False and replace the output layers exactly as you did when training.
