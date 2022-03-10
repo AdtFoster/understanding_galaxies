@@ -1,3 +1,4 @@
+#!/bin/bash
 #SBATCH --job-name=understand                       # Job name
 #SBATCH --output=understand_%A.log 
 #SBATCH --mem=0   
