@@ -4,7 +4,7 @@ Created on Tue Mar  1 10:09:31 2022
 
 @author: r41331jc
 """
-
+import logging
 import glob
 import os
 import warnings
@@ -16,6 +16,8 @@ import numpy as np
 import creating_image_functions
 
 if __name__ == '__main__':
+
+    logging.basicConfig(level=logging.INFO)
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--fits-dir', dest='fits_dir', type=str)
@@ -36,7 +38,7 @@ if __name__ == '__main__':
 
     fits_dir =  args.fits_dir
     #fits_dir = 'samples'
-    print('Loading images from {}'.format(fits_dir))
+    logging.info('Loading images from {}'.format(fits_dir))
     assert os.path.isdir(fits_dir)
 
     save_dir = args.save_dir
@@ -47,7 +49,7 @@ if __name__ == '__main__':
     # '/**/*.fits', recursive=True):
     imgs = {} # Opens dictionary for storing images
     filenames = glob.iglob(f'{fits_dir}' + '/*.fits') #operates over all FIT's within the desired directory
-    # print(filenames)
+    # logging.info(filenames)
     # filenames = list(filenames)[:5]
     for filename in filenames:
         try:
@@ -57,7 +59,7 @@ if __name__ == '__main__':
         imgs[filename] = img #Unsure if didctionary would be better here if required for a large quantity of data
         #imgs.append(img)
 
-    print('All images loaded')
+    logging.info('All images loaded')
   
     final_data = {} # Create dictionary to append final data to
 
@@ -65,14 +67,15 @@ if __name__ == '__main__':
         original_loc_name = original_loc.replace('.fits','')
         original_loc_name = original_loc_name.replace(fits_dir,'')
         original_loc_name = original_loc_name.replace('\\', '')
-        min_redshift_df = parquet_file.where(parquet_file['iauname']==original_loc_name)
-        min_redshift_df = min_redshift_df.dropna(subset = ['iauname'])
-        min_redshift = min_redshift_df.to_numpy()
-        redshift_val = min_redshift[:,1]
-        redshift_val = redshift_val[0]
+        galaxy = parquet_file.where(parquet_file['iauname']==original_loc_name).squeeze()
+        logging.info(galaxy)
+        # galaxy = galaxy.dropna(subset = ['iauname'])
+        # min_redshift = min_redshift_df.to_numpy()
+        galaxy_redshift = galaxy['redshift']
+        logging.info(galaxy_redshift)
         
-        for redshift in np.arange(redshift_val, args.max_redshift, args.step_size):
-            scale_factor = redshift/redshift_val
+        for redshift in np.arange(galaxy_redshift, args.max_redshift, args.step_size):
+            scale_factor = redshift/galaxy_redshift
             filename = os.path.basename(original_loc)
             filename_scale = filename.replace('.fits', '_{0}.png'.format(scale_factor))
             # file_loc = os.path.join('/share/nas/walml/repos/understanding_galaxies', output_dir_name[1], filename)
@@ -82,7 +85,7 @@ if __name__ == '__main__':
             final_data[file_loc] = img_scaled
          
 
-    print('All images scaled')
+    logging.info('All images scaled')
 
     for save_loc, scaled_image in final_data.items():
         #creating_image_functions.make_png_from_corrected_fits(final_data[entry_name][0], os.getcwd() + '/' + f'{output_dir_name[0]}' + '/Original_' + entry_name + '.png', 424) #Might want to remove the word Original in file name?
@@ -91,4 +94,4 @@ if __name__ == '__main__':
             png_loc=save_loc,
             png_size=424)
 
-    print('Successfully made images - exiting')
+    logging.info('Successfully made images - exiting')
