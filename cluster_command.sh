@@ -7,54 +7,55 @@
 #SBATCH --constraint=A100 
 #SBATCH --exclusive   # only one task per node
  
-
 pwd; hostname; date
 
-# nvidia-smi
+nvidia-smi
 
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/share/apps/cudnn_8_1_0/cuda/lib64
 
 THIS_REPO_DIR=/share/nas2/walml/repos/understanding_galaxies
 PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
 
+# TODO crank it up
 FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native/J000
 
 SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled
 
-MIN_GAL = 100
-MAX_GAL = 105
+# TODO crank it up
+MIN_GAL=100
+MAX_GAL=105
 
-MIN_GAL_SQUID = 100
-MAX_GAL_SQUID = 105
+MIN_GAL_SQUID=100
+MAX_GAL_SQUID=105
 
-PERCENT = 66
+PERCENT=66
 
-PRED_Z = 0.03
-MAX_Z = 0.12
-STEP_SIZE = 0.002
+PRED_Z=0.03
+MAX_Z=0.12
+STEP_SIZE=0.002
 
-MIN_ALLOW_Z = 0.05
-MAX_ALLOW_Z = 0.02
+MIN_ALLOW_Z=0.05
+MAX_ALLOW_Z=0.02
 
-MIN_DELTA_Z = 0.004
-MAX_DELTA_Z = 0.015
-STEP_DELTA_Z = 0.001
-MIN_DELTA_P = 0.014
-MAX_DELTA_P = 0.024
-STEP_DELTA_P = 0.001
-MIN_DELTA_MAG = 0.3
-MAX_DELTA_MAG = 1.3
-STEP_DELTA_MAG = 0.1
-MIN_DELTA_MASS = 0.5
-MAX_DELTA_MASS = 1.5
-STEP_DELTA_MASS = 0.1
+MIN_DELTA_Z=0.004
+MAX_DELTA_Z=0.015
+STEP_DELTA_Z=0.001
+MIN_DELTA_P=0.014
+MAX_DELTA_P=0.024
+STEP_DELTA_P=0.001
+MIN_DELTA_MAG=0.3
+MAX_DELTA_MAG=1.3
+STEP_DELTA_MAG=0.1
+MIN_DELTA_MASS=0.5
+MAX_DELTA_MASS=1.5
+STEP_DELTA_MASS=0.1
 
-UPDATE_INTERVAL = 50
-THRESHOLD_VAL = 0.8
+UPDATE_INTERVAL=50
+THRESHOLD_VAL=0.8
 
-DELTA_Z = 0.006
-DELTA_P = 0.016
-DELTA_MAG = 0.5
+DELTA_Z=0.006
+DELTA_P=0.016
+DELTA_MAG=0.5
 
 $PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
     --fits-dir $FITS_DIR \
@@ -65,13 +66,13 @@ $PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
 $PYTHON $THIS_REPO_DIR/make_predictions.py \
     --batch-size 128 \
     --input-dir $SCALED_IMG_DIR \
-    --checkpoint-loc /share/nas/walml/repos/zoobot_test/data/pretrained_models/decals_dr_train_set_only_replicated/checkpoint \
-    --save-loc /share/nas/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv
+    --checkpoint-loc /share/nas2/walml/repos/zoobot_test/data/pretrained_models/decals_dr_train_set_only_replicated/checkpoint \
+    --save-loc /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv
 # should still support CSV, lets see TODO
 
 # load predictions in convenient dataframe
 $PYTHON $THIS_REPO_DIR/create_dataframe.py \
-    --file-name /share/nas/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv \
+    --file-name /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv \
     --min-allow-z $MIN_ALLOW_Z \
     --max-allow-z $MAX_ALLOW_Z
 
