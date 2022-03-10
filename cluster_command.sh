@@ -58,6 +58,8 @@ SCALED_IMG_DIR=/share/nas/walml/repos/understanding_galaxies/scaled
 MIN_GAL = 100
 MAX_GAL = 105
 
+PERCENT = 66
+
 PRED_Z = 0.03
 MAX_Z = 0.15
 STEP_SIZE = 0.002
@@ -118,3 +120,12 @@ $PYTHON $ZOOBOT_DIR/cluster_conf_matrix_code.py \
     --delta-z $DELTA_Z \
     --delta-p $DELTA_P \
     --delta-mag DELTA_MAG
+
+$PYTHON $ZOOBOT_DIR/squid_diagrams.py \
+    --min-gal $MIN_GAL \
+    --max-gal $MAX_GAL \
+    --delta-z $DELTA_Z \
+    --delta-p $DELTA_P \
+    --delta-mag DELTA_MAG \
+    --min_z $PRED_Z \
+    --percent $PERCENT
