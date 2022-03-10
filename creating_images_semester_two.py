@@ -82,18 +82,23 @@ if __name__ == '__main__':
             filename_scale = filename.replace('.fits', '_{0}.png'.format(scale_factor))
             # file_loc = os.path.join('/share/nas/walml/repos/understanding_galaxies', output_dir_name[1], filename)
             file_loc = os.path.join(save_dir, filename_scale)
-
-            _, _, img_scaled = creating_image_functions.photon_counts_from_FITS(original_img, scale_factor) # Second input is scale factor, changed in parser
-            final_data[file_loc] = img_scaled
+            if not os.path.isfile(file_loc):
+                _, _, img_scaled = creating_image_functions.photon_counts_from_FITS(original_img, scale_factor) # Second input is scale factor, changed in parser
+                final_data[file_loc] = img_scaled
+            else:
+                logging.info('Skipping {}'.format(file_loc))
          
 
     logging.info('All images scaled')
 
     for save_loc, scaled_image in final_data.items():
-        #creating_image_functions.make_png_from_corrected_fits(final_data[entry_name][0], os.getcwd() + '/' + f'{output_dir_name[0]}' + '/Original_' + entry_name + '.png', 424) #Might want to remove the word Original in file name?
-        creating_image_functions.make_png_from_corrected_fits(
-            img=scaled_image,
-            png_loc=save_loc,
-            png_size=424)
+        if not os.path.isfile(save_loc):
+            #creating_image_functions.make_png_from_corrected_fits(final_data[entry_name][0], os.getcwd() + '/' + f'{output_dir_name[0]}' + '/Original_' + entry_name + '.png', 424) #Might want to remove the word Original in file name?
+            creating_image_functions.make_png_from_corrected_fits(
+                img=scaled_image,
+                png_loc=save_loc,
+                png_size=424)
+        else:
+            logging.info('Skipping {}'.format(save_loc))
 
     logging.info('Successfully made images - exiting')
