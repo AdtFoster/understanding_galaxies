@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
     model = define_model.load_model(
         checkpoint_loc=args.checkpoint_loc,
-        output_dim=len(label_cols)
+        output_dim=len(label_cols),
         include_top=True,
         input_size=initial_size,
         crop_size=crop_size,
