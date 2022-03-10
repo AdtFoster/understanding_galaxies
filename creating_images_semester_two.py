@@ -34,7 +34,7 @@ if __name__ == '__main__':
     else:
         catalog_loc = 'nsa_v1_0_1_mag_cols.parquet'
     
-    parquet_file = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift'])
+    df = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift'])
 
     fits_dir =  args.fits_dir
     #fits_dir = 'samples'
@@ -67,7 +67,7 @@ if __name__ == '__main__':
         original_loc_name = original_loc.replace('.fits','')
         original_loc_name = original_loc_name.replace(fits_dir,'')
         original_loc_name = original_loc_name.replace('\\', '')
-        galaxy = parquet_file.where(parquet_file['iauname']==original_loc_name).squeeze()
+        galaxy = df.query(f'iauname == "{original_loc_name}"').squeeze()
         logging.info(galaxy)
         # galaxy = galaxy.dropna(subset = ['iauname'])
         # min_redshift = min_redshift_df.to_numpy()
