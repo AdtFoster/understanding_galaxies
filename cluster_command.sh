@@ -64,7 +64,7 @@ MAX_GAL_SQUID = 105
 PERCENT = 66
 
 PRED_Z = 0.03
-MAX_Z = 0.15
+MAX_Z = 0.12
 STEP_SIZE = 0.002
 
 MIN_DELTA_Z = 0.005
@@ -76,6 +76,9 @@ STEP_DELTA_P = 0.001
 MIN_DELTA_MAG = 0.4
 MAX_DELTA_MAG = 0.6
 STEP_DELTA_MAG = 0.1
+MIN_DELTA_MASS = 0.9
+MAX_DELTA_MASS = 1.1
+STEP_DELTA_MASS = 0.1
 
 UPDATE_INTERVAL = 50
 THRESHOLD_VAL = 0.8
@@ -110,7 +113,10 @@ $PYTHON $ZOOBOT_DIR/sampling_galaxies.py \
     --step-delta-p $STEP_DELTA_P \
     --min-delta-mag $MIN_DELTA_MAG \
     --max-delta-mag $MAX_DELTA_MAG \
-    --step-delta-mag $STEP_DELTA_MAG
+    --step-delta-mag $STEP_DELTA_MAG \
+    --min-delta-mass $MIN_DELTA_MASS \
+    --max-delta-mass $MAX_DELTA_MASS \
+    --step-delta-mass $STEP_DELTA_MASS
     
 $PYTHON $ZOOBOT_DIR/plotting.py \
 
@@ -122,13 +128,15 @@ $PYTHON $ZOOBOT_DIR/cluster_conf_matrix_code.py \
     --threshold-val $THRESHOLD_VAL \
     --delta-z $DELTA_Z \
     --delta-p $DELTA_P \
-    --delta-mag DELTA_MAG
+    --delta-mag $DELTA_MAG \
+    --delta-mag $DELTA_MASS
 
 $PYTHON $ZOOBOT_DIR/squid_diagrams.py \
     --min-gal $MIN_GAL_SQUID \
     --max-gal $MAX_GAL_SQUID \
     --delta-z $DELTA_Z \
     --delta-p $DELTA_P \
-    --delta-mag DELTA_MAG \
+    --delta-mag $DELTA_MAG \
+    --delta-mass $DELTA_MASS \
     --min_z $PRED_Z \
     --percent $PERCENT
