@@ -128,8 +128,7 @@ $PYTHON $ZOOBOT_DIR/cluster_conf_matrix_code.py \
     --threshold-val $THRESHOLD_VAL \
     --delta-z $DELTA_Z \
     --delta-p $DELTA_P \
-    --delta-mag $DELTA_MAG \
-    --delta-mag $DELTA_MASS
+    --delta-mag $DELTA_MAG 
 
 $PYTHON $ZOOBOT_DIR/squid_diagrams.py \
     --min-gal $MIN_GAL_SQUID \
