@@ -1,11 +1,12 @@
-#!/bin/bash
 #SBATCH --job-name=understand                       # Job name
 #SBATCH --output=understand_%A.log 
-#SBATCH --mem=32gb                                      # Job memory request
+#SBATCH --mem=0   
+#SBATCH -c=24                                    # Job memory request
 #SBATCH --no-requeue                                    # Do not resubmit a failed job
 #SBATCH --time=23:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --exclusive   # only one task per node
+ 
 
 pwd; hostname; date
 
@@ -13,47 +14,12 @@ pwd; hostname; date
 
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/share/apps/cudnn_8_1_0/cuda/lib64
 
-ZOOBOT_DIR=/share/nas/walml/repos/understanding_galaxies
-PYTHON=/share/nas/walml/miniconda3/envs/zoobot/bin/python
+THIS_REPO_DIR=/share/nas2/walml/repos/understanding_galaxies
+PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
 
-FITS_DIR=/share/nas/walml/galaxy_zoo/decals/dr5/fits_native/J000
+FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native/J000
 
-SCALE_FACTOR=1.2
-SCALED_IMG_DIR=/share/nas/walml/repos/understanding_galaxies/scaled_$SCALE_FACTOR
-
-$PYTHON $ZOOBOT_DIR/creating_image_main.py \
-    --fits-dir $FITS_DIR \
-    --scale-factor $SCALE_FACTOR \
-    --save-dir $SCALED_IMG_DIR
-    
-$PYTHON $ZOOBOT_DIR/make_predictions.py \
-    --batch-size 128 \
-    --input-dir $SCALED_IMG_DIR \
-    --checkpoint-loc /share/nas/walml/repos/zoobot_test/data/pretrained_models/decals_dr_train_set_only_replicated/checkpoint \
-    --save-loc /share/nas/walml/repos/understanding_galaxies/results/scaled_image_predictions_$SCALE_FACTOR.csv
-    
-  #Split here
-  
-  #SBATCH --job-name=understand                       # Job name
-#SBATCH --output=understand_%A.log 
-#SBATCH --mem=32gb                                      # Job memory request
-#SBATCH --no-requeue                                    # Do not resubmit a failed job
-#SBATCH --time=23:00:00                                # Time limit hrs:min:sec
-#SBATCH --constraint=A100 
-#SBATCH --exclusive   # only one task per node
-
-pwd; hostname; date
-
-# nvidia-smi
-
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/share/apps/cudnn_8_1_0/cuda/lib64
-
-ZOOBOT_DIR=/share/nas/walml/repos/understanding_galaxies
-PYTHON=/share/nas/walml/miniconda3/envs/zoobot/bin/python
-
-FITS_DIR=/share/nas/walml/galaxy_zoo/decals/dr5/fits_native/J000
-
-SCALED_IMG_DIR=/share/nas/walml/repos/understanding_galaxies/scaled
+SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled
 
 MIN_GAL = 100
 MAX_GAL = 105
@@ -90,24 +56,27 @@ DELTA_Z = 0.006
 DELTA_P = 0.016
 DELTA_MAG = 0.5
 
-$PYTHON $ZOOBOT_DIR/creating_images_semester_two.py \
+$PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
     --fits-dir $FITS_DIR \
     --save-dir $SCALED_IMG_DIR \
     --max-redshift $MAX_Z \
     --step-size $STEP_SIZE
     
-$PYTHON $ZOOBOT_DIR/make_predictions.py \
+$PYTHON $THIS_REPO_DIR/make_predictions.py \
     --batch-size 128 \
     --input-dir $SCALED_IMG_DIR \
     --checkpoint-loc /share/nas/walml/repos/zoobot_test/data/pretrained_models/decals_dr_train_set_only_replicated/checkpoint \
     --save-loc /share/nas/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv
-    
-$PYTHON $ZOOBOT_DIR/create_dataframe.py \
+# should still support CSV, lets see TODO
+
+# load predictions in convenient dataframe
+$PYTHON $THIS_REPO_DIR/create_dataframe.py \
     --file-name /share/nas/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv \
     --min-allow-z $MIN_ALLOW_Z \
     --max-allow-z $MAX_ALLOW_Z
 
-$PYTHON $ZOOBOT_DIR/sampling_galaxies.py \
+# apply debiasing method, to each galaxy, by sampling nearby galaxies
+$PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
     --min-gal $MIN_GAL \
     --max-gal $MAX_GAL \
     --min-delta-z $MIN_DELTA_Z \
@@ -123,9 +92,9 @@ $PYTHON $ZOOBOT_DIR/sampling_galaxies.py \
     --max-delta-mass $MAX_DELTA_MASS \
     --step-delta-mass $STEP_DELTA_MASS
     
-$PYTHON $ZOOBOT_DIR/plotting.py \
+$PYTHON $THIS_REPO_DIR/plotting.py \
 
-$PYTHON $ZOOBOT_DIR/cluster_conf_matrix_code.py \
+$PYTHON $THIS_REPO_DIR/cluster_conf_matrix_code.py \
     --min-gal $MIN_GAL \
     --max-gal $MAX_GAL \
     --update-interval $UPDATE_INTERVAL \
@@ -135,7 +104,8 @@ $PYTHON $ZOOBOT_DIR/cluster_conf_matrix_code.py \
     --delta-p $DELTA_P \
     --delta-mag $DELTA_MAG 
 
-$PYTHON $ZOOBOT_DIR/squid_diagrams.py \
+# evolution tracks
+$PYTHON $THIS_REPO_DIR/squid_diagrams.py \
     --min-gal $MIN_GAL_SQUID \
     --max-gal $MAX_GAL_SQUID \
     --delta-z $DELTA_Z \

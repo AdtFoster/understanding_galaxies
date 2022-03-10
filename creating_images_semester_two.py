@@ -25,7 +25,14 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    parquet_file = pd.read_parquet('nsa_v1_0_1_mag_cols.parquet', columns= ['iauname', 'redshift'])
+    # TODO
+    
+    if os.path.isdir('/share/nas2'):
+        catalog_loc = '/share/nas2/walml/repos/gz-decals-classifiers/data/catalogs/nsa_v1_0_1_mag_cols.parquet'
+    else:
+        catalog_loc = 'nsa_v1_0_1_mag_cols.parquet'
+    
+    parquet_file = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift'])
 
     fits_dir =  args.fits_dir
     #fits_dir = 'samples'

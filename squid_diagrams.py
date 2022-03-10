@@ -13,10 +13,11 @@ import argparse
 #frf for file opening and plotting functions
 import functions_for_redshifting_figures as frf
 
-print('\nStart')
 
 if __name__ == '__main__':
     
+    print('\nStart')
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--min-gal', dest='min_gal', type=int)
     parser.add_argument('--max-gal', dest='max_gal', type=int)
@@ -29,23 +30,23 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    min_gal = 120
-    max_gal = 130
-    delta_z = 0.006 #sets width of sample box - Default optimised = 0.008
-    delta_p = 0.017 #sets height of smaple box - Default optimised = 0.016
-    delta_mag = 0.4 #Vary to find better base value - Default optimised = 0.5
-    delta_mass = 0.1
-    min_z = 0.05
-    percent = 66
+    # min_gal = 120
+    # max_gal = 130
+    # delta_z = 0.006 #sets width of sample box - Default optimised = 0.008
+    # delta_p = 0.017 #sets height of smaple box - Default optimised = 0.016
+    # delta_mag = 0.4 #Vary to find better base value - Default optimised = 0.5
+    # delta_mass = 0.1
+    # min_z = 0.05
+    # percent = 66
     
-    #min_gal = args.min_gal
-    #max_gal = args.max_gal
-    #delta_z = args.delta_z #sets width of sample box - Default optimised = 0.008
-    #delta_p = args.delta_p #sets height of smaple box - Default optimised = 0.016
-    #delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
-    #delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
-    #min_z = args.min_z
-    #percent = args.percent
+    min_gal = args.min_gal
+    max_gal = args.max_gal
+    delta_z = args.delta_z #sets width of sample box - Default optimised = 0.008
+    delta_p = args.delta_p #sets height of smaple box - Default optimised = 0.016
+    delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
+    delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
+    min_z = args.min_z
+    percent = args.percent
     
     count_array = []
 

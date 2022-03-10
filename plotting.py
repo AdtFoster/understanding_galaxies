@@ -66,6 +66,6 @@ if __name__ == '__main__':
     delta_mag = temp[2][0]
     delta_mass = temp[3][0]
     
-    pd.DataFrame(temp).to_csv('deltas.csv')
-    
+    temp.to_csv('deltas.csv')
+
     print("The best delta values are delta z =  ", delta_z, ", delta p = ", delta_p, ", delta mag = ", delta_mag, " and delta mass = ", delta_mass)

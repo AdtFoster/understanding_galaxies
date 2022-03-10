@@ -8,9 +8,9 @@ import argparse
 import tensorflow as tf
 
 from zoobot import label_metadata, schemas
-from zoobot.data_utils import image_datasets
-from zoobot.estimators import define_model, preprocess
-from zoobot.predictions import predict_on_tfrecords, predict_on_images
+from zoobot.tensorflow.data_utils import image_datasets
+from zoobot.tensorflow.estimators import define_model, preprocess
+from zoobot.tensorflow.predictions import predict_on_dataset
 
 
 if __name__ == '__main__':
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     file_format = 'png'
 
     # utility function to easily list the images in a folder.
-    unordered_image_paths = predict_on_images.paths_in_folder(Path(args.input_dir), file_format=file_format, recursive=False)
+    unordered_image_paths = predict_on_dataset.paths_in_folder(Path(args.input_dir), file_format=file_format, recursive=False)
 
     ## or maybe you already have a list from a catalog?
     # unordered_image_paths = df['paths']
@@ -91,33 +91,5 @@ if __name__ == '__main__':
     For example, below is how to load the model in finetune_minimal.py.
     """
 
-    # finetuned_dir = 'results/finetune_advanced/full/checkpoint'
-    # base_model = define_model.load_model(
-    #   checkpoint_dir,
-    #   include_top=False,
-    #   input_size=initial_size,
-    #   crop_size=crop_size,
-    #   resize_size=resize_size,
-    #   output_dim=None 
-    # )
-    # new_head = tf.keras.Sequential([
-    #   tf.keras.layers.InputLayer(input_shape=(7,7,1280)),
-    #   tf.keras.layers.GlobalAveragePooling2D(),
-    #   tf.keras.layers.Dropout(0.75),
-    #   tf.keras.layers.Dense(64, activation='relu'),
-    #   tf.keras.layers.Dropout(0.75),
-    #   tf.keras.layers.Dense(64, activation='relu'),
-    #   tf.keras.layers.Dropout(0.75),
-    #   tf.keras.layers.Dense(1, activation="sigmoid", name='sigmoid_output')
-    # ])
-    # model = tf.keras.Sequential([
-    #   tf.keras.Input(shape=(initial_size, initial_size, 1)),
-    #   base_model,
-    #   new_head
-    # ])
-    # define_model.load_weights(model, finetuned_dir, expect_partial=True)
-
-    # label_cols = ['ring']
-
     n_samples = 1
-    predict_on_images.predict(image_ds, model, n_samples, label_cols, args.save_loc)
+    predict_on_dataset.predict(image_ds, model, n_samples, label_cols, args.save_loc)
