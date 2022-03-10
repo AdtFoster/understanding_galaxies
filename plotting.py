@@ -32,9 +32,6 @@ if __name__ == '__main__':
     residual_array = np.split(residual_array, count)
     residual_array = np.asarray(residual_array)
     
-    standard_deviation_array = np.split(standard_deviation_array, count)
-    standard_deviation_array = np.asarray(standard_deviation_array)
-    
     for i in range(len(count_array_perm[:,0,0])):
         plt.plot(count_array_perm[i,:,0],count_array_perm[i,:,1], linestyle = "-", alpha = 0.7) #label = "{0:.3f} {1:.3f} {2:.3f}".format(delta_z, delta_p, delta_mag),
     
@@ -61,13 +58,14 @@ if __name__ == '__main__':
     plt.savefig("Total linear residual.png")
     plt.close()
     
-    temp = pd.DataFrame(standard_deviation_array[:,0,:])
-    temp = temp.loc[[temp[3].astype(float).idxmin()]]
+    temp = pd.DataFrame(standard_deviation_array)
+    temp = temp.loc[[temp[4].astype(float).idxmin()]]
     temp = temp.reset_index(drop=True)
     delta_z = temp[0][0]
     delta_p = temp[1][0]
     delta_mag = temp[2][0]
+    delta_mass = temp[3][0]
     
     pd.DataFrame(temp).to_csv('deltas.csv')
     
-    print("The best delta values are delta z =  ", delta_z, ", delta p = ", delta_p, " and delta mag = ", delta_mag)
+    print("The best delta values are delta z =  ", delta_z, ", delta p = ", delta_p, ", delta mag = ", delta_mag, " and delta mass = ", delta_mass)

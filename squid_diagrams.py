@@ -23,43 +23,33 @@ if __name__ == '__main__':
     parser.add_argument('--delta-z', dest='delta_z', type=float)
     parser.add_argument('--delta-p', dest='delta_p', type=float)
     parser.add_argument('--delta-mag', dest='delta_mag', type=float)
+    parser.add_argument('--delta-mass', dest='delta_mass', type=float)
     parser.add_argument('--min-z', dest='max_z', type=float)
     parser.add_argument('--percent', dest='percent', type=float)
     
     args = parser.parse_args()
     
-    #min_gal = 40
-    #max_gal = 50
-    #delta_z = 0.008 #sets width of sample box - Default optimised = 0.008
-    #delta_p = 0.016 #sets height of smaple box - Default optimised = 0.016
-    #delta_mag = 0.5 #Vary to find better base value - Default optimised = 0.5
-    #min_z = 0.05
-    #percent = 66
+    min_gal = 120
+    max_gal = 130
+    delta_z = 0.006 #sets width of sample box - Default optimised = 0.008
+    delta_p = 0.017 #sets height of smaple box - Default optimised = 0.016
+    delta_mag = 0.4 #Vary to find better base value - Default optimised = 0.5
+    delta_mass = 0.1
+    min_z = 0.05
+    percent = 66
     
-    min_gal = args.min_gal
-    max_gal = args.max_gal
-    delta_z = args.delta_z #sets width of sample box - Default optimised = 0.008
-    delta_p = args.delta_p #sets height of smaple box - Default optimised = 0.016
-    delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
-    min_z = args.min_z
-    percent = args.percent
+    #min_gal = args.min_gal
+    #max_gal = args.max_gal
+    #delta_z = args.delta_z #sets width of sample box - Default optimised = 0.008
+    #delta_p = args.delta_p #sets height of smaple box - Default optimised = 0.016
+    #delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
+    #delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
+    #min_z = args.min_z
+    #percent = args.percent
     
     count_array = []
-    
-    #Individual galaxy tunable test parameters
-    #test_z = 0.2308291643857956
-    #pred_z = 0.1154145821928978
-    #actual_p = 0.5717100280287778
-    #test_p = 0.4432387127766238
-    #test_mag = -19.726
 
-    #Set values for smapling 
-    #upper_z = test_z + delta_z
-    #lower_z = test_z - delta_z
-    #upper_p = test_p + delta_p
-    #lower_p =test_p - delta_p
-
-        # The data
+    # The data
     full_data = pd.read_csv('full_data.csv', index_col=0)
     full_data = full_data.to_numpy()
     
@@ -93,6 +83,7 @@ if __name__ == '__main__':
         pred_z = min_z
         actual_p = gal_min_z[1].astype(float).to_numpy()[0]
         test_mag = gal_max_z[5].astype(float).to_numpy()[0]
+        test_mass = gal_max_z[6].astype(float).to_numpy()[0]
 
         #Set values for smapling 
         upper_z = test_z + delta_z
@@ -108,7 +99,6 @@ if __name__ == '__main__':
         for name in unique_names:
             sim_sub_set = sim_sub_set.append(full_dataframe[full_dataframe[0] == name])
             sim_sub_set_var = sim_sub_set_var.append(full_dataframe_var[full_dataframe_var[0] == name])
-        
         
         #Let's make some predictions
 
@@ -145,11 +135,13 @@ if __name__ == '__main__':
             gaussain_p_variable = closest_vals[1].astype(float).to_numpy()[0]
             gaussian_z_variable = closest_vals[4].astype(float).to_numpy()[0]
             gaussian_mag_variable = closest_vals[5].astype(float).to_numpy()[0]
+            gaussian_mass_variable = closest_vals[6].astype(float).to_numpy()[0]
 
             proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p, test_z, delta_p/2, delta_z/2)
             mag_weight = frf.gaussian_weightings(gaussian_mag_variable, 0, test_mag, 0, delta_mag, 1)
-
-            weight = proximity_weight * mag_weight
+            mass_weight = frf.mass_gaussian_weightings(gaussian_mass_variable, test_mass, delta_mass)
+            
+            weight = proximity_weight * mag_weight * mass_weight
 
             #print('mag_weight is:', mag_weight, '\nprox_wieght is:', proximity_weight, '\nTotal Weight is:', weight)
 
