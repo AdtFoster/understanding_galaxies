@@ -47,7 +47,7 @@ if __name__ == '__main__':
         os.mkdir(save_dir)
         
     # '/**/*.fits', recursive=True):
-    imgs = {} # Opens dictionary for storing images
+    imgs = {} # Opens dictionary for storing images, like (filename: file contents)
     filenames = glob.iglob(f'{fits_dir}' + '/*.fits') #operates over all FIT's within the desired directory
     # logging.info(filenames)
     # filenames = list(filenames)[:5]
@@ -63,10 +63,12 @@ if __name__ == '__main__':
   
     final_data = {} # Create dictionary to append final data to
 
+    logging.info(df['iauname'])
+
     for original_loc, original_img in imgs.items():
-        original_loc_name = original_loc.replace('.fits','')
-        original_loc_name = original_loc_name.replace(fits_dir,'')
-        original_loc_name = original_loc_name.replace('\\', '')
+        original_loc_name = os.path.basename(original_loc).replace('.fits','')
+
+        logging.info(original_loc_name)
         galaxy = df.query(f'iauname == "{original_loc_name}"').squeeze()
         logging.info(galaxy)
         # galaxy = galaxy.dropna(subset = ['iauname'])
