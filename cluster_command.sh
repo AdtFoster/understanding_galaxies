@@ -64,12 +64,12 @@ $PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
     --max-redshift $MAX_Z \
     --step-size $STEP_SIZE
     
-# $PYTHON $THIS_REPO_DIR/make_predictions.py \
-#     --batch-size 128 \
-#     --input-dir $SCALED_IMG_DIR \
-#     --checkpoint-loc /share/nas2/walml/repos/zoobot_test/data/pretrained_models/decals_dr_train_set_only_replicated/checkpoint \
-#     --save-loc /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv
-# # should still support CSV, lets see TODO
+$PYTHON $THIS_REPO_DIR/make_predictions.py \
+    --batch-size 256 \
+    --input-dir $SCALED_IMG_DIR \
+    --checkpoint-loc /share/nas2/walml/repos/gz-decals-classifiers/results/tensorflow/all_campaigns_ortho_v2_train_only_m0/checkpoint \
+    --save-loc /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv
+# should still support CSV, lets see TODO
 
 # # load predictions in convenient dataframe
 # $PYTHON $THIS_REPO_DIR/create_dataframe.py \

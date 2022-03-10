@@ -1,13 +1,11 @@
 import os
 import logging
-import glob
-import pandas as pd
 from pathlib import Path
 import argparse
 
 import tensorflow as tf
 
-from zoobot import label_metadata, schemas
+from zoobot.shared import label_metadata
 from zoobot.tensorflow.data_utils import image_datasets
 from zoobot.tensorflow.estimators import define_model, preprocess
 from zoobot.tensorflow.predictions import predict_on_dataset
@@ -16,6 +14,7 @@ from zoobot.tensorflow.predictions import predict_on_dataset
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
+    # simulated image dir TODO
     parser.add_argument('--input-dir', dest='input_dir', type=str)
     parser.add_argument('--checkpoint-loc', dest='checkpoint_loc', type=str)
     parser.add_argument('--save-loc', dest='save_loc', type=str)
@@ -84,7 +83,7 @@ if __name__ == '__main__':
         expect_partial=True  # optimiser state will not load as we're not using it for predictions
     )
 
-    label_cols = label_metadata.decals_label_cols  
+    label_cols = label_metadata.decals_all_campaigns_ortho_label_cols  
 
     """
     If you have done finetuning, use include_top=False and replace the output layers exactly as you did when training.
