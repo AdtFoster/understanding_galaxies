@@ -48,7 +48,7 @@ if __name__ == '__main__':
         
     # '/**/*.fits', recursive=True):
     imgs = {} # Opens dictionary for storing images, like (filename: file contents)
-    filenames = glob.iglob(f'{fits_dir}' + '/*.fits')[:10] #operates over all FIT's within the desired directory
+    filenames = glob.glob(f'{fits_dir}' + '/*.fits')[:10] # operates over all FIT's within the desired directory
     # logging.info(filenames)
     # filenames = list(filenames)[:5]
     for filename in filenames:
