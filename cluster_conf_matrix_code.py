@@ -415,6 +415,9 @@ if __name__ == '__main__':
             dominant_morphology_simulated.append("NULL")  
     
     confident_locs = np.argwhere(np.asarray(dominant_morphology_predicted)!='NULL') #find arguements for confident debiased predictions
+    logging.info(confident_locs)
+    if len(confident_locs) == 0:
+        raise ValueError(f'No confident (i.e. non-NULL i.e. with predicted debiased p > {threshold_p} found - cannot make CMs or metrics')
     
     dominant_morphology_expected = np.asarray(dominant_morphology_expected)[confident_locs] #remove non-confident debiased predictions from expected list
     dominant_morphology_predicted = np.asarray(dominant_morphology_predicted)[confident_locs] #remove non-confident debiased predictions from predicted list
