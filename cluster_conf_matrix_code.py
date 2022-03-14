@@ -21,7 +21,7 @@ import functions_for_redshifting_figures as frf
 if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO)
-    
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--min-gal', dest='min_gal', type=int)
     parser.add_argument('--max-gal', dest='max_gal', type=int)
@@ -425,6 +425,8 @@ if __name__ == '__main__':
     predicted = dominant_morphology_predicted #list of predicted vals in order of prediction
     simulated = dominant_morphology_simulated
     
+    logging.info(expected)
+    logging.info(predicted)
     results = confusion_matrix(expected, predicted, labels=morphology_names) #converting inputs into confusion matrix format (debiased on x-axis (top) and true on y-axis (side))
     results = results[0:4, 0:4] #(remove the NULL column for debiased prediction as it will never be filled) changed to include to avoid confusion about the diagonal - mike request
     comparison_results = confusion_matrix(expected, simulated, labels=morphology_names) #converting inputs into confusion matrix format (debiased on x-axis (top) and true on y-axis (side))
