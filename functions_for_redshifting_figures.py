@@ -6,6 +6,8 @@ def main():
     return
 
 def file_reader(file_name):
+    # TODO replace with hdf5 reader
+    # reads the csv of ml output concentrations, and converts the [[0, 2, 4]] format to np
     input_file=open(file_name, 'r', encoding='utf-8-sig')
 
     rows = csv.DictReader(input_file)

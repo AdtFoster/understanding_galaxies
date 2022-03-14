@@ -58,6 +58,7 @@ if __name__ == '__main__':
             'id_str': 'iauname', 
         },
     inplace=True) #rename the headers of the dataframe
+    logging.info(scale_factor_df.columns.values)
     
 
     logging.info(scale_factor_df['iauname'])
