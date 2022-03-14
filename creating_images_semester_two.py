@@ -16,7 +16,7 @@ import numpy as np
 import creating_image_functions
 
 def iauname_to_filename(iauname, base_dir):
-    return os.path.join(base_dir, iauname[:4], iauname = '.fits')
+    return os.path.join(base_dir, iauname[:4], iauname + '.fits')
 
 if __name__ == '__main__':
 
