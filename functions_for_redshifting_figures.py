@@ -7,7 +7,7 @@ from zoobot.tensorflow.predictions import load_predictions
 
 def file_reader(file_name):
 
-    prediction_df = load_predictions.hdf5_to_prediction_df(file_name)
+    prediction_df = load_predictions.hdf5s_to_prediction_df(file_name)
     return prediction_df
 
 
