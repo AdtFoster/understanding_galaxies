@@ -11,51 +11,51 @@ def file_reader(file_name):
     return prediction_df
 
 
-def file_reader_old(file_name):
-    # TODO replace with hdf5 reader
-    # reads the csv of ml output concentrations, and converts the [[0, 2, 4]] format to np
-    input_file=open(file_name, 'r', encoding='utf-8-sig')
+# def file_reader_old(file_name):
+#     # TODO replace with hdf5 reader
+#     # reads the csv of ml output concentrations, and converts the [[0, 2, 4]] format to np
+#     input_file=open(file_name, 'r', encoding='utf-8-sig')
 
-    rows = csv.DictReader(input_file)
+#     rows = csv.DictReader(input_file)
 
-    smoothness=np.zeros((0, 4))
+#     smoothness=np.zeros((0, 4))
 
-    for line in rows: 
+#     for line in rows: 
 
-        smoothness_line = np.array((line['id_str'], line['smooth-or-featured-dr8_smooth_pred'], line['smooth-or-featured-dr8_featured-or-disk_pred'], line['smooth-or-featured-dr8_artifact_pred']))
-        smoothness = np.vstack((smoothness, smoothness_line))
+#         smoothness_line = np.array((line['id_str'], line['smooth-or-featured-dr8_smooth_pred'], line['smooth-or-featured-dr8_featured-or-disk_pred'], line['smooth-or-featured-dr8_artifact_pred']))
+#         smoothness = np.vstack((smoothness, smoothness_line))
     
-    for i in range(np.size(smoothness, 0)):
-        for j in range(np.size(smoothness, 1)):
-            smoothness[i, j] = smoothness[i, j].replace('[', '')
-            smoothness[i, j] = smoothness[i, j].replace(']', '')
+#     for i in range(np.size(smoothness, 0)):
+#         for j in range(np.size(smoothness, 1)):
+#             smoothness[i, j] = smoothness[i, j].replace('[', '')
+#             smoothness[i, j] = smoothness[i, j].replace(']', '')
     
-    return smoothness
+#     return smoothness
 
-def file_reader_filtered_old(file_name):
-    """
-    file_name - str (name and csv file to read)
-    #filter_columns - list (columns by whihc the intital data set will be selected)
-    #data_columns - list (columns to be used for plotting)
-    threshold_condition - float (value at which threshold cuttoff occurs)
-    """
-    input_file=open(file_name, 'r', encoding='utf-8-sig')
+# def file_reader_filtered_old(file_name):
+#     """
+#     file_name - str (name and csv file to read)
+#     #filter_columns - list (columns by whihc the intital data set will be selected)
+#     #data_columns - list (columns to be used for plotting)
+#     threshold_condition - float (value at which threshold cuttoff occurs)
+#     """
+#     input_file=open(file_name, 'r', encoding='utf-8-sig')
 
-    data_array=csv.DictReader(input_file)
+#     data_array=csv.DictReader(input_file)
 
-    smoothness=np.zeros((0, 7))
+#     smoothness=np.zeros((0, 7))
 
-    for line in data_array:
+#     for line in data_array:
         
-        smoothness_line = np.array((line['id_str'], line['bar-dr8_strong_pred'], line['bar-dr8_weak_pred'], line['bar-dr8_no_pred'], line['smooth-or-featured-dr8_smooth_pred'], line['smooth-or-featured-dr8_featured-or-disk_pred'], line['smooth-or-featured-dr8_artifact_pred']))
-        smoothness = np.vstack((smoothness, smoothness_line))
+#         smoothness_line = np.array((line['id_str'], line['bar-dr8_strong_pred'], line['bar-dr8_weak_pred'], line['bar-dr8_no_pred'], line['smooth-or-featured-dr8_smooth_pred'], line['smooth-or-featured-dr8_featured-or-disk_pred'], line['smooth-or-featured-dr8_artifact_pred']))
+#         smoothness = np.vstack((smoothness, smoothness_line))
     
-    for i in range(np.size(smoothness, 0)):
-        for j in range(np.size(smoothness, 1)):
-            smoothness[i, j] = smoothness[i, j].replace('[', '')
-            smoothness[i, j] = smoothness[i, j].replace(']', '')
+#     for i in range(np.size(smoothness, 0)):
+#         for j in range(np.size(smoothness, 1)):
+#             smoothness[i, j] = smoothness[i, j].replace('[', '')
+#             smoothness[i, j] = smoothness[i, j].replace(']', '')
     
-    return smoothness
+#     return smoothness
 
 def prob_maker(input_array):
     

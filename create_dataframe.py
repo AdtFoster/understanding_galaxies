@@ -48,6 +48,8 @@ if __name__ == '__main__':
 
     nsa_catalog = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift', 'elpetro_absmag_r','elpetro_mass','petro_th50','petro_th90'])
     nsa_catalog['concentration'] = nsa_catalog['petro_th50'] / nsa_catalog['petro_th90']
+    nsa_catalog = nsa_catalog.rename(columns={'redshift': 'original_redshift'})  # for clarity
+    nsa_catalog['original_redshift'] = nsa_catalog['original_redshift'].clip(lower=1e-10) #removes any negative errors should be unnecessary
 
     # # logging.info(pd.read_csv(file_name).columns.values)
 
@@ -61,30 +63,31 @@ if __name__ == '__main__':
     
     scale_factor_df = frf.file_reader(file_name)
     logging.info(scale_factor_df.columns.values)
-    scale_factor_df['iauname'] = scale_factor_df['id_str'].apply(lambda x: os.path.basename(x).split('.')[0])  # assume id_str is filename like '/folders/{iauname}.{extension}' 
-    
-
+    # assume id_str is filename like '/folders/{iauname}_{scale_factor}.{extension}' 
+    scale_factor_df['iauname'] = scale_factor_df['id_str'].apply(lambda x: os.path.basename(x).split('_')[0])  
     logging.info(scale_factor_df['iauname'])
+    scale_factor_df['scale_factor'] = scale_factor_df['id_str'].apply(lambda x: os.path.basename(x).split('_')[1].split('.')[0]) 
+    logging.info(scale_factor_df['scale_factor'])
+
     # scale_factor_df['iauname'] = scale_factor_df.iauname.str.replace('/share/nas/walml/repos/understanding_galaxies/scaled_{0}/'.format(scale_factor_multiplier[i]), '', regex=False)
     # scale_factor_df['iauname'] = scale_factor_df.iauname.str.replace('.png', '', regex=False)
-    scale_factor_df['iauname'] = scale_factor_df.iauname.str.replace(scale_factor_df.iauname.str.split('_')[1], '', regex=False)
-    scale_factor_df['iauname'] = scale_factor_df.iauname.str.replace('_', '', regex=False)
+    # scale_factor_df['iauname'] = scale_factor_df.iauname.str.replace(scale_factor_df.iauname.str.split('_')[1], '', regex=False)
+    # scale_factor_df['iauname'] = scale_factor_df.iauname.str.replace('_', '', regex=False)
     
-    logging.info(scale_factor_df['iauname'])
+    # logging.info(scale_factor_df['iauname'])
     # merged_dataframe = scale_factor_df.merge(nsa_catalog, left_on='iauname', right_on='iauname', how='left') #in final version make the larger dataframe update itsefl to be smaller?
     # merged_dataframe['redshift']=merged_dataframe['redshift'].clip(lower=1e-10) #removes any negative errors
     # merged_dataframe['redshift']=merged_dataframe['redshift'].mul(scale_factor_multiplier[i]) #Multiplies the redshift by the scalefactor
-    merged_dataframe = scale_factor_df.merge(nsa_catalog, left_on='iauname', right_on='iauname', how='inner')
+    merged_dataframe = scale_factor_df.merge(nsa_catalog, on='iauname', how='inner')
     logging.info(len(merged_dataframe))
     assert len(merged_dataframe) > 0
 
-    merged_dataframe['redshift'] = merged_dataframe['redshift'].clip(lower=1e-10) #removes any negative errors should be unnecessary
-
     first_mag_cut = merged_dataframe[(merged_dataframe["elpetro_absmag_r"] < -18 ) & (merged_dataframe["elpetro_absmag_r"] >= -24) & (merged_dataframe["redshift"] <= max_allow_z) & (merged_dataframe["redshift"] >= min_allow_z)]
 
-    merged_dataframe['redshift']=merged_dataframe['redshift'].mul(float(scale_factor_df.iauname.str.split('_')[1])) #Multiplies the redshift by the scalefactor
-    
-    merged_numpy_first_cut = first_mag_cut.to_numpy(dtype=str) #converts dataframe to numpy array for manipulation
+    merged_dataframe['redshift'] = merged_dataframe['original_redshift'] * merged_dataframe['scale_factor']
+    logging.info(merged_dataframe['redshift'])
+
+    merged_numpy_first_cut = first_mag_cut.to_numpy(dtype=str) # converts dataframe to numpy array for manipulation
     
     numpy_merged_probs_first_cut = frf.prob_maker(merged_numpy_first_cut)
     numpy_merged_var_first_cut = frf.variance_from_beta(merged_numpy_first_cut)
