@@ -5,6 +5,8 @@ Created on Tue Mar  8 15:09:08 2022
 
 @author: adamfoster
 """
+import logging
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,6 +19,9 @@ import functions_for_redshifting_figures as frf
 
 
 if __name__ == '__main__':
+
+    logging.basicConfig(level=logging.INFO)
+    
     parser = argparse.ArgumentParser()
     parser.add_argument('--min-gal', dest='min_gal', type=int)
     parser.add_argument('--max-gal', dest='max_gal', type=int)
@@ -36,7 +41,7 @@ if __name__ == '__main__':
     full_data_array_first_cut = pd.read_csv('full_data.csv', index_col=0)
     full_data_array_first_cut = full_data_array_first_cut.to_numpy()
     
-    print('Extracting test sample')
+    logging.info('Extracting test sample')
     #Remove the test sample
     test_sample_names = full_data_array_first_cut[args.min_gal:args.max_gal, 0] #define the test galaxies we want to use
 
@@ -49,7 +54,7 @@ if __name__ == '__main__':
         test_sample = test_sample.append(rows ,ignore_index=True) #append correct galaxy rows to blank array
         full_dataframe.drop(rows.index, inplace=True) #reset indexing
 
-    print('Beginning predictions')
+    logging.info('Beginning predictions')
     #If we want to operate over multiple galaxies, start a for loop here
     test_gal_number = 0 #count number of gals which have been processed
     skipped_gal = 0
@@ -69,7 +74,7 @@ if __name__ == '__main__':
     for test_name in test_sample_names:
         
         if (test_gal_number % args.update_interval == 0):
-            print('completed {0} of {1} galaxy debias predictions'.format(test_gal_number, len(test_sample_names))) #prints progress every {number} galaxy debias predictions
+            logging.info('completed {0} of {1} galaxy debias predictions'.format(test_gal_number, len(test_sample_names))) #prints progress every {number} galaxy debias predictions
         
         test_galaxy = test_sample[test_sample[0] == test_name] #selects only the current test galaxy from dataframe
         gal_max_z = test_galaxy.loc[[test_galaxy[4].astype(float).idxmax()]] #finds the maximum redshfit value for all the galaxies simulations
@@ -363,7 +368,7 @@ if __name__ == '__main__':
     prediction prob is test_p.
     """
     
-    print('{0} predictions complete, {1} galaxies skipped, plotting matrix'.format(test_gal_number, skipped_gal))
+    logging.info('{0} predictions complete, {1} galaxies skipped, plotting matrix'.format(test_gal_number, skipped_gal))
     
     morphology_names = ['smooth', 'featured', 'artifact', 'NULL'] #add NULL to morphology names
     threshold_p = args.threshold_val
@@ -488,4 +493,6 @@ if __name__ == '__main__':
     plt.ylabel('Non-simulated (low redshift) prediction (Actual)', fontsize = 15) # y-axis label with fontsize 15
     plt.savefig('Non_de_biased_predictions_confusion_matrix.png')
     plt.close()
+
+    logging.info('Confusion matrix plots complete - existing')
     

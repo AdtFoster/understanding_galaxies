@@ -4,11 +4,19 @@ Created on Tue Mar  1 15:56:09 2022
 
 @author: r41331jc
 """
+import logging
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
 if __name__ == '__main__':
+
+    logging.basicConfig(level=logging.INFO)
+    
+    logging.info('Beginning plotting')
+
     count_array_perm = pd.read_csv('count_array_perm.csv', index_col=0)
     count_array_perm = count_array_perm.to_numpy()
     
@@ -68,4 +76,6 @@ if __name__ == '__main__':
     
     temp.to_csv('deltas.csv')
 
-    print("The best delta values are delta z =  ", delta_z, ", delta p = ", delta_p, ", delta mag = ", delta_mag, " and delta mass = ", delta_mass)
+    logging.info('Plotting complete')
+
+    logging.info(f'The best delta values are delta z = {delta_z}, delta p =  {delta_p}, delta mag = {delta_mag} and delta mass = {delta_mass}')

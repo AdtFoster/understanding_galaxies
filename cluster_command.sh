@@ -63,7 +63,7 @@ DELTA_MAG=0.5
 #     --save-dir $SCALED_IMG_DIR \
 #     --max-redshift $MAX_Z \
 #     --step-size $STEP_SIZE
-    
+
 # $PYTHON $THIS_REPO_DIR/make_predictions.py \
 #     --batch-size 256 \
 #     --input-dir $SCALED_IMG_DIR \
@@ -93,25 +93,25 @@ $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
     --max-delta-mass $MAX_DELTA_MASS \
     --step-delta-mass $STEP_DELTA_MASS
     
-$PYTHON $THIS_REPO_DIR/plotting.py \
+$PYTHON $THIS_REPO_DIR/plotting.py
 
-# $PYTHON $THIS_REPO_DIR/cluster_conf_matrix_code.py \
-#     --min-gal $MIN_GAL \
-#     --max-gal $MAX_GAL \
-#     --update-interval $UPDATE_INTERVAL \
-#     --pred-z $PRED_Z \
-#     --threshold-val $THRESHOLD_VAL \
-#     --delta-z $DELTA_Z \
-#     --delta-p $DELTA_P \
-#     --delta-mag $DELTA_MAG 
+$PYTHON $THIS_REPO_DIR/cluster_conf_matrix_code.py \
+    --min-gal $MIN_GAL \
+    --max-gal $MAX_GAL \
+    --update-interval $UPDATE_INTERVAL \
+    --pred-z $PRED_Z \
+    --threshold-val $THRESHOLD_VAL \
+    --delta-z $DELTA_Z \
+    --delta-p $DELTA_P \
+    --delta-mag $DELTA_MAG 
 
 # # evolution tracks
-# $PYTHON $THIS_REPO_DIR/squid_diagrams.py \
-#     --min-gal $MIN_GAL_SQUID \
-#     --max-gal $MAX_GAL_SQUID \
-#     --delta-z $DELTA_Z \
-#     --delta-p $DELTA_P \
-#     --delta-mag $DELTA_MAG \
-#     --delta-mass $DELTA_MASS \
-#     --min_z $PRED_Z \
-#     --percent $PERCENT
+$PYTHON $THIS_REPO_DIR/squid_diagrams.py \
+    --min-gal $MIN_GAL_SQUID \
+    --max-gal $MAX_GAL_SQUID \
+    --delta-z $DELTA_Z \
+    --delta-p $DELTA_P \
+    --delta-mag $DELTA_MAG \
+    --delta-mass $DELTA_MASS \
+    --min_z $PRED_Z \
+    --percent $PERCENT

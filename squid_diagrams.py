@@ -4,6 +4,7 @@ Created on Tue Mar  8 16:39:56 2022
 
 @author: r41331jc
 """
+import logging
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -16,7 +17,9 @@ import functions_for_redshifting_figures as frf
 
 if __name__ == '__main__':
     
-    print('\nStart')
+    logging.basicConfig(level=logging.INFO)
+
+    logging.info('Begin creating squid diagrams')
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--min-gal', dest='min_gal', type=int)
