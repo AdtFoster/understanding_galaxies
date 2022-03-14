@@ -46,29 +46,39 @@ if __name__ == '__main__':
     else:
         catalog_loc = 'nsa_v1_0_1_mag_cols.parquet'
 
-    parquet_file = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift', 'elpetro_absmag_r','elpetro_mass','petro_th50','petro_th90'])
-    parquet_file['concentration'] = parquet_file['petro_th50'] / parquet_file['petro_th90']
+    nsa_catalog = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift', 'elpetro_absmag_r','elpetro_mass','petro_th50','petro_th90'])
+    nsa_catalog['concentration'] = nsa_catalog['petro_th50'] / nsa_catalog['petro_th90']
 
-    logging.info(pd.read_csv(file_name).columns.values)
+    # logging.info(pd.read_csv(file_name).columns.values)
     scale_factor_data[file_name] = frf.file_reader(file_name)
 
-    scale_factor_dataframe = pd.DataFrame(scale_factor_data[file_name])
-    scale_factor_dataframe.rename(columns={0: 'iauname', 1:'smooth-or-featured_smooth_pred', 2:'smooth-or-featured_featured-or-disk_pred', 3:'smooth-or-featured_artifact_pred'}, inplace=True) #rename the headers of the dataframe
-
-    # scale_factor_dataframe['iauname'] = scale_factor_dataframe.iauname.str.replace('/share/nas/walml/repos/understanding_galaxies/scaled_{0}/'.format(scale_factor_multiplier[i]), '', regex=False)
-    # scale_factor_dataframe['iauname'] = scale_factor_dataframe.iauname.str.replace('.png', '', regex=False)
-    scale_factor_dataframe['iauname'] = scale_factor_dataframe.iauname.str.replace(scale_factor_dataframe.iauname.str.split('_')[1], '', regex=False)
-    scale_factor_dataframe['iauname'] = scale_factor_dataframe.iauname.str.replace('_', '', regex=False)
+    scale_factor_df = pd.DataFrame(scale_factor_data[file_name])
+    scale_factor_df.rename(columns=
+        {
+            'id_str': 'iauname', 
+        },
+    inplace=True) #rename the headers of the dataframe
     
-    # merged_dataframe = scale_factor_dataframe.merge(parquet_file, left_on='iauname', right_on='iauname', how='left') #in final version make the larger dataframe update itsefl to be smaller?
+
+    logging.info(scale_factor_df['iauname'])
+    # scale_factor_df['iauname'] = scale_factor_df.iauname.str.replace('/share/nas/walml/repos/understanding_galaxies/scaled_{0}/'.format(scale_factor_multiplier[i]), '', regex=False)
+    # scale_factor_df['iauname'] = scale_factor_df.iauname.str.replace('.png', '', regex=False)
+    scale_factor_df['iauname'] = scale_factor_df.iauname.str.replace(scale_factor_df.iauname.str.split('_')[1], '', regex=False)
+    scale_factor_df['iauname'] = scale_factor_df.iauname.str.replace('_', '', regex=False)
+    
+    logging.info(scale_factor_df['iauname'])
+    # merged_dataframe = scale_factor_df.merge(nsa_catalog, left_on='iauname', right_on='iauname', how='left') #in final version make the larger dataframe update itsefl to be smaller?
     # merged_dataframe['redshift']=merged_dataframe['redshift'].clip(lower=1e-10) #removes any negative errors
     # merged_dataframe['redshift']=merged_dataframe['redshift'].mul(scale_factor_multiplier[i]) #Multiplies the redshift by the scalefactor
-    merged_dataframe = scale_factor_dataframe.merge(parquet_file, left_on='iauname', right_on='iauname', how='left') #in final version make the larger dataframe update itsefl to be smaller?
-    merged_dataframe['redshift']=merged_dataframe['redshift'].clip(lower=1e-10) #removes any negative errors should be unnecessary
+    merged_dataframe = scale_factor_df.merge(nsa_catalog, left_on='iauname', right_on='iauname', how='inner')
+    logging.info(len(merged_dataframe))
+    assert len(merged_dataframe) > 0
+
+    merged_dataframe['redshift'] = merged_dataframe['redshift'].clip(lower=1e-10) #removes any negative errors should be unnecessary
 
     first_mag_cut = merged_dataframe[(merged_dataframe["elpetro_absmag_r"] < -18 ) & (merged_dataframe["elpetro_absmag_r"] >= -24) & (merged_dataframe["redshift"] <= max_allow_z) & (merged_dataframe["redshift"] >= min_allow_z)]
 
-    merged_dataframe['redshift']=merged_dataframe['redshift'].mul(float(scale_factor_dataframe.iauname.str.split('_')[1])) #Multiplies the redshift by the scalefactor
+    merged_dataframe['redshift']=merged_dataframe['redshift'].mul(float(scale_factor_df.iauname.str.split('_')[1])) #Multiplies the redshift by the scalefactor
     
     merged_numpy_first_cut = first_mag_cut.to_numpy(dtype=str) #converts dataframe to numpy array for manipulation
     
@@ -82,7 +92,7 @@ if __name__ == '__main__':
     full_data_array_first_cut_var=np.vstack((full_data_array_first_cut_var, numpy_merged_var_first_cut))
         # i+=1
     
-    pd.DataFrame(full_data_array_first_cut).to_csv('full_data.csv')
-    pd.DataFrame(full_data_array_first_cut_var).to_csv('full_data_var.csv')
+    pd.DataFrame(full_data_array_first_cut).to_csv('full_data.csv', index=False)
+    pd.DataFrame(full_data_array_first_cut_var).to_csv('full_data_var.csv', index=False)
     
     print('Files appended, removing test sample')
