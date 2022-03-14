@@ -82,7 +82,7 @@ if __name__ == '__main__':
     logging.info(len(merged_dataframe))
     assert len(merged_dataframe) > 0
 
-    first_mag_cut = merged_dataframe[(merged_dataframe["elpetro_absmag_r"] < -18 ) & (merged_dataframe["elpetro_absmag_r"] >= -24) & (merged_dataframe["redshift"] <= max_allow_z) & (merged_dataframe["redshift"] >= min_allow_z)]
+    first_mag_cut = merged_dataframe[(merged_dataframe["elpetro_absmag_r"] < -18 ) & (merged_dataframe["elpetro_absmag_r"] >= -24) & (merged_dataframe["original_redshift"] <= max_allow_z) & (merged_dataframe["original_redshift"] >= min_allow_z)]
 
     merged_dataframe['redshift'] = merged_dataframe['original_redshift'] * merged_dataframe['scale_factor']
     logging.info(merged_dataframe['redshift'])
