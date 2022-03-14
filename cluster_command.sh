@@ -23,11 +23,11 @@ FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native/J000
 SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled
 
 # TODO crank it up
-MIN_GAL=100
-MAX_GAL=105
+MIN_GAL=0
+MAX_GAL=5
 
-MIN_GAL_SQUID=100
-MAX_GAL_SQUID=105
+MIN_GAL_SQUID=0
+MAX_GAL_SQUID=5
 
 PERCENT=66
 

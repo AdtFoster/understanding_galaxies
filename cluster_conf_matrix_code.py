@@ -42,19 +42,20 @@ if __name__ == '__main__':
     full_data_array_first_cut = full_data_array_first_cut.to_numpy()
     
     logging.info('Extracting test sample')
-    #Remove the test sample
+    # Remove the test sample
     test_sample_names = full_data_array_first_cut[args.min_gal:args.max_gal, 0] #define the test galaxies we want to use
+    assert len(test_sample_names) > 0
 
     full_dataframe = pd.DataFrame(full_data_array_first_cut) #convert numpy arrays to dataframes
     test_sample = pd.DataFrame(columns=full_dataframe.columns) #form new array of correct column length and labels
 
     for name in test_sample_names: #iterate over each galaxy in test sample
-        cond = full_dataframe[0] == name #identify each galaxy by classification name
+        cond = full_dataframe[0] == name # identify each galaxy by classification name
         rows = full_dataframe.loc[cond, :]
         test_sample = test_sample.append(rows ,ignore_index=True) #append correct galaxy rows to blank array
         full_dataframe.drop(rows.index, inplace=True) #reset indexing
 
-    logging.info('Beginning predictions')
+    logging.info('Beginning predictions on {} galaxies'.format(len(test_sample_names)))
     #If we want to operate over multiple galaxies, start a for loop here
     test_gal_number = 0 #count number of gals which have been processed
     skipped_gal = 0
