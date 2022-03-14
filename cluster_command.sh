@@ -76,7 +76,7 @@ DELTA_MAG=0.5
 #     --min-allow-z $MIN_ALLOW_Z \
 #     --max-allow-z $MAX_ALLOW_Z
 
-# # apply debiasing method, to each galaxy, by sampling nearby galaxies
+# apply debiasing method, to each galaxy, by sampling nearby galaxies
 $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
     --min-gal $MIN_GAL \
     --max-gal $MAX_GAL \
@@ -93,7 +93,7 @@ $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
     --max-delta-mass $MAX_DELTA_MASS \
     --step-delta-mass $STEP_DELTA_MASS
     
-# $PYTHON $THIS_REPO_DIR/plotting.py \
+$PYTHON $THIS_REPO_DIR/plotting.py \
 
 # $PYTHON $THIS_REPO_DIR/cluster_conf_matrix_code.py \
 #     --min-gal $MIN_GAL \

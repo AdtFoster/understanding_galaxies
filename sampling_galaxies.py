@@ -4,6 +4,7 @@ Created on Tue Mar  8 11:35:48 2022
 
 @author: r41331jc
 """
+import logging
 
 import numpy as np
 import pandas as pd
@@ -12,6 +13,9 @@ import argparse
 import functions_for_redshifting_figures as frf
 
 if __name__ == '__main__':
+
+    logging.basicConfig(level=logging.INFO)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--min-gal', dest='min_gal', type=int)
     parser.add_argument('--max-gal', dest='max_gal', type=int)
@@ -87,12 +91,12 @@ if __name__ == '__main__':
     
     count = 0
     
-    print('Beginning predictions')
+    logging.info('Beginning predictions')
     for delta_z in np.arange(min_delta_z,max_delta_z,step_delta_z):
         for delta_p in np.arange(min_delta_p,max_delta_p,step_delta_p):
             for delta_mag in np.arange(min_delta_mag,max_delta_mag,step_delta_mag):
                 for delta_mass in np.arange(min_delta_mass,max_delta_mass,step_delta_mass):
-                    print(delta_z, delta_p, delta_mag, delta_mass)
+                    logging.debug('{:.4f} {:.4f} {:.4f} {:.4f}'.format(delta_z, delta_p, delta_mag, delta_mass))
                     
                     number_of_galaxies = 0
                     count_array = []
@@ -304,3 +308,5 @@ if __name__ == '__main__':
     pd.DataFrame(error_array_perm).to_csv('error_array_perm.csv')
     pd.DataFrame(residual_array).to_csv('residual_array.csv')
     pd.DataFrame(standard_deviation_array).to_csv('standard_deviation_array.csv')
+
+    logging.info('Sucessfully saved debiased values - exiting')
