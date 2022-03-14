@@ -15,6 +15,9 @@ import numpy as np
 
 import creating_image_functions
 
+def iauname_to_filename(iauname, base_dir):
+    return os.path.join(base_dir, iauname[:4], iauname = '.fits')
+
 if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO)
@@ -47,58 +50,47 @@ if __name__ == '__main__':
         os.mkdir(save_dir)
         
     # '/**/*.fits', recursive=True):
-    imgs = {} # Opens dictionary for storing images, like (filename: file contents)
-    filenames = glob.glob(f'{fits_dir}' + '/*.fits')[:10] # operates over all FIT's within the desired directory
+    # imgs = {} # Opens dictionary for storing images, like (filename: file contents)
+    # filenames = glob.glob(f'{fits_dir}' + '/*.fits')[:10] # operates over all FIT's within the desired directory
     # logging.info(filenames)
     # filenames = list(filenames)[:5]
-    for filename in filenames:
+
+    filenames = df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir))[:100]
+    logging.info('Filenames: {}'.format(len(filenames)))
+    logging.info('Example filename: {}'.format(filenames[0]))
+
+    for original_loc in filenames:
+
         try:
-            img, hdr = fits.getdata(filename, 0, header=True) #Extract FITs data
+            img, hdr = fits.getdata(original_loc, 0, header=True) #Extract FITs data
+            valid_data = True
         except Exception:
-            warnings.warn('Invalid fits at {}'.format(filename))
-        imgs[filename] = img #Unsure if didctionary would be better here if required for a large quantity of data
-        #imgs.append(img)
+            warnings.warn('Invalid fits at {}'.format(original_loc))
+            valid_data = False
 
-    logging.info('All images loaded')
-  
-    final_data = {} # Create dictionary to append final data to
+        if valid_data:
 
-    logging.info(df['iauname'])
+            iauname = os.path.basename(original_loc).replace('.fits','')
+            logging.debug(iauname)
 
-    for original_loc, original_img in imgs.items():
-        original_loc_name = os.path.basename(original_loc).replace('.fits','')
-
-        logging.info(original_loc_name)
-        galaxy = df.query(f'iauname == "{original_loc_name}"').squeeze()
-        logging.info(galaxy)
-        # galaxy = galaxy.dropna(subset = ['iauname'])
-        # min_redshift = min_redshift_df.to_numpy()
-        galaxy_redshift = galaxy['redshift']
-        logging.info(galaxy_redshift)
-        
-        for redshift in np.arange(galaxy_redshift, args.max_redshift, args.step_size):
-            scale_factor = redshift/galaxy_redshift
-            filename = os.path.basename(original_loc)
-            filename_scale = filename.replace('.fits', '_{0}.png'.format(scale_factor))
-            # file_loc = os.path.join('/share/nas/walml/repos/understanding_galaxies', output_dir_name[1], filename)
-            file_loc = os.path.join(save_dir, filename_scale)
-            if not os.path.isfile(file_loc):
-                _, _, img_scaled = creating_image_functions.photon_counts_from_FITS(original_img, scale_factor) # Second input is scale factor, changed in parser
-                final_data[file_loc] = img_scaled
-            else:
-                logging.info('Skipping {}'.format(file_loc))
-         
-
-    logging.info('All images scaled')
-
-    for save_loc, scaled_image in final_data.items():
-        if not os.path.isfile(save_loc):
-            #creating_image_functions.make_png_from_corrected_fits(final_data[entry_name][0], os.getcwd() + '/' + f'{output_dir_name[0]}' + '/Original_' + entry_name + '.png', 424) #Might want to remove the word Original in file name?
-            creating_image_functions.make_png_from_corrected_fits(
-                img=scaled_image,
-                png_loc=save_loc,
-                png_size=424)
-        else:
-            logging.info('Skipping {}'.format(save_loc))
+            galaxy = df.query(f'iauname == "{iauname}"').squeeze()
+            logging.debug(galaxy)
+            
+            galaxy_redshift = galaxy['redshift']
+            logging.debug(galaxy_redshift)
+            
+            for redshift in np.arange(galaxy_redshift, args.max_redshift, args.step_size):
+                scale_factor = redshift/galaxy_redshift
+                filename_scale = iauname + '_{0}.png'.format(scale_factor)  # save output image with scale_factor appended
+                # file_loc = os.path.join('/share/nas/walml/repos/understanding_galaxies', output_dir_name[1], filename)
+                scaled_file_loc = os.path.join(save_dir, filename_scale)
+                if not os.path.isfile(scaled_file_loc):
+                    _, _, img_scaled = creating_image_functions.photon_counts_from_FITS(img, scale_factor) # Second input is scale factor, changed in parser
+                    creating_image_functions.make_png_from_corrected_fits(
+                        img=img_scaled,
+                        png_loc=scaled_file_loc,
+                        png_size=424)
+                else:
+                    logging.info('Skipping {}, already exists'.format(scaled_file_loc))
 
     logging.info('Successfully made images - exiting')
