@@ -18,7 +18,7 @@ THIS_REPO_DIR=/share/nas2/walml/repos/understanding_galaxies
 PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
 
 # TODO crank it up
-FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native/J000
+FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native
 
 SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled
 
