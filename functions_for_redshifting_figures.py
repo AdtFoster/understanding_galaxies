@@ -3,12 +3,12 @@ import matplotlib.pyplot as plt
 import csv
 import logging
 
-from zoobot.tensorflow.evaluation import evaluate_model
+from zoobot.tensorflow.predictions import load_predictions
 
 def file_reader(file_name):
 
-    galaxy_id_df, concentrations = evaluate_model.load_hdf5s(file_name)
-
+    prediction_df = load_predictions.hdf5_to_prediction_df(file_name)
+    return prediction_df
 
 
 def file_reader_old(file_name):

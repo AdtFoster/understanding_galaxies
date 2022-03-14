@@ -49,16 +49,19 @@ if __name__ == '__main__':
     nsa_catalog = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift', 'elpetro_absmag_r','elpetro_mass','petro_th50','petro_th90'])
     nsa_catalog['concentration'] = nsa_catalog['petro_th50'] / nsa_catalog['petro_th90']
 
-    # logging.info(pd.read_csv(file_name).columns.values)
-    scale_factor_data[file_name] = frf.file_reader(file_name)
+    # # logging.info(pd.read_csv(file_name).columns.values)
 
-    scale_factor_df = pd.DataFrame(scale_factor_data[file_name])
-    scale_factor_df.rename(columns=
-        {
-            'id_str': 'iauname', 
-        },
-    inplace=True) #rename the headers of the dataframe
+
+    # scale_factor_df = pd.DataFrame(scale_factor_data[file_name])
+    # scale_factor_df.rename(columns=
+    #     {
+    #         'id_str': 'iauname', 
+    #     },
+    # inplace=True) #rename the headers of the dataframe
+    
+    scale_factor_df = frf.file_reader(file_name)
     logging.info(scale_factor_df.columns.values)
+    scale_factor_df['iauname'] = scale_factor_df['id_str'].apply(lambda x: os.path.basename(x).split('.')[0])  # assume id_str is filename like '/folders/{iauname}.{extension}' 
     
 
     logging.info(scale_factor_df['iauname'])
