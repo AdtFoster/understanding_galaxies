@@ -34,10 +34,16 @@ if __name__ == '__main__':
     
     if os.path.isdir('/share/nas2'):
         catalog_loc = '/share/nas2/walml/repos/gz-decals-classifiers/data/catalogs/nsa_v1_0_1_mag_cols.parquet'
+        ml_safe_loc = '/share/nas2/walml/walml/repos/gz-decals-classifiers/data/catalogs/training_catalogs/dr5_ortho_v2_labelled_catalog.parquet'
+        # note that not every galaxy in this catalog has a good image downloaded
     else:
         catalog_loc = 'nsa_v1_0_1_mag_cols.parquet'
-    
+        ml_safe_loc = 'dr5_ortho_v2_labelled_catalog.parquet'
+
     df = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift'])
+    ml_safe = pd.read_parquet(ml_safe_loc, columns=['id_str'])
+    df = df['iauname'].isin(ml_safe)  # filter to only galaxies with good images
+    assert len(df) > 0
 
     fits_dir =  args.fits_dir
     #fits_dir = 'samples'
@@ -55,7 +61,7 @@ if __name__ == '__main__':
     # logging.info(filenames)
     # filenames = list(filenames)[:5]
 
-    filenames = df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir))[:100]
+    filenames = df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir))[:10000]
     logging.info('Filenames: {}'.format(len(filenames)))
     logging.info('Example filename: {}'.format(filenames[0]))
 
@@ -65,7 +71,8 @@ if __name__ == '__main__':
             img, hdr = fits.getdata(original_loc, 0, header=True) #Extract FITs data
             valid_data = True
         except Exception:
-            warnings.warn('Invalid fits at {}'.format(original_loc))
+            # most images will not exist as only a subset of NSA catalog was downloaded
+            logging.debug('Invalid fits at {}'.format(original_loc))
             valid_data = False
 
         if valid_data:
@@ -92,5 +99,7 @@ if __name__ == '__main__':
                         png_size=424)
                 else:
                     logging.info('Skipping {}, already exists'.format(scaled_file_loc))
+                
+            logging.info('Made images for {}'.format(iauname))
 
     logging.info('Successfully made images - exiting')
