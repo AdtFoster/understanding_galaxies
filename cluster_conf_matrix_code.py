@@ -39,6 +39,9 @@ if __name__ == '__main__':
     delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
     
     full_data_array_first_cut = pd.read_csv('full_data.csv', index_col=0)
+    logging.info(len(full_data_array_first_cut))
+    logging.info(full_data_array_first_cut)
+    assert len(full_data_array_first_cut) > 0
     full_data_array_first_cut = full_data_array_first_cut.to_numpy()
     
     logging.info('Extracting test sample')
