@@ -8,13 +8,13 @@ def main():
 def file_reader(file_name):
     input_file=open(file_name, 'r', encoding='utf-8-sig')
 
-    data_array=csv.DictReader(input_file)
+    rows = csv.DictReader(input_file)
 
     smoothness=np.zeros((0, 4))
 
-    for line in data_array:
+    for line in rows: 
 
-        smoothness_line = np.array((line['id_str'], line['smooth-or-featured_smooth_pred'], line['smooth-or-featured_featured-or-disk_pred'], line['smooth-or-featured_artifact_pred']))
+        smoothness_line = np.array((line['id_str'], line['smooth-or-featured-dr8_smooth_pred'], line['smooth-or-featured-dr8_featured-or-disk_pred'], line['smooth-or-featured-dr8_artifact_pred']))
         smoothness = np.vstack((smoothness, smoothness_line))
     
     for i in range(np.size(smoothness, 0)):
@@ -39,7 +39,7 @@ def file_reader_filtered(file_name):
 
     for line in data_array:
         
-        smoothness_line = np.array((line['id_str'], line['bar_strong_pred'], line['bar_weak_pred'], line['bar_no_pred'], line['smooth-or-featured_smooth_pred'], line['smooth-or-featured_featured-or-disk_pred'], line['smooth-or-featured_artifact_pred']))
+        smoothness_line = np.array((line['id_str'], line['bar-dr8_strong_pred'], line['bar-dr8_weak_pred'], line['bar-dr8_no_pred'], line['smooth-or-featured-dr8_smooth_pred'], line['smooth-or-featured-dr8_featured-or-disk_pred'], line['smooth-or-featured-dr8_artifact_pred']))
         smoothness = np.vstack((smoothness, smoothness_line))
     
     for i in range(np.size(smoothness, 0)):
