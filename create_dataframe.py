@@ -99,7 +99,10 @@ if __name__ == '__main__':
     full_data_array_first_cut_var=np.vstack((full_data_array_first_cut_var, numpy_merged_var_first_cut))
         # i+=1
     
+    logging.info('{} simulated images, of which {} are galaxies passing first cut. Saving.'.format(len(merged_dataframe), len(merged_numpy_first_cut)))
+
+    assert len(merged_numpy_first_cut) > 0
     pd.DataFrame(full_data_array_first_cut).to_csv('full_data.csv', index=False)
     pd.DataFrame(full_data_array_first_cut_var).to_csv('full_data_var.csv', index=False)
     
-    print('Files appended, removing test sample')
+  

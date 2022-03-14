@@ -72,10 +72,10 @@ DELTA_MAG=0.5
 #     --save-loc /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.csv
 
 # # # load predictions in convenient dataframe
-# $PYTHON $THIS_REPO_DIR/create_dataframe.py \
-#     --file-name /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.hdf5 \
-#     --min-allow-z $MIN_ALLOW_Z \
-#     --max-allow-z $MAX_ALLOW_Z
+$PYTHON $THIS_REPO_DIR/create_dataframe.py \
+    --file-name /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.hdf5 \
+    --min-allow-z $MIN_ALLOW_Z \
+    --max-allow-z $MAX_ALLOW_Z
 
 # # apply debiasing method, to each galaxy, by sampling nearby galaxies
 # $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
@@ -96,15 +96,15 @@ DELTA_MAG=0.5
     
 # $PYTHON $THIS_REPO_DIR/plotting.py
 
-$PYTHON $THIS_REPO_DIR/cluster_conf_matrix_code.py \
-    --min-gal $MIN_GAL \
-    --max-gal $MAX_GAL \
-    --update-interval $UPDATE_INTERVAL \
-    --pred-z $PRED_Z \
-    --threshold-val $THRESHOLD_VAL \
-    --delta-z $DELTA_Z \
-    --delta-p $DELTA_P \
-    --delta-mag $DELTA_MAG 
+# $PYTHON $THIS_REPO_DIR/cluster_conf_matrix_code.py \
+#     --min-gal $MIN_GAL \
+#     --max-gal $MAX_GAL \
+#     --update-interval $UPDATE_INTERVAL \
+#     --pred-z $PRED_Z \
+#     --threshold-val $THRESHOLD_VAL \
+#     --delta-z $DELTA_Z \
+#     --delta-p $DELTA_P \
+#     --delta-mag $DELTA_MAG 
 
 # # evolution tracks
 # TODO DELTA_MASS needs specifying above
