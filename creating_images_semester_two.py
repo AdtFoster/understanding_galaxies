@@ -34,7 +34,7 @@ if __name__ == '__main__':
     
     if os.path.isdir('/share/nas2'):
         catalog_loc = '/share/nas2/walml/repos/gz-decals-classifiers/data/catalogs/nsa_v1_0_1_mag_cols.parquet'
-        ml_safe_loc = '/share/nas2/walml/walml/repos/gz-decals-classifiers/data/catalogs/training_catalogs/dr5_ortho_v2_labelled_catalog.parquet'
+        ml_safe_loc = '/share/nas2/walml/repos/gz-decals-classifiers/data/catalogs/training_catalogs/dr5_ortho_v2_labelled_catalog.parquet'
         # note that not every galaxy in this catalog has a good image downloaded
     else:
         catalog_loc = 'nsa_v1_0_1_mag_cols.parquet'
