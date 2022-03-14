@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     df = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift'])
     ml_safe = pd.read_parquet(ml_safe_loc, columns=['id_str'])
-    df = df['iauname'].isin(ml_safe)  # filter to only galaxies with good images
+    df = df[df['iauname'].isin(ml_safe)].reset_index(drop=True)  # filter to only galaxies with good images
     assert len(df) > 0
 
     df = df.sort_values('iauname')
