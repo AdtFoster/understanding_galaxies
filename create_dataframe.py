@@ -5,6 +5,7 @@ Created on Tue Feb 15 11:32:45 2022
 @author: r41331jc
 """
 import os
+import logging
 
 import numpy as np
 import pandas as pd
@@ -13,6 +14,9 @@ import argparse
 import functions_for_redshifting_figures as frf
 
 if __name__ == '__main__':
+
+    logging.basicConfig(level=logging.INFO)
+
     scale_factor_data={}
     full_data_array_first_cut=np.zeros((0, 10))
     full_data_array_first_cut_var=np.zeros((0, 10))
@@ -20,7 +24,7 @@ if __name__ == '__main__':
     # The data
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file-name', dest='file_name', type=str)
+    parser.add_argument('--file-name', dest='file_name', type=str, help='ML predictions e.g. scaled_image_predictions_1.csv')
     parser.add_argument('--min-allow-z', dest='min_allow_z', type=float)
     parser.add_argument('--max-allow-z', dest='max_allow_z', type=float)
     args = parser.parse_args()
@@ -45,6 +49,7 @@ if __name__ == '__main__':
     parquet_file = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift', 'elpetro_absmag_r','elpetro_mass','petro_th50','petro_th90'])
     parquet_file['concentration'] = parquet_file['petro_th50'] / parquet_file['petro_th90']
 
+    logging.info(pd.read_csv(file_name).columns.values)
     scale_factor_data[file_name] = frf.file_reader(file_name)
 
     scale_factor_dataframe = pd.DataFrame(scale_factor_data[file_name])

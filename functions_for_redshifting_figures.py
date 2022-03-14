@@ -14,7 +14,7 @@ def file_reader(file_name):
 
     for line in data_array:
 
-        smoothness_line = np.array((line['image_loc'], line['smooth-or-featured_smooth_pred'], line['smooth-or-featured_featured-or-disk_pred'], line['smooth-or-featured_artifact_pred']))
+        smoothness_line = np.array((line['id_str'], line['smooth-or-featured_smooth_pred'], line['smooth-or-featured_featured-or-disk_pred'], line['smooth-or-featured_artifact_pred']))
         smoothness = np.vstack((smoothness, smoothness_line))
     
     for i in range(np.size(smoothness, 0)):
@@ -39,7 +39,7 @@ def file_reader_filtered(file_name):
 
     for line in data_array:
         
-        smoothness_line = np.array((line['image_loc'], line['bar_strong_pred'], line['bar_weak_pred'], line['bar_no_pred'], line['smooth-or-featured_smooth_pred'], line['smooth-or-featured_featured-or-disk_pred'], line['smooth-or-featured_artifact_pred']))
+        smoothness_line = np.array((line['id_str'], line['bar_strong_pred'], line['bar_weak_pred'], line['bar_no_pred'], line['smooth-or-featured_smooth_pred'], line['smooth-or-featured_featured-or-disk_pred'], line['smooth-or-featured_artifact_pred']))
         smoothness = np.vstack((smoothness, smoothness_line))
     
     for i in range(np.size(smoothness, 0)):
