@@ -1,11 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
+import logging
 
-def main():
-    return
+from zoobot.tensorflow.evaluation import evaluate_model
 
 def file_reader(file_name):
+
+    galaxy_id_df, concentrations = evaluate_model.load_hdf5s(file_name)
+
+
+
+def file_reader_old(file_name):
     # TODO replace with hdf5 reader
     # reads the csv of ml output concentrations, and converts the [[0, 2, 4]] format to np
     input_file=open(file_name, 'r', encoding='utf-8-sig')
@@ -26,7 +32,7 @@ def file_reader(file_name):
     
     return smoothness
 
-def file_reader_filtered(file_name):
+def file_reader_filtered_old(file_name):
     """
     file_name - str (name and csv file to read)
     #filter_columns - list (columns by whihc the intital data set will be selected)
