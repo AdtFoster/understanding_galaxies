@@ -66,7 +66,7 @@ if __name__ == '__main__':
     # assume id_str is filename like '/folders/{iauname}_{scale_factor}.{extension}' 
     scale_factor_df['iauname'] = scale_factor_df['id_str'].apply(lambda x: os.path.basename(x).split('_')[0])  
     logging.info(scale_factor_df['iauname'])
-    scale_factor_df['scale_factor'] = scale_factor_df['id_str'].apply(lambda x: os.path.basename(x).split('_')[1].split('.')[0]) 
+    scale_factor_df['scale_factor'] = scale_factor_df['id_str'].apply(lambda x: os.path.basename(x).split('_')[1].replace('.png', '').replace('.jpeg', '')).astype(float) 
     logging.info(scale_factor_df['scale_factor'])
 
     # scale_factor_df['iauname'] = scale_factor_df.iauname.str.replace('/share/nas/walml/repos/understanding_galaxies/scaled_{0}/'.format(scale_factor_multiplier[i]), '', regex=False)
