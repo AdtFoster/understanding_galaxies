@@ -45,6 +45,8 @@ if __name__ == '__main__':
     df = df['iauname'].isin(ml_safe)  # filter to only galaxies with good images
     assert len(df) > 0
 
+    df = df.sort_values('iauname')
+
     fits_dir =  args.fits_dir
     #fits_dir = 'samples'
     logging.info('Loading images from {}'.format(fits_dir))
