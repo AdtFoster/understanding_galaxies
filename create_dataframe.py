@@ -83,6 +83,9 @@ if __name__ == '__main__':
 
     merged_numpy_first_cut = first_mag_cut.to_numpy(dtype=str) # converts dataframe to numpy array for manipulation
     
+    # homework: use df[cols].values
+    # df[col] = arr[index]
+    # df = pd.concat([df[subset], arr], axis=1)
     numpy_merged_probs_first_cut = frf.prob_maker(merged_numpy_first_cut)
     numpy_merged_var_first_cut = frf.variance_from_beta(merged_numpy_first_cut)
 
@@ -98,7 +101,7 @@ if __name__ == '__main__':
     logging.info('{} simulated images, of which {} are galaxies passing first cut. Saving.'.format(len(merged_dataframe), len(merged_numpy_first_cut)))
 
     assert len(merged_numpy_first_cut) > 0
-    pd.DataFrame(full_data_array_first_cut).to_csv('full_data.csv', index=False)
-    pd.DataFrame(full_data_array_first_cut_var).to_csv('full_data_var.csv', index=False)
+    pd.DataFrame(full_data_array_first_cut, columns=merged_dataframe.columns).to_csv('full_data.csv', index=False)
+    pd.DataFrame(full_data_array_first_cut_var, columns=merged_dataframe.columns).to_csv('full_data_var.csv', index=False)
     
   
