@@ -18,7 +18,7 @@ if __name__ == '__main__':
     parser.add_argument('--checkpoint-loc', dest='checkpoint_loc', type=str)
     parser.add_argument('--save-dir', dest='save_dir', default='results/latest_scaled_predictions', type=str)
     parser.add_argument('--batch-size', dest='batch_size', default=128, type=int)
-    parser.add_argument('--overwrite', dest='overwrite', default=False, on_action='store_true')
+    parser.add_argument('--overwrite', dest='overwrite', default=False, action='store_true')
 
     args = parser.parse_args()
 
