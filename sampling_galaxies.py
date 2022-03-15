@@ -68,7 +68,7 @@ if __name__ == '__main__':
     full_data = pd.read_csv('full_data.csv', index_col=0)
     full_data_var = pd.read_csv('full_data_var.csv', index_col=0)
     
-    test_sample_names = full_data.iloc[min_gal:max_gal, 'iauname'] 
+    test_sample_names = full_data.loc[min_gal:max_gal, 'iauname'] 
     logging.info(test_sample_names)
 
     test_sample = full_data[full_data['iauname'].isin(test_sample_names)].reset_index(drop=True)
