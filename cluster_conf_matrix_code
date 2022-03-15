@@ -23,7 +23,7 @@ if __name__ == '__main__':
     parser.add_argument('--update-interval', dest='update_interval', type=int)
     parser.add_argument('--pred-z', dest='pred_z', type=float)
     parser.add_argument('--threshold-val', dest='threshold_val', type=float)
-    parser.add_argument('--delta-z', dest='', type=float)
+    parser.add_argument('--delta-z', dest='delta_z', type=float)
     parser.add_argument('--delta-p', dest='delta_p', type=float)
     parser.add_argument('--delta-mag', dest='delta_mag', type=float)
 
