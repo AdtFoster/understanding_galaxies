@@ -127,12 +127,15 @@ if __name__ == '__main__':
                     
                         immediate_sub_sample = full_data[(full_data[4].astype(float) < upper_z) & (full_data[4].astype(float) >= lower_z) & (full_data[1].astype(float) >= lower_p) & (full_data[1].astype(float) <= upper_p)]
                         unique_names = pd.unique(immediate_sub_sample[0])
+                        assert len(unique_names) > 0
                             
                         sim_sub_set = pd.DataFrame()
                         sim_sub_set_var = pd.DataFrame()
                         for unique_name in unique_names:
                             sim_sub_set = sim_sub_set.append(full_data[full_data[0] == unique_name])
                             sim_sub_set_var = sim_sub_set_var.append(full_data_var[full_data_var[0] == unique_name])
+                        assert len(sim_sub_set) > 0
+
                         
                         
                         #Let's make some predictions
@@ -143,15 +146,20 @@ if __name__ == '__main__':
                     
                     
                         for unique_name in unique_names:
+                            logging.info(unique_name)
                             galaxy_data = sim_sub_set[sim_sub_set[0] == unique_name]
                             galaxy_data_var = sim_sub_set_var[sim_sub_set_var[0] == unique_name]
                     
                             abs_diff_pred_z = abs(galaxy_data[4].astype(float) - pred_z)
-                            min_pos_pred = abs_diff_pred_z.nsmallest(2).index[0] #nsmallest pickest the n smallest values and puts them in df
+
+                            logging.info(abs_diff_pred_z)
+                            logging.info(abs_diff_pred_z.shape)
+                            # pick the 2 smallest, and define as min and next_min
+                            min_pos_pred = abs_diff_pred_z.nsmallest(2).index[0] #nsmallest picks the n smallest values and puts them in df
                             next_min_pos_pred = abs_diff_pred_z.nsmallest(2).index[1]
                     
                             abs_diff_test_z = abs(galaxy_data[4].astype(float) - test_z)
-                            min_pos_test = abs_diff_test_z.nsmallest(2).index[0] #nsmallest pickest the n smallest values and puts them in df
+                            min_pos_test = abs_diff_test_z.nsmallest(2).index[0] #nsmallest picks the n smallest values and puts them in df
                             nextmin_pos_test = abs_diff_test_z.nsmallest(2).index[1]
                     
                             estimate_predictions = galaxy_data.loc[[min_pos_pred]]
