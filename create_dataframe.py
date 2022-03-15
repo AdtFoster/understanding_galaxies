@@ -24,17 +24,17 @@ if __name__ == '__main__':
     parser.add_argument('--max-allow-z', dest='max_allow_z', type=float)
     args = parser.parse_args()
     
-    #max_allow_z = args.max_allow_z
-    #min_allow_z = args.min_allow_z
+    max_allow_z = args.max_allow_z
+    min_allow_z = args.min_allow_z
     
-    max_allow_z = 0.25
-    min_allow_z = 0.02
+    #max_allow_z = 0.25
+    #min_allow_z = 0.02
     
-    file_name_list = ['scaled_image_predictions_1.csv', 'scaled_image_predictions_1.2.csv', 'scaled_image_predictions_1.4.csv', 'scaled_image_predictions_1.6.csv', 'scaled_image_predictions_1.8.csv', 'scaled_image_predictions_2.csv', 'scaled_image_predictions_2.2.csv', 'scaled_image_predictions_2.4.csv', 'scaled_image_predictions_2.6.csv', 'scaled_image_predictions_2.8.csv', 'scaled_image_predictions_3.csv', 'scaled_image_predictions_4.csv', 'scaled_image_predictions_5.csv', 'scaled_image_predictions_6.csv']
-    scale_factor_multiplier=[1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4, 2.6, 2.8, 3, 4, 5, 6] #index used for scale facotr multiplication
-    i=0 
+    #file_name_list = ['scaled_image_predictions_1.csv', 'scaled_image_predictions_1.2.csv', 'scaled_image_predictions_1.4.csv', 'scaled_image_predictions_1.6.csv', 'scaled_image_predictions_1.8.csv', 'scaled_image_predictions_2.csv', 'scaled_image_predictions_2.2.csv', 'scaled_image_predictions_2.4.csv', 'scaled_image_predictions_2.6.csv', 'scaled_image_predictions_2.8.csv', 'scaled_image_predictions_3.csv', 'scaled_image_predictions_4.csv', 'scaled_image_predictions_5.csv', 'scaled_image_predictions_6.csv']
+    #scale_factor_multiplier=[1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4, 2.6, 2.8, 3, 4, 5, 6] #index used for scale facotr multiplication
+    #i=0 
     
-    #file_name_list = [args.file_name]
+    file_name_list = [args.file_name]
     parquet_file = pd.read_parquet('nsa_v1_0_1_mag_cols.parquet', columns= ['iauname', 'redshift', 'elpetro_absmag_r','elpetro_mass','petro_th50','petro_th90'])
     parquet_file['concentration'] = parquet_file['petro_th50'] / parquet_file['petro_th90']
     
@@ -70,7 +70,7 @@ if __name__ == '__main__':
     
         full_data_array_first_cut=np.vstack((full_data_array_first_cut, numpy_merged_probs_first_cut)) #stacks all data from current redshift to cumulative array
         full_data_array_first_cut_var=np.vstack((full_data_array_first_cut_var, numpy_merged_var_first_cut))
-        i+=1
+        #i+=1
     
     pd.DataFrame(full_data_array_first_cut).to_csv('full_data.csv')
     pd.DataFrame(full_data_array_first_cut_var).to_csv('full_data_var.csv')
