@@ -1,3 +1,4 @@
+from itertools import count
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
@@ -56,23 +57,28 @@ def file_reader(file_name):
     
 #     return smoothness
 
-def prob_maker(input_array):
+def prob_maker(df):
     
-    cropped_input = input_array[:, 1:4].astype(float)
-    empty_probabilities = np.empty((0, np.size(cropped_input, 1)))
-    for line in cropped_input:
-        empty_row=np.empty((0, np.size(cropped_input, 1)))
-        for row in line:
+    count_cols = ['smooth-or-featured-dr5_smooth', 'smooth-or-featured-dr5_featured-or-disk', 'smooth-or-featured-dr5_artifact']
+    # cropped_input = df[count_cols].values.astype(float)
+    # empty_probabilities = np.empty((0, np.size(cropped_input, 1)))
+    # for line in cropped_input:
+    #     empty_row=np.empty((0, np.size(cropped_input, 1)))
+    #     for row in line:
 
-            smoothness_probability = row/sum(line)
-            empty_row = np.append(empty_row, smoothness_probability)
-        empty_probabilities = np.vstack((empty_probabilities, empty_row))
+    #         smoothness_probability = row/sum(line)
+    #         empty_row = np.append(empty_row, smoothness_probability)
+    #     empty_probabilities = np.vstack((empty_probabilities, empty_row))
     
-    #empty_probabilities = np.vstack((prob_headers, empty_probabilities)) #Re-add names for columns
-    empty_probabilities = np.hstack((input_array[:, 0:1], empty_probabilities)) #Re-add the iaunames for each row
-    empty_probabilities = np.hstack((empty_probabilities, input_array[:, 4:9]))
+    # #empty_probabilities = np.vstack((prob_headers, empty_probabilities)) #Re-add names for columns
+    # empty_probabilities = np.hstack((input_array[:, 0:1], empty_probabilities)) #Re-add the iaunames for each row
+    # empty_probabilities = np.hstack((empty_probabilities, input_array[:, 4:9]))
 
-    return empty_probabilities
+    for count_col in count_cols:
+        prob_col = count_col + '_prob'
+        df[prob_col] = df[count_col] / df[count_cols].sum(axis=1)
+
+    return df
 
 def prob_maker_filtered(input_array):
     """
@@ -205,29 +211,26 @@ def proportion_over_threshold_using_certain_total(input_array, threshold):
 
     return proportions
 
-def variance_from_beta(input_array):
-    """
-    5 column array [name, smooth, featured, artifct, redshift]
-    """
-    cropped_input = input_array[:, 1:4].astype(float) #seperates only the wanted inputs
-    empty_variance = np.empty((0, np.size(cropped_input, 1)))
-    for line in cropped_input:
-        empty_row=np.empty((0, np.size(cropped_input, 1)))
-        for row in line:
-            alpha = row
-            beta = sum(line) - row
 
-            numerator = (alpha * beta)
-            denominator = ((alpha + beta)**2) * (alpha + beta + 1)
-            smoothness_variance = numerator/denominator #calculation
+def get_dirichlet_variance(x, alpha_col):
+    alpha = x[alpha_col]
+    beta = x.sum() - alpha
+    numerator = (alpha * beta)
+    denominator = ((alpha + beta)**2) * (alpha + beta + 1)
+    smoothness_variance = numerator/denominator #calculation
+    return smoothness_variance
 
-            empty_row = np.append(empty_row, smoothness_variance)
-        empty_variance = np.vstack((empty_variance, empty_row))
 
-    empty_variance = np.hstack((input_array[:, 0:1], empty_variance)) #Re-add the iaunames for each row
-    empty_variance = np.hstack((empty_variance, input_array[:, 4:9]))
+def variance_from_beta(df):
 
-    return empty_variance
+    count_cols = ['smooth-or-featured-dr5_smooth', 'smooth-or-featured-dr5_featured-or-disk', 'smooth-or-featured-dr5_artifact']
+
+    for count_col in count_cols:
+        var_col = count_col + '_var'
+        df[var_col] = df[count_cols].apply(lambda x: get_dirichlet_variance(x, count_col), axis=1)
+
+    return df
+
 
 def gaussian_weightings(p, z, p_0, z_0, delta_p, delta_z):
     """

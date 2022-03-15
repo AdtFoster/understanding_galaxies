@@ -66,7 +66,6 @@ if __name__ == '__main__':
     
     # created by create_dataframe.py
     full_data = pd.read_csv('full_data.csv', index_col=0)
-    full_data_var = pd.read_csv('full_data_var.csv', index_col=0)
     
     test_sample_names = full_data.loc[min_gal:max_gal, 'iauname'] 
     logging.info(test_sample_names)
@@ -74,7 +73,6 @@ if __name__ == '__main__':
     test_sample = full_data[full_data['iauname'].isin(test_sample_names)].reset_index(drop=True)
 
     full_data = full_data[~full_data['iauname'].isin(test_sample_names)].reset_index(drop=True)
-    full_data_var = full_data_var[~full_data_var['iauname'].isin(test_sample_names)].reset_index(drop=True)
     
     standard_deviation_array = np.zeros((0,8))
     residual_array = np.zeros((0,2))
@@ -123,19 +121,13 @@ if __name__ == '__main__':
                             (full_data[1].astype(float) >= lower_p) & (full_data[1].astype(float) <= upper_p)
                             # mag and mass are extra weightings, don't change num galaxies in the box
                         ]
-                        unique_names = pd.unique(immediate_sub_sample[0])
-                        if len(unique_names) < 10:
-                                
-                            # assert len(unique_names) > 0
-                                
-                            sim_sub_set = pd.DataFrame()
-                            sim_sub_set_var = pd.DataFrame()
-                            for unique_name in unique_names:
-                                sim_sub_set = sim_sub_set.append(full_data[full_data[0] == unique_name])
-                                sim_sub_set_var = sim_sub_set_var.append(full_data_var[full_data_var[0] == unique_name])
-                            assert len(sim_sub_set) > 0
+                        galaxy_names_in_box = pd.unique(immediate_sub_sample[0])
+                        if len(galaxy_names_in_box) < 10:
+                            # begin debiasing
 
-                            
+                            # select all galaxies within specified box
+                            sim_sub_set = full_data[full_data['iauname'].isin(galaxy_names_in_box)]
+                            assert len(sim_sub_set) > 0
                             
                             #Let's make some predictions
                         
@@ -144,20 +136,21 @@ if __name__ == '__main__':
                             sd_list = []
                         
                         
-                            for unique_name in unique_names:
-                                logging.info(unique_name)
-                                galaxy_data = sim_sub_set[sim_sub_set[0] == unique_name]
-                                galaxy_data_var = sim_sub_set_var[sim_sub_set_var[0] == unique_name]
+                            for galaxy in galaxy_names_in_box:
+                                logging.info(galaxy)
+
+                                # df of all simulated instances of this particular examplar galaxy
+                                galaxy_data = sim_sub_set.query(f'iauname == {galaxy}').reset_index(drop=True)
                         
-                                abs_diff_pred_z = abs(galaxy_data[4].astype(float) - pred_z)
+                                abs_diff_pred_z = abs(galaxy_data['redshift'].astype(float) - pred_z)  # simulated redshift - target redshift
 
                                 logging.info(abs_diff_pred_z)
                                 logging.info(abs_diff_pred_z.shape)
-                                # pick the 2 smallest, and define as min and next_min
+                                # pick the 2 smallest simulated version of this examplar galaxy, and define as min and next_min
                                 min_pos_pred = abs_diff_pred_z.nsmallest(2).index[0] #nsmallest picks the n smallest values and puts them in df
                                 next_min_pos_pred = abs_diff_pred_z.nsmallest(2).index[1]
                         
-                                abs_diff_test_z = abs(galaxy_data[4].astype(float) - test_z)
+                                abs_diff_test_z = abs(galaxy_data['redshift'].astype(float) - test_z)
                                 min_pos_test = abs_diff_test_z.nsmallest(2).index[0] #nsmallest picks the n smallest values and puts them in df
                                 nextmin_pos_test = abs_diff_test_z.nsmallest(2).index[1]
                         
