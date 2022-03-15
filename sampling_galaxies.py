@@ -66,24 +66,16 @@ if __name__ == '__main__':
     
     # created by create_dataframe.py
     full_data = pd.read_csv('full_data.csv', index_col=0)
-    full_data = full_data.to_numpy()
-    
     full_data_var = pd.read_csv('full_data_var.csv', index_col=0)
-    full_data_var = full_data_var.to_numpy()
     
-    test_sample_names = full_data[min_gal:max_gal, 0] 
+    test_sample_names = full_data.iloc[min_gal:max_gal, 'iauname'] 
+    logging.info(test_sample_names)
+
+    test_sample = full_data[full_data['iauname'].isin(test_sample_names)].reset_index(drop=True)
+
+    full_data = full_data[~full_data['iauname'].isin(test_sample_names)].reset_index(drop=True)
+    full_data_var = full_data_var[~full_data_var['iauname'].isin(test_sample_names)].reset_index(drop=True)
     
-    full_data = pd.DataFrame(full_data)
-    full_data_var = pd.DataFrame(full_data_var)
-    test_sample = pd.DataFrame(columns=full_data.columns)
-    
-    for name in test_sample_names:
-        cond = full_data[0] == name
-        rows = full_data.loc[cond, :]
-        test_sample = test_sample.append(rows ,ignore_index=True)
-        full_data.drop(rows.index, inplace=True)
-        full_data_var.drop(rows.index, inplace=True)
-        
     standard_deviation_array = np.zeros((0,8))
     residual_array = np.zeros((0,2))
     count_array_perm = np.zeros((0,2))
