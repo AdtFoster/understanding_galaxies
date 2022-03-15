@@ -70,7 +70,12 @@ if __name__ == '__main__':
 
     # TODO if you make this cut before choosing which galaxies to simulate, you would need to simulate WAY fewer galaxies, as vast majority fail this
     # or is this only for the test sample?
-    first_mag_cut = merged_dataframe[(merged_dataframe["elpetro_absmag_r"] < -18 ) & (merged_dataframe["elpetro_absmag_r"] >= -24) & (merged_dataframe["original_redshift"] <= max_allow_z) & (merged_dataframe["original_redshift"] >= min_allow_z)]
+    first_mag_cut = merged_dataframe[
+        (merged_dataframe["elpetro_absmag_r"] < -18 ) & 
+        (merged_dataframe["elpetro_absmag_r"] >= -24) & 
+        (merged_dataframe["original_redshift"] <= max_allow_z) &
+        (merged_dataframe["original_redshift"] >= min_allow_z)
+    ]
     logging.info('{} of {} pass first cut'.format(len(merged_dataframe), len(first_mag_cut)))
 
     merged_dataframe['redshift'] = merged_dataframe['original_redshift'] * merged_dataframe['scale_factor']
