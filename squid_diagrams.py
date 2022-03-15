@@ -4,6 +4,7 @@ Created on Tue Mar  8 16:39:56 2022
 
 @author: r41331jc
 """
+import logging
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -13,10 +14,13 @@ import argparse
 #frf for file opening and plotting functions
 import functions_for_redshifting_figures as frf
 
-print('\nStart')
 
 if __name__ == '__main__':
     
+    logging.basicConfig(level=logging.INFO)
+
+    logging.info('Begin creating squid diagrams')
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--min-gal', dest='min_gal', type=int)
     parser.add_argument('--max-gal', dest='max_gal', type=int)
@@ -29,14 +33,14 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    #min_gal = 120
-    #max_gal = 130
-    #delta_z = 0.006 #sets width of sample box - Default optimised = 0.008
-    #delta_p = 0.017 #sets height of smaple box - Default optimised = 0.016
-    #delta_mag = 0.4 #Vary to find better base value - Default optimised = 0.5
-    #delta_mass = 0.1
-    #min_z = 0.05
-    #percent = 66
+    # min_gal = 120
+    # max_gal = 130
+    # delta_z = 0.006 #sets width of sample box - Default optimised = 0.008
+    # delta_p = 0.017 #sets height of smaple box - Default optimised = 0.016
+    # delta_mag = 0.4 #Vary to find better base value - Default optimised = 0.5
+    # delta_mass = 0.1
+    # min_z = 0.05
+    # percent = 66
     
     min_gal = args.min_gal
     max_gal = args.max_gal

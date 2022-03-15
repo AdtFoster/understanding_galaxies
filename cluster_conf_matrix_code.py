@@ -5,6 +5,8 @@ Created on Tue Mar  8 15:09:08 2022
 
 @author: adamfoster
 """
+import logging
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,6 +19,9 @@ import functions_for_redshifting_figures as frf
 
 
 if __name__ == '__main__':
+
+    logging.basicConfig(level=logging.INFO)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--min-gal', dest='min_gal', type=int)
     parser.add_argument('--max-gal', dest='max_gal', type=int)
@@ -34,22 +39,26 @@ if __name__ == '__main__':
     delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
     
     full_data_array_first_cut = pd.read_csv('full_data.csv', index_col=0)
+    logging.info(len(full_data_array_first_cut))
+    logging.info(full_data_array_first_cut)
+    assert len(full_data_array_first_cut) > 0
     full_data_array_first_cut = full_data_array_first_cut.to_numpy()
     
-    print('Extracting test sample')
-    #Remove the test sample
+    logging.info('Extracting test sample')
+    # Remove the test sample
     test_sample_names = full_data_array_first_cut[args.min_gal:args.max_gal, 0] #define the test galaxies we want to use
+    assert len(test_sample_names) > 0
 
     full_dataframe = pd.DataFrame(full_data_array_first_cut) #convert numpy arrays to dataframes
     test_sample = pd.DataFrame(columns=full_dataframe.columns) #form new array of correct column length and labels
 
     for name in test_sample_names: #iterate over each galaxy in test sample
-        cond = full_dataframe[0] == name #identify each galaxy by classification name
+        cond = full_dataframe[0] == name # identify each galaxy by classification name
         rows = full_dataframe.loc[cond, :]
         test_sample = test_sample.append(rows ,ignore_index=True) #append correct galaxy rows to blank array
         full_dataframe.drop(rows.index, inplace=True) #reset indexing
 
-    print('Beginning predictions')
+    logging.info('Beginning predictions on {} galaxies'.format(len(test_sample_names)))
     #If we want to operate over multiple galaxies, start a for loop here
     test_gal_number = 0 #count number of gals which have been processed
     skipped_gal = 0
@@ -69,7 +78,7 @@ if __name__ == '__main__':
     for test_name in test_sample_names:
         
         if (test_gal_number % args.update_interval == 0):
-            print('completed {0} of {1} galaxy debias predictions'.format(test_gal_number, len(test_sample_names))) #prints progress every {number} galaxy debias predictions
+            logging.info('completed {0} of {1} galaxy debias predictions'.format(test_gal_number, len(test_sample_names))) #prints progress every {number} galaxy debias predictions
         
         test_galaxy = test_sample[test_sample[0] == test_name] #selects only the current test galaxy from dataframe
         gal_max_z = test_galaxy.loc[[test_galaxy[4].astype(float).idxmax()]] #finds the maximum redshfit value for all the galaxies simulations
@@ -363,7 +372,7 @@ if __name__ == '__main__':
     prediction prob is test_p.
     """
     
-    print('{0} predictions complete, {1} galaxies skipped, plotting matrix'.format(test_gal_number, skipped_gal))
+    logging.info('{0} predictions complete, {1} galaxies skipped, plotting matrix'.format(test_gal_number, skipped_gal))
     
     morphology_names = ['smooth', 'featured', 'artifact', 'NULL'] #add NULL to morphology names
     threshold_p = args.threshold_val
@@ -410,6 +419,9 @@ if __name__ == '__main__':
             dominant_morphology_simulated.append("NULL")  
     
     confident_locs = np.argwhere(np.asarray(dominant_morphology_predicted)!='NULL') #find arguements for confident debiased predictions
+    logging.info(confident_locs)
+    if len(confident_locs) == 0:
+        raise ValueError(f'No confident (i.e. non-NULL i.e. with predicted debiased p > {threshold_p} found - cannot make CMs or metrics')
     
     dominant_morphology_expected = np.asarray(dominant_morphology_expected)[confident_locs] #remove non-confident debiased predictions from expected list
     dominant_morphology_predicted = np.asarray(dominant_morphology_predicted)[confident_locs] #remove non-confident debiased predictions from predicted list
@@ -420,6 +432,8 @@ if __name__ == '__main__':
     predicted = dominant_morphology_predicted #list of predicted vals in order of prediction
     simulated = dominant_morphology_simulated
     
+    logging.info(expected)
+    logging.info(predicted)
     results = confusion_matrix(expected, predicted, labels=morphology_names) #converting inputs into confusion matrix format (debiased on x-axis (top) and true on y-axis (side))
     results = results[0:4, 0:4] #(remove the NULL column for debiased prediction as it will never be filled) changed to include to avoid confusion about the diagonal - mike request
     comparison_results = confusion_matrix(expected, simulated, labels=morphology_names) #converting inputs into confusion matrix format (debiased on x-axis (top) and true on y-axis (side))
@@ -488,4 +502,6 @@ if __name__ == '__main__':
     plt.ylabel('Non-simulated (low redshift) prediction (Actual)', fontsize = 15) # y-axis label with fontsize 15
     plt.savefig('Non_de_biased_predictions_confusion_matrix.png')
     plt.close()
+
+    logging.info('Confusion matrix plots complete - existing')
     
