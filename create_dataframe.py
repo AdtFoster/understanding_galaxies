@@ -6,6 +6,7 @@ Created on Tue Feb 15 11:32:45 2022
 """
 import os
 import logging
+import glob
 
 import numpy as np
 import pandas as pd
@@ -17,19 +18,13 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO)
 
-    scale_factor_data={}
-    full_data_array_first_cut=np.zeros((0, 10))
-    full_data_array_first_cut_var=np.zeros((0, 10))
-    
-    # The data
-    
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file-name', dest='file_name', type=str, help='ML predictions e.g. scaled_image_predictions_1.csv')
+    parser.add_argument('--predictions-dir', dest='predictions_dir', type=str, help='ML predictions e.g. scaled_image_predictions_1.csv')
     parser.add_argument('--min-allow-z', dest='min_allow_z', type=float)
     parser.add_argument('--max-allow-z', dest='max_allow_z', type=float)
     args = parser.parse_args()
 
-    file_name = args.file_name
+    predictions_dir = args.predictions_dir
     
     max_allow_z = args.max_allow_z
     min_allow_z = args.min_allow_z
@@ -50,18 +45,9 @@ if __name__ == '__main__':
     nsa_catalog['concentration'] = nsa_catalog['petro_th50'] / nsa_catalog['petro_th90']
     nsa_catalog = nsa_catalog.rename(columns={'redshift': 'original_redshift'})  # for clarity
     nsa_catalog['original_redshift'] = nsa_catalog['original_redshift'].clip(lower=1e-10) #removes any negative errors should be unnecessary
-
-    # # logging.info(pd.read_csv(file_name).columns.values)
-
-
-    # scale_factor_df = pd.DataFrame(scale_factor_data[file_name])
-    # scale_factor_df.rename(columns=
-    #     {
-    #         'id_str': 'iauname', 
-    #     },
-    # inplace=True) #rename the headers of the dataframe
     
-    scale_factor_df = frf.file_reader(file_name)
+    scale_factor_df_chunks = [frf.file_reader(loc) for loc in glob.glob(os.path.join(predictions_dir, '*.hdf5'))]
+    scale_factor_df = pd.concat([scale_factor_df_chunks], axis=0).reset_index(drop=True)
     logging.info(scale_factor_df.columns.values)
     # assume id_str is filename like '/folders/{iauname}_{scale_factor}.{extension}' 
     scale_factor_df['iauname'] = scale_factor_df['id_str'].apply(lambda x: os.path.basename(x).split('_')[0])  
@@ -98,6 +84,8 @@ if __name__ == '__main__':
     numpy_merged_probs_first_cut = np.hstack((numpy_merged_probs_first_cut, merged_numpy_first_cut[:, -1:]))
     numpy_merged_var_first_cut = np.hstack((numpy_merged_var_first_cut, merged_numpy_first_cut[:, -1:]))
 
+    full_data_array_first_cut=np.zeros((0, 10))
+    full_data_array_first_cut_var=np.zeros((0, 10))
     full_data_array_first_cut=np.vstack((full_data_array_first_cut, numpy_merged_probs_first_cut)) #stacks all data from current redshift to cumulative array
     full_data_array_first_cut_var=np.vstack((full_data_array_first_cut_var, numpy_merged_var_first_cut))
         # i+=1

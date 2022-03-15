@@ -67,13 +67,13 @@ DELTA_MAG=0.5
 
 $PYTHON $THIS_REPO_DIR/make_predictions.py \
     --batch-size 256 \
-    --input-dir $SCALED_IMG_DIR \
+    --image-dir $SCALED_IMG_DIR \
     --checkpoint-loc /share/nas2/walml/repos/gz-decals-classifiers/results/tensorflow/all_campaigns_ortho_v2_train_only_m0/checkpoint \
-    --save-loc /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.hdf5
+    --save-dir /share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions
 
 #  load predictions in convenient dataframe
 $PYTHON $THIS_REPO_DIR/create_dataframe.py \
-    --file-name /share/nas2/walml/repos/understanding_galaxies/results/scaled_image_predictions.hdf5 \
+    --predictions-dir /share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions \
     --min-allow-z $MIN_ALLOW_Z \
     --max-allow-z $MAX_ALLOW_Z
 
