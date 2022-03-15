@@ -47,7 +47,7 @@ if __name__ == '__main__':
     nsa_catalog['original_redshift'] = nsa_catalog['original_redshift'].clip(lower=1e-10) #removes any negative errors should be unnecessary
     
     scale_factor_df_chunks = [frf.file_reader(loc) for loc in glob.glob(os.path.join(predictions_dir, '*.hdf5'))]
-    scale_factor_df = pd.concat([scale_factor_df_chunks], axis=0).reset_index(drop=True)
+    scale_factor_df = pd.concat(scale_factor_df_chunks, axis=0).reset_index(drop=True)
     logging.info(scale_factor_df.columns.values)
     # assume id_str is filename like '/folders/{iauname}_{scale_factor}.{extension}' 
     scale_factor_df['iauname'] = scale_factor_df['id_str'].apply(lambda x: os.path.basename(x).split('_')[0])  
