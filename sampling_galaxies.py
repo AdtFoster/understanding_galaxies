@@ -30,37 +30,37 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    min_gal = 120
-    max_gal = 130
+    #min_gal = 120
+    #max_gal = 130
     
-    #min_gal = args.min_gal
-    #max_gal = args.max_gal
+    min_gal = args.min_gal
+    max_gal = args.max_gal
     
-    min_delta_z = 0.005
-    max_delta_z = 0.007
-    step_delta_z = 0.001
-    min_delta_p = 0.015
-    max_delta_p = 0.017
-    step_delta_p = 0.001
-    min_delta_mag = 0.4
-    max_delta_mag = 0.6
-    step_delta_mag = 0.1
-    min_delta_mass = 0.1
-    max_delta_mass = 0.3
-    step_delta_mass = 0.1
+    #min_delta_z = 0.005
+    #max_delta_z = 0.007
+    #step_delta_z = 0.001
+    #min_delta_p = 0.015
+    #max_delta_p = 0.017
+    #step_delta_p = 0.001
+    #min_delta_mag = 0.4
+    #max_delta_mag = 0.6
+    #step_delta_mag = 0.1
+    #min_delta_mass = 0.1
+    #max_delta_mass = 0.3
+    #step_delta_mass = 0.1
     
-    #min_delta_z = args.min_delta_z
-    #max_delta_z = args.max_delta_z
-    #step_delta_z = args.step_delta_z
-    #min_delta_p = args.min_delta_p
-    #max_delta_p = args.max_delta_p
-    #step_delta_p = args.step_delta_p
-    #min_delta_mag = args.min_delta_mag
-    #max_delta_mag = args.max_delta_mag
-    #step_delta_mag = args.step_delta_mag
-    #min_delta_mass = args.min_delta_mass
-    #max_delta_mass = args.max_delta_mass
-    #step_delta_mass = args.step_delta_mass
+    min_delta_z = args.min_delta_z
+    max_delta_z = args.max_delta_z
+    step_delta_z = args.step_delta_z
+    min_delta_p = args.min_delta_p
+    max_delta_p = args.max_delta_p
+    step_delta_p = args.step_delta_p
+    min_delta_mag = args.min_delta_mag
+    max_delta_mag = args.max_delta_mag
+    step_delta_mag = args.step_delta_mag
+    min_delta_mass = args.min_delta_mass
+    max_delta_mass = args.max_delta_mass
+    step_delta_mass = args.step_delta_mass
     
     full_data = pd.read_csv('full_data.csv', index_col=0)
     full_data = full_data.to_numpy()
