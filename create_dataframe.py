@@ -39,7 +39,7 @@ if __name__ == '__main__':
     if os.path.isdir('/share/nas2'):
         catalog_loc = '/share/nas2/walml/repos/gz-decals-classifiers/data/catalogs/nsa_v1_0_1_mag_cols.parquet'
     else:
-        catalog_loc = 'nsa_v1_0_1_mag_cols.parquet'
+        catalog_loc = '/Users/adamfoster/Documents/MPhysProject/understanding_galaxies/making_figures/nsa_v1_0_1_mag_cols.parquet'
 
     nsa_catalog = pd.read_parquet(catalog_loc, columns=['iauname', 'redshift', 'elpetro_absmag_r','elpetro_mass','petro_th50','petro_th90'])
     nsa_catalog['concentration'] = nsa_catalog['petro_th50'] / nsa_catalog['petro_th90']
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     logging.info(scale_factor_df['iauname'])
     scale_factor_df['scale_factor'] = scale_factor_df['id_str'].apply(lambda x: os.path.basename(x).split('_')[1].replace('.png', '').replace('.jpeg', '')).astype(float) 
     logging.info(scale_factor_df['scale_factor'])
-    logging.info(scale_factor_df.colums.values)
+    logging.info(scale_factor_df.columns.values)
     scale_factor_df = scale_factor_df[['iauname', 'scale_factor', 'smooth-or-featured-dr5_smooth', 'smooth-or-featured-dr5_featured-or-disk', 'smooth-or-featured-dr5_artifact']]
 
     # scale_factor_df['iauname'] = scale_factor_df.iauname.str.replace('/share/nas/walml/repos/understanding_galaxies/scaled_{0}/'.format(scale_factor_multiplier[i]), '', regex=False)

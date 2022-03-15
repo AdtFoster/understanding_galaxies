@@ -10,17 +10,19 @@
  
 pwd; hostname; date
 
-nvidia-smi
+#nvidia-smi
 
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/share/apps/cudnn_8_1_0/cuda/lib64
+#export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/share/apps/cudnn_8_1_0/cuda/lib64
 
-THIS_REPO_DIR=/share/nas2/walml/repos/understanding_galaxies
-PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
+#THIS_REPO_DIR=/share/nas2/walml/repos/understanding_galaxies
+THIS_REPO_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies
+#PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
+PYTHON=/Users/adamfoster/opt/anaconda3/envs/ZooBot/bin/python
 
 # TODO crank it up
-FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native
+#FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native
 
-SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled
+#SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled
 
 # TODO crank it up
 MIN_GAL=0
@@ -38,16 +40,16 @@ STEP_SIZE=0.002
 MIN_ALLOW_Z=0.02
 MAX_ALLOW_Z=0.05
 
-MIN_DELTA_Z=0.004
+MIN_DELTA_Z=0.013
 MAX_DELTA_Z=0.015
 STEP_DELTA_Z=0.001
-MIN_DELTA_P=0.014
+MIN_DELTA_P=0.022
 MAX_DELTA_P=0.024
 STEP_DELTA_P=0.001
-MIN_DELTA_MAG=0.3
+MIN_DELTA_MAG=1.1
 MAX_DELTA_MAG=1.3
 STEP_DELTA_MAG=0.1
-MIN_DELTA_MASS=0.5
+MIN_DELTA_MASS=1.3
 MAX_DELTA_MASS=1.5
 STEP_DELTA_MASS=0.1
 
@@ -72,15 +74,15 @@ DELTA_MAG=0.5
 #     --save-dir /share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions
 
 #  load predictions in convenient dataframe
-$PYTHON $THIS_REPO_DIR/create_dataframe.py \
-    --predictions-dir /share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions \
-    --min-allow-z $MIN_ALLOW_Z \
-    --max-allow-z $MAX_ALLOW_Z
+#$PYTHON $THIS_REPO_DIR/create_dataframe.py \
+#    --predictions-dir /Users/adamfoster/Documents/MPhysProject/understanding_galaxies/results/latest_scaled_predictions \
+#    --max-allow-z $MAX_ALLOW_Z \
+#    --min-allow-z $MIN_ALLOW_Z 
 
 # # apply debiasing method, to each galaxy, by sampling nearby galaxies
 $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
-    --min-gal $MIN_GAL \
     --max-gal $MAX_GAL \
+    --min-gal $MIN_GAL \
     --min-delta-z $MIN_DELTA_Z \
     --max-delta-z $MAX_DELTA_Z \
     --step-delta-z $STEP_DELTA_Z \
@@ -117,3 +119,6 @@ $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
 #     --delta-mass $DELTA_MASS \
 #     --min_z $PRED_Z \
 #     --percent $PERCENT
+
+# Testing that the shell script works
+#$PYTHON $THIS_REPO_DIR/test.py \
