@@ -72,27 +72,27 @@ DELTA_MAG=0.5
 #     --save-dir /share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions
 
 #  load predictions in convenient dataframe
-$PYTHON $THIS_REPO_DIR/create_dataframe.py \
-    --predictions-dir /share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions \
-    --min-allow-z $MIN_ALLOW_Z \
-    --max-allow-z $MAX_ALLOW_Z
+# $PYTHON $THIS_REPO_DIR/create_dataframe.py \
+#     --predictions-dir /share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions \
+#     --min-allow-z $MIN_ALLOW_Z \
+#     --max-allow-z $MAX_ALLOW_Z
 
 # # apply debiasing method, to each galaxy, by sampling nearby galaxies
-# $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
-#     --min-gal $MIN_GAL \
-#     --max-gal $MAX_GAL \
-#     --min-delta-z $MIN_DELTA_Z \
-#     --max-delta-z $MAX_DELTA_Z \
-#     --step-delta-z $STEP_DELTA_Z \
-#     --min-delta-p $MIN_DELTA_P \
-#     --max-delta-p $MAX_DELTA_P \
-#     --step-delta-p $STEP_DELTA_P \
-#     --min-delta-mag $MIN_DELTA_MAG \
-#     --max-delta-mag $MAX_DELTA_MAG \
-#     --step-delta-mag $STEP_DELTA_MAG \
-#     --min-delta-mass $MIN_DELTA_MASS \
-#     --max-delta-mass $MAX_DELTA_MASS \
-#     --step-delta-mass $STEP_DELTA_MASS
+$PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
+    --min-gal $MIN_GAL \
+    --max-gal $MAX_GAL \
+    --min-delta-z $MIN_DELTA_Z \
+    --max-delta-z $MAX_DELTA_Z \
+    --step-delta-z $STEP_DELTA_Z \
+    --min-delta-p $MIN_DELTA_P \
+    --max-delta-p $MAX_DELTA_P \
+    --step-delta-p $STEP_DELTA_P \
+    --min-delta-mag $MIN_DELTA_MAG \
+    --max-delta-mag $MAX_DELTA_MAG \
+    --step-delta-mag $STEP_DELTA_MAG \
+    --min-delta-mass $MIN_DELTA_MASS \
+    --max-delta-mass $MAX_DELTA_MASS \
+    --step-delta-mass $STEP_DELTA_MASS
     
 # $PYTHON $THIS_REPO_DIR/plotting.py
 
