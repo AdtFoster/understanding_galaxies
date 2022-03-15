@@ -4,3 +4,4 @@
 *.csv
 .DS_Store
 *.hdf5
+*.tar.gz
