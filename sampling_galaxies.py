@@ -51,7 +51,7 @@ if __name__ == '__main__':
     step_delta_mass = args.step_delta_mass
     
     # created by create_dataframe.py
-    full_data = pd.read_csv('full_data.csv') #index_col=0
+    full_data = pd.read_csv('output_csvs/full_data.csv') #index_col=0
     
     #form a numpy array of the first [min_gal:max_gal] galaxy names
     test_sample_names = pd.unique(full_data['iauname'])[min_gal:max_gal] 
@@ -243,7 +243,7 @@ if __name__ == '__main__':
             
                                 
                             number_of_galaxies +=1
-                            print(number_of_galaxies)
+                            
 
                             
                         else:
@@ -298,9 +298,9 @@ if __name__ == '__main__':
     standard_deviation_array = standard_deviation_array.sort_values(by=4)
     standard_deviation_array = standard_deviation_array.to_numpy()
     
-    pd.DataFrame(count_array_perm).to_csv('count_array_perm.csv')
-    pd.DataFrame(error_array_perm).to_csv('error_array_perm.csv')
-    pd.DataFrame(residual_array).to_csv('residual_array.csv')
-    pd.DataFrame(standard_deviation_array).to_csv('standard_deviation_array.csv')
+    pd.DataFrame(count_array_perm).to_csv('output_csvs/count_array_perm.csv')
+    pd.DataFrame(error_array_perm).to_csv('output_csvs/error_array_perm.csv')
+    pd.DataFrame(residual_array).to_csv('output_csvs/residual_array.csv')
+    pd.DataFrame(standard_deviation_array).to_csv('output_csvs/standard_deviation_array.csv')
 
     logging.info('Sucessfully saved debiased values - exiting')

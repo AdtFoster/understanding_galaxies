@@ -6,6 +6,7 @@ Created on Thu Mar 17 10:25:14 2022
 """
 
 import logging
+#import string
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -29,9 +30,11 @@ if __name__ == '__main__':
     parser.add_argument('--delta-p', dest='delta_p', type=float)
     parser.add_argument('--delta-mag', dest='delta_mag', type=float)
     parser.add_argument('--delta-mass', dest='delta_mass', type=float)
-    parser.add_argument('--min-z', dest='max_z', type=float)
+    parser.add_argument('--min-z', dest='min_z', type=float)
     parser.add_argument('--percent', dest='percent', type=float)
-    
+    parser.add_argument('--morphology', dest='morphology', type=str)
+    parser.add_argument('--max-z', dest='max_z', type=float)
+
     args = parser.parse_args()
     
     
@@ -43,11 +46,13 @@ if __name__ == '__main__':
     delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
     min_z = args.min_z
     percent = args.percent
+    morphology = args.morphology
+    max_z = args.max_z
     
     count_array = []
 
     # The data
-    full_data = pd.read_csv('full_data.csv') #index_col=0
+    full_data = pd.read_csv('output_csvs/full_data.csv') #index_col=0
     
     #form a numpy array of the first [min_gal:max_gal] galaxy names
     test_sample_names = pd.unique(full_data['iauname'])[min_gal:max_gal] 
@@ -65,9 +70,9 @@ if __name__ == '__main__':
         gal_max_z = test_galaxy.loc[[test_galaxy['redshift'].astype(float).idxmax()]]
         gal_min_z = test_galaxy.loc[[test_galaxy['redshift'].astype(float).idxmin()]]
         test_z = gal_max_z['redshift'].values[0]
-        test_p = gal_max_z['smooth-or-featured-dr5_smooth_prob'].values[0]
+        test_p = gal_max_z[f'smooth-or-featured-dr5_{morphology}_prob'].values[0]
         pred_z = gal_min_z['redshift'].values[0]
-        actual_p = gal_min_z['smooth-or-featured-dr5_smooth_prob'].values[0]
+        actual_p = gal_min_z[f'smooth-or-featured-dr5_{morphology}_prob'].values[0]
         test_mag = gal_max_z['elpetro_absmag_r'].values[0]
         test_mass = gal_max_z['elpetro_mass'].values[0]
 
@@ -80,8 +85,8 @@ if __name__ == '__main__':
         immediate_sub_sample = full_data[
                             (full_data['redshift'].astype(float) < upper_z) &
                             (full_data['redshift'].astype(float) >= lower_z) &
-                            (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) >= lower_p) &
-                            (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) <= upper_p)
+                            (full_data[f'smooth-or-featured-dr5_{morphology}_prob'].astype(float) >= lower_p) &
+                            (full_data[f'smooth-or-featured-dr5_{morphology}_prob'].astype(float) <= upper_p)
                             ]
 
         galaxy_names_in_box = pd.unique(immediate_sub_sample['iauname'])
@@ -113,17 +118,17 @@ if __name__ == '__main__':
             grad_reference = galaxy_data.loc[[next_min_pos_pred]]
 
             #Calculating the difference between the closest and second closest prob and redshifts to the target prediction redshift
-            diff_y = estimate_predictions['smooth-or-featured-dr5_smooth_prob'].values[0] - grad_reference['smooth-or-featured-dr5_smooth_prob'].values[0]
+            diff_y = estimate_predictions[f'smooth-or-featured-dr5_{morphology}_prob'].values[0] - grad_reference[f'smooth-or-featured-dr5_{morphology}_prob'].values[0]
             diff_x = estimate_predictions['redshift'].values[0] - grad_reference['redshift'].values[0] 
             gradient = diff_y / diff_x #Finding the gradient between the two points closest to the test value
                         
             minimum_point_seperation = pred_z - estimate_predictions['redshift'].values[0]
             grad_correction = gradient * minimum_point_seperation
-            grad_corrected_prediction = estimate_predictions['smooth-or-featured-dr5_smooth_prob'].values[0] + grad_correction
+            grad_corrected_prediction = estimate_predictions[f'smooth-or-featured-dr5_{morphology}_prob'].values[0] + grad_correction
                                     
             closest_vals = galaxy_data.loc[[min_pos_test]] #Possible could encounter edge case issues
             
-            gaussain_p_variable = closest_vals['smooth-or-featured-dr5_smooth_prob'].values[0]
+            gaussain_p_variable = closest_vals[f'smooth-or-featured-dr5_{morphology}_prob'].values[0]
             gaussian_z_variable = closest_vals['redshift'].values[0]
             gaussian_mag_variable = closest_vals['elpetro_absmag_r'].values[0]
             gaussian_mass_variable = closest_vals['elpetro_mass'].values[0]
@@ -137,7 +142,7 @@ if __name__ == '__main__':
             #print('mag_weight is:', mag_weight, '\nprox_wieght is:', proximity_weight, '\nTotal Weight is:', weight)
                         
             prediction_list.append(grad_corrected_prediction)
-            sd_list.append(estimate_predictions['smooth-or-featured-dr5_smooth_var'].values[0])
+            sd_list.append(estimate_predictions[f'smooth-or-featured-dr5_{morphology}_var'].values[0])
             weight_list.append(weight)
 
         weighted_mean_numerator = np.sum(np.array(weight_list) * np.array(prediction_list))
@@ -168,8 +173,8 @@ if __name__ == '__main__':
         for galaxy in galaxy_names_in_box:
             galaxy_data = sim_sub_set.query(f'iauname == "{galaxy}"').reset_index(drop=True)
             x_data = np.asarray(galaxy_data['redshift']).astype(float)
-            y_data = np.asarray(galaxy_data['smooth-or-featured-dr5_smooth_prob']).astype(float)
-            y_err = np.sqrt(np.asarray(galaxy_data['smooth-or-featured-dr5_smooth_var']).astype(float))
+            y_data = np.asarray(galaxy_data[f'smooth-or-featured-dr5_{morphology}_prob']).astype(float)
+            y_err = np.sqrt(np.asarray(galaxy_data[f'smooth-or-featured-dr5_{morphology}_var']).astype(float))
             
             plt.errorbar(x_data, y_data, marker ='x', alpha=norm_alphas_per_gal[weight_index])
             weight_index+=1
@@ -178,8 +183,8 @@ if __name__ == '__main__':
         plt.errorbar(pred_z, actual_p, marker = 'v', alpha = 0.75,  color = 'black', label='Actual Test prediction for new redshift')
         plt.errorbar(test_z, test_p, marker = 's', alpha = 0.75,  color = 'black', label='Original redshift prediction')
         plt.xlabel('Redshift', fontsize=15)
-        plt.ylabel('Prediction of Smoothness Liklihood', fontsize=15)
-        plt.xlim([0, 0.25])
+        plt.ylabel(f'Prediction of {morphology} Liklihood', fontsize=15)
+        plt.xlim([0, max_z])
         plt.ylim([0, 1])
         plt.xticks(fontsize=15)
         plt.yticks(fontsize=15)
@@ -226,7 +231,7 @@ if __name__ == '__main__':
         width_val = np.append(width_val, allowed_val[0,0])
         
         for i in range(len(allowed_val)-1):
-            if (bool((allowed_val[i+1,0] - allowed_val[i,0])<0.0015)  != bool((allowed_val[i,0]- allowed_val[i-1,0])<0.0015)):
+            if (bool((allowed_val[i+1,0] - allowed_val[i,0])<0.0015) != bool((allowed_val[i,0] - allowed_val[i-1,0])<0.0015)):
                 width_val = np.append(width_val, allowed_val[i,0])
         
         width_val = np.append(width_val, allowed_val[len(allowed_val)-1,0])
@@ -237,7 +242,7 @@ if __name__ == '__main__':
         plt.subplot(122)
 
         plt.plot(norm_kern_sum, x_range, label= 'Kerneled pdf')
-        plt.ylabel("Smooth probability", fontsize=15)
+        plt.ylabel(f'{morphology} probability', fontsize=15)
         plt.xlabel("Normalised value", fontsize=15)
         plt.axhline(actual_p, label='Original prob = {0:.3f}'.format(actual_p), color='black')
         plt.ylim([0, 1])
@@ -254,7 +259,7 @@ if __name__ == '__main__':
         
         plt.legend(fontsize=12, framealpha=0)
         plt.gca().invert_xaxis()
-        plt.savefig('grad_corr_{0}_with_kernels_adjusted.png'.format(test_name))
+        plt.savefig('squid_plots/grad_corr_{0}_with_kernels_adjusted_{1}.jpeg'.format(test_name, morphology))
         plt.close()
 
     plt.close('all')

@@ -40,9 +40,7 @@ if __name__ == '__main__':
     delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
     delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
     
-    full_data = pd.read_csv('full_data.csv', index_col=0)
-    logging.info(len(full_data))
-    logging.info(full_data)
+    full_data = pd.read_csv('output_csvs/full_data.csv')
     assert len(full_data) > 0
     
     logging.info('Extracting test sample')
@@ -80,20 +78,18 @@ if __name__ == '__main__':
         gal_max_z = test_galaxy.loc[[test_galaxy['redshift'].astype(float).idxmax()]]
         gal_min_z = test_galaxy.loc[[test_galaxy['redshift'].astype(float).idxmin()]]
         test_z = gal_max_z['redshift'].values[0]
-        #test_p = gal_max_z['smooth-or-featured-dr5_smooth_prob'].values[0]
         pred_z = gal_min_z['redshift'].values[0]
-        #actual_p = gal_min_z['smooth-or-featured-dr5_smooth_prob'].values[0]
         test_mag = gal_max_z['elpetro_absmag_r'].values[0]
         test_mass = gal_max_z['elpetro_mass'].values[0]
                         
-        #identify the 3 prob variables for the simulated image
+        #identify the 3 prob variables for the simulated image (could function)
         test_p_smooth = gal_max_z['smooth-or-featured-dr5_smooth_prob'].values[0] #converts prob at max z to useable float format
-        test_p_featured = gal_max_z['smooth-or-featured-dr5_featured_prob'].values[0] #converts prob at max z to useable float format
+        test_p_featured = gal_max_z['smooth-or-featured-dr5_featured-or-disk_prob'].values[0] #converts prob at max z to useable float format
         test_p_artifact = gal_max_z['smooth-or-featured-dr5_artifact_prob'].values[0] #converts prob at max z to useable float format
 
         #identify the 3 prob variables for non-simulated image for comparison 
         actual_p_smooth = gal_min_z['smooth-or-featured-dr5_smooth_prob'].values[0] #prob of smooth
-        actual_p_featured = gal_min_z['smooth-or-featured-dr5_featured_prob'].values[0] #prob of featured
+        actual_p_featured = gal_min_z['smooth-or-featured-dr5_featured-or-disk_prob'].values[0] #prob of featured
         actual_p_artifact = gal_min_z['smooth-or-featured-dr5_artifact_prob'].values[0] #prob of artifact
         
         #Set values for smapling 
@@ -111,32 +107,33 @@ if __name__ == '__main__':
 
         #sub sample for each morphology
         immediate_sub_sample_smooth = full_data[
-                            (full_data['redshift'].astype(float) < upper_z) &
+                            (full_data['redshift'].astype(float) <= upper_z) &
                             (full_data['redshift'].astype(float) >= lower_z) &
                             (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) >= lower_p_smooth) &
                             (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) <= upper_p_smooth)
                             ] #samples galaxies within box limits
         
         immediate_sub_sample_featured = full_data[
-                            (full_data['redshift'].astype(float) < upper_z) &
+                            (full_data['redshift'].astype(float) <= upper_z) &
                             (full_data['redshift'].astype(float) >= lower_z) &
-                            (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) >= lower_p_featured) &
-                            (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) <= upper_p_featured)
+                            (full_data['smooth-or-featured-dr5_featured-or-disk_prob'].astype(float) >= lower_p_featured) &
+                            (full_data['smooth-or-featured-dr5_featured-or-disk_prob'].astype(float) <= upper_p_featured)
                             ] #samples galaxies within box limits
         immediate_sub_sample_artifact = full_data[
-                            (full_data['redshift'].astype(float) < upper_z) &
+                            (full_data['redshift'].astype(float) <= upper_z) &
                             (full_data['redshift'].astype(float) >= lower_z) &
-                            (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) >= lower_p_artifact) &
-                            (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) <= upper_p_artifact)
+                            (full_data['smooth-or-featured-dr5_artifact_prob'].astype(float) >= lower_p_artifact) &
+                            (full_data['smooth-or-featured-dr5_artifact_prob'].astype(float) <= upper_p_artifact)
                             ] #samples galaxies within box limits
         
-        if len(immediate_sub_sample_smooth)==0:
+        #requires at least 10 nearby galaxies for debiasing
+        if len(immediate_sub_sample_smooth)<10:
             skipped_gal+=1
             continue
-        elif len(immediate_sub_sample_featured)==0:
+        elif len(immediate_sub_sample_featured)<10:
             skipped_gal+=1
             continue
-        elif len(immediate_sub_sample_artifact)==0:
+        elif len(immediate_sub_sample_artifact)<10:
             skipped_gal+=1
             continue
         
@@ -202,7 +199,7 @@ if __name__ == '__main__':
             gaussian_z_variable = closest_vals['redshift'].values[0]
             gaussian_mag_variable = closest_vals['elpetro_absmag_r'].values[0]
             gaussian_mass_variable = closest_vals['elpetro_mass'].values[0]
-                        
+
             proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_smooth, test_z, delta_p/2, delta_z/2)
             mag_weight = frf.gaussian_weightings(gaussian_mag_variable, 0, test_mag, 0, delta_mag, 1)
             mass_weight = frf.mass_gaussian_weightings(gaussian_mass_variable, test_mass, delta_mass)
@@ -235,17 +232,17 @@ if __name__ == '__main__':
             grad_reference = galaxy_data.loc[[next_min_pos_pred]]
 
             #Calculating the difference between the closest and second closest prob and redshifts to the target prediction redshift
-            diff_y = estimate_predictions['smooth-or-featured-dr5_featured_prob'].values[0] - grad_reference['smooth-or-featured-dr5_featured_prob'].values[0]
+            diff_y = estimate_predictions['smooth-or-featured-dr5_featured-or-disk_prob'].values[0] - grad_reference['smooth-or-featured-dr5_featured-or-disk_prob'].values[0]
             diff_x = estimate_predictions['redshift'].values[0] - grad_reference['redshift'].values[0] 
             gradient = diff_y / diff_x #Finding the gradient between the two points closest to the test value
                         
             minimum_point_seperation = pred_z - estimate_predictions['redshift'].values[0]
             grad_correction = gradient * minimum_point_seperation
-            grad_corrected_prediction = estimate_predictions['smooth-or-featured-dr5_featured_prob'].values[0] + grad_correction
+            grad_corrected_prediction = estimate_predictions['smooth-or-featured-dr5_featured-or-disk_prob'].values[0] + grad_correction
                                     
             closest_vals = galaxy_data.loc[[min_pos_test]] #Possible could encounter edge case issues
                                 
-            gaussain_p_variable = closest_vals['smooth-or-featured-dr5_featured_prob'].values[0]
+            gaussain_p_variable = closest_vals['smooth-or-featured-dr5_featured-or-disk_prob'].values[0]
             gaussian_z_variable = closest_vals['redshift'].values[0]
             gaussian_mag_variable = closest_vals['elpetro_absmag_r'].values[0]
             gaussian_mass_variable = closest_vals['elpetro_mass'].values[0]
@@ -259,7 +256,7 @@ if __name__ == '__main__':
             #print('mag_weight is:', mag_weight, '\nprox_wieght is:', proximity_weight, '\nTotal Weight is:', weight)
                         
             prediction_list_featured.append(grad_corrected_prediction)
-            sd_list_featured.append(estimate_predictions['smooth-or-featured-dr5_featured_var'].values[0])
+            sd_list_featured.append(estimate_predictions['smooth-or-featured-dr5_featured-or-disk_var'].values[0])
             weight_list_featured.append(weight)
             
         #for loop for the artifact gradient predictions
@@ -374,8 +371,7 @@ if __name__ == '__main__':
     weighted_means_list_smooth_norm = weighted_means_list_smooth / sum_of_morph_predictions
     weighted_means_list_artifact_norm = weighted_means_list_artifact / sum_of_morph_predictions
     weighted_means_list_featured_norm = weighted_means_list_featured / sum_of_morph_predictions
-    
-    
+
     dominant_morphology_expected = []
     for i in range(len(actual_p_list_smooth)):
         if actual_p_list_smooth[i]>=threshold_p:
@@ -479,7 +475,7 @@ if __name__ == '__main__':
     plt.title('Comparative predictions with de-biasing method (N={0} with {1} above p={2})'.format(len(test_sample_names) - skipped_gal, len(predicted), threshold_p), fontsize=20, wrap=True)
     plt.xlabel('De-biased high redshift prediction (Predicted)', fontsize = 15) # x-axis label with fontsize 15
     plt.ylabel('Non-simulated (low redshift) prediction (Actual)', fontsize = 15) # y-axis label with fontsize 15
-    plt.savefig('De_biased_predictions_confusion_matrix.png')
+    plt.savefig('matrix_plots/De_biased_predictions_confusion_matrix.jpeg')
     plt.close()
     
     
@@ -491,7 +487,7 @@ if __name__ == '__main__':
     plt.title('Comparative predictions with non de-biasing method (N={0:} with {1} above p={2})'.format(len(test_sample_names) - skipped_gal, len(simulated), threshold_p), fontsize=20, wrap=True)
     plt.xlabel('High redshift prediction (Prediction)', fontsize = 15) # x-axis label with fontsize 15
     plt.ylabel('Non-simulated (low redshift) prediction (Actual)', fontsize = 15) # y-axis label with fontsize 15
-    plt.savefig('Non_de_biased_predictions_confusion_matrix.png')
+    plt.savefig('matrix_plots/Non_de_biased_predictions_confusion_matrix.jpeg')
     plt.close()
 
-    logging.info('Confusion matrix plots complete - existing')
+    logging.info('Confusion matrix plots complete - exiting')
