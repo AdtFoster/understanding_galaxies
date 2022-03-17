@@ -22,11 +22,11 @@ PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
 # TODO crank it up
 FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native
 
-SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled
+SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled_debug
 
 # TODO crank it up
 MIN_GAL=0
-MAX_GAL=100
+MAX_GAL=10
 
 MIN_GAL_SQUID=0
 MAX_GAL_SQUID=5
@@ -61,14 +61,14 @@ DELTA_P=0.016
 DELTA_MAG=0.5
 DELTA_MASS=1.0
 
-MORPHOLOGY='artifact' #smooth, featured-or-disk, artifact
+MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
 # TODO specify DELTA_MASS
 
-# $PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
-#     --fits-dir $FITS_DIR \
-#     --save-dir $SCALED_IMG_DIR \
-#     --max-redshift $MAX_Z \
-#     --step-size $STEP_SIZE
+ $PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
+     --fits-dir $FITS_DIR \
+     --save-dir $SCALED_IMG_DIR \
+     --max-redshift $MAX_Z \
+     --step-size $STEP_SIZE
 
 # $PYTHON $THIS_REPO_DIR/make_predictions.py \
 #     --batch-size 256 \
@@ -114,17 +114,17 @@ MORPHOLOGY='artifact' #smooth, featured-or-disk, artifact
 
 # # evolution tracks
 # TODO DELTA_MASS needs specifying above
- $PYTHON $THIS_REPO_DIR/squid_diagrams_new.py \
-     --min-gal $MIN_GAL_SQUID \
-     --max-gal $MAX_GAL_SQUID \
-     --delta-z $DELTA_Z \
-     --delta-p $DELTA_P \
-     --delta-mag $DELTA_MAG \
-     --delta-mass $DELTA_MASS \
-     --min-z $PRED_Z \
-     --percent $PERCENT \
-     --morphology $MORPHOLOGY \
-     --max-z $MAX_Z
+# $PYTHON $THIS_REPO_DIR/squid_diagrams_new.py \
+#     --min-gal $MIN_GAL_SQUID \
+#     --max-gal $MAX_GAL_SQUID \
+#     --delta-z $DELTA_Z \
+#     --delta-p $DELTA_P \
+#     --delta-mag $DELTA_MAG \
+#     --delta-mass $DELTA_MASS \
+#     --min-z $PRED_Z \
+#     --percent $PERCENT \
+#     --morphology $MORPHOLOGY \
+#     --max-z $MAX_Z
 
 # Testing that the shell script works (Leave this hashed out)
 #$PYTHON $THIS_REPO_DIR/test.py \
