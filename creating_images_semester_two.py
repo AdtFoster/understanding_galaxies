@@ -65,7 +65,7 @@ if __name__ == '__main__':
     # logging.info(filenames)
     # filenames = list(filenames)[:5]
 
-    filenames = list(df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir)))[:10]
+    filenames = list(df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir)))[:10] #convert to arg
     logging.info('Filenames: {}'.format(len(filenames)))
     logging.info('Example filename: {}'.format(filenames[0]))
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
             
             for redshift in np.arange(galaxy_redshift, args.max_redshift, args.step_size):
                 scale_factor = redshift/galaxy_redshift
-                filename_scale = iauname + '_{0}.png'.format(scale_factor)  # save output image with scale_factor appended
+                filename_scale = iauname + '_{0}.jpeg'.format(scale_factor)  # save output image with scale_factor appended
                 # file_loc = os.path.join('/share/nas/walml/repos/understanding_galaxies', output_dir_name[1], filename)
                 scaled_file_loc = os.path.join(save_dir, filename_scale)
                 if not os.path.isfile(scaled_file_loc):
