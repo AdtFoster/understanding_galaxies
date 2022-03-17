@@ -99,3 +99,5 @@ if __name__ == '__main__':
             predict_on_dataset.predict(image_ds, model, n_samples, label_cols, save_loc)
 
         png_start_index += png_batch_size
+
+    logging.info('Predictions complete - happy days')
