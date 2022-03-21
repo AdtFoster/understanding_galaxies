@@ -67,17 +67,17 @@ DELTA_MASS=1.0
 MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
 # TODO specify DELTA_MASS
 
-$PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
-    --fits-dir $FITS_DIR \
-    --save-dir $SCALED_IMG_DIR \
-    --max-redshift $MAX_Z \
-    --step-size $STEP_SIZE
+# $PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
+#     --fits-dir $FITS_DIR \
+#     --save-dir $SCALED_IMG_DIR \
+#     --max-redshift $MAX_Z \
+#     --step-size $STEP_SIZE
 
-#  $PYTHON $THIS_REPO_DIR/make_predictions.py \
-#      --batch-size 256 \
-#      --image-dir $SCALED_IMG_DIR \
-#      --checkpoint-loc /share/nas2/walml/repos/gz-decals-classifiers/results/tensorflow/all_campaigns_ortho_v2_train_only_m0/checkpoint \
-#      --save-dir $PREDICTIONS_DIR
+ $PYTHON $THIS_REPO_DIR/make_predictions.py \
+     --batch-size 256 \
+     --image-dir $SCALED_IMG_DIR \
+     --checkpoint-loc /share/nas2/walml/repos/gz-decals-classifiers/results/tensorflow/all_campaigns_ortho_v2_train_only_m0/checkpoint \
+     --save-dir $PREDICTIONS_DIR
 
 # #  load predictions in convenient dataframe
 # $PYTHON $THIS_REPO_DIR/create_dataframe.py \
