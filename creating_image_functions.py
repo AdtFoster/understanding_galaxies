@@ -138,12 +138,12 @@ def poisson_noise(photon_count, x, size):
     #photon_with_poisson += np.random.poisson(5e12, (3, size, size))
     return photon_with_poisson
 
-def make_png_from_corrected_fits(img, png_loc, png_size):
+def make_jpg_from_corrected_fits(img, loc, size):
     '''
-    Create png from multi-band fits
+    Create jpg from multi-band fits
     Args:
-        fits_loc (str): location of .fits to create png from
-        png_loc (str): location to save png
+        img
+        loc (str): location to save jpg
     Returns:
         None
     '''
@@ -163,14 +163,14 @@ def make_png_from_corrected_fits(img, png_loc, png_size):
             arcsinh=1.,
             scales=_scales,
             desaturate=True)
-    save_carefully_resized_png(png_loc, rgbimg, target_size=png_size)
+    save_carefully_resized_jpg(loc, rgbimg, target_size=size)
 
 
-def save_carefully_resized_png(png_loc, native_image, target_size):
+def save_carefully_resized_jpg(loc, native_image, target_size):
     """
     # TODO
     Args:
-        png_loc ():
+        loc ():
         native_image ():
         target_size ():
     Returns:
@@ -178,8 +178,8 @@ def save_carefully_resized_png(png_loc, native_image, target_size):
     native_pil_image = Image.fromarray(np.uint8(native_image * 255.), mode='RGB')
     nearest_image = native_pil_image.resize(size=(target_size, target_size), resample=Image.LANCZOS)
     nearest_image = nearest_image.transpose(Image.FLIP_TOP_BOTTOM)  # to align with north/east
-    nearest_image.save(png_loc)
-    #nearest_image.save(png_loc, path = Path(os.getcwd() + '/Images'))
+    nearest_image.save(loc, quality=80)
+    #nearest_image.save(loc, path = Path(os.getcwd() + '/Images'))
 
 def dr2_style_rgb(imgs, bands, mnmx=None, arcsinh=None, scales=None, desaturate=False):
     '''

@@ -2,7 +2,7 @@
 #SBATCH --job-name=understand                       # Job name
 #SBATCH --output=understand_%A.log 
 #SBATCH --mem=0   
-#SBATCH -c 24                                    # Job memory request
+#SBATCH -c 24                                       # Job memory request
 #SBATCH --no-requeue                                    # Do not resubmit a failed job
 #SBATCH --time=23:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
@@ -23,6 +23,9 @@ PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
 FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native
 
 SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled_debug
+PREDICTIONS_DIR=/share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions
+
+# PREDICTIONS_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies/results/latest_scaled_predictions
 
 # TODO crank it up
 MIN_GAL=0
@@ -64,26 +67,26 @@ DELTA_MASS=1.0
 MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
 # TODO specify DELTA_MASS
 
-# $PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
-#     --fits-dir $FITS_DIR \
-#     --save-dir $SCALED_IMG_DIR \
-#     --max-redshift $MAX_Z \
-#     --step-size $STEP_SIZE
+$PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
+    --fits-dir $FITS_DIR \
+    --save-dir $SCALED_IMG_DIR \
+    --max-redshift $MAX_Z \
+    --step-size $STEP_SIZE
 
- $PYTHON $THIS_REPO_DIR/make_predictions.py \
-     --batch-size 256 \
-     --image-dir $SCALED_IMG_DIR \
-     --checkpoint-loc /share/nas2/walml/repos/gz-decals-classifiers/results/tensorflow/all_campaigns_ortho_v2_train_only_m0/checkpoint \
-     --save-dir /share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions
+#  $PYTHON $THIS_REPO_DIR/make_predictions.py \
+#      --batch-size 256 \
+#      --image-dir $SCALED_IMG_DIR \
+#      --checkpoint-loc /share/nas2/walml/repos/gz-decals-classifiers/results/tensorflow/all_campaigns_ortho_v2_train_only_m0/checkpoint \
+#      --save-dir $PREDICTIONS_DIR
 
-#  load predictions in convenient dataframe
-#$PYTHON $THIS_REPO_DIR/create_dataframe.py \
-#    --predictions-dir /Users/adamfoster/Documents/MPhysProject/understanding_galaxies/results/latest_scaled_predictions \
+# #  load predictions in convenient dataframe
+# $PYTHON $THIS_REPO_DIR/create_dataframe.py \
+#    --predictions-dir $PREDICTIONS_DIR \
 #    --max-allow-z $MAX_ALLOW_Z \
 #    --min-allow-z $MIN_ALLOW_Z 
 
 # # apply debiasing method, to each galaxy, by sampling nearby galaxies
-#$PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
+# $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
 #    --max-gal $MAX_GAL \
 #    --min-gal $MIN_GAL \
 #    --min-delta-z $MIN_DELTA_Z \
@@ -113,7 +116,7 @@ MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
 #     --delta-mass $DELTA_MASS
 
 # # evolution tracks
-# TODO DELTA_MASS needs specifying above
+# # TODO DELTA_MASS needs specifying above
 # $PYTHON $THIS_REPO_DIR/squid_diagrams_new.py \
 #     --min-gal $MIN_GAL_SQUID \
 #     --max-gal $MAX_GAL_SQUID \

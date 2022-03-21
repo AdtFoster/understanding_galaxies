@@ -34,10 +34,15 @@ if __name__ == '__main__':
     """
     List the images to make predictions on.
     """
-    file_format = 'png'
+    file_format = 'jpeg'
 
     # utility function to easily list the images in a folder.
     all_image_paths = predict_on_dataset.paths_in_folder(Path(args.image_dir), file_format=file_format, recursive=False)
+    assert len(all_image_paths) > 0
+    logging.info('Example path: {}'.format(all_image_paths[0]))
+
+    # TEMP
+    all_image_paths = all_image_paths[:1000000]  # 1m
 
     requested_img_size_after_loading = 300  # 300 for paper, from tfrecord or from png (png will be resized when loaded, before preprocessing)
     batch_size = args.batch_size  # 128 for paper, you'll need a very good GPU. 8 for debugging, 64 for RTX 2070, 256 for A100
@@ -97,6 +102,7 @@ if __name__ == '__main__':
             # image_ds will give batches of (images, paths) when label_cols=[]
 
             predict_on_dataset.predict(image_ds, model, n_samples, label_cols, save_loc)
+            logging.info('Predictions saved to {}'.format(save_loc))
 
         png_start_index += png_batch_size
 

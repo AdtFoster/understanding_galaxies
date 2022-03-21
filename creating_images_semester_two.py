@@ -20,7 +20,7 @@ def iauname_to_filename(iauname, base_dir):
 
 if __name__ == '__main__':
 
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--fits-dir', dest='fits_dir', type=str)
@@ -30,7 +30,6 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    # TODO
     
     if os.path.isdir('/share/nas2'):
         catalog_loc = '/share/nas2/walml/repos/gz-decals-classifiers/data/catalogs/nsa_v1_0_1_mag_cols.parquet'
@@ -65,11 +64,15 @@ if __name__ == '__main__':
     # logging.info(filenames)
     # filenames = list(filenames)[:5]
 
-    filenames = list(df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir)))[:10]
+    logging.info('Galaxies with good images: {}'.format(len(df)))
+    df = df.query('redshift < 0.055')
+
+    # TODO refactor out max galaxies
+    filenames = list(df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir)))
     logging.info('Filenames: {}'.format(len(filenames)))
     logging.info('Example filename: {}'.format(filenames[0]))
 
-    for original_loc in filenames:
+    for original_loc in filenames:  # [50000:]
 
         try:
             img, hdr = fits.getdata(original_loc, 0, header=True) #Extract FITs data
@@ -92,15 +95,15 @@ if __name__ == '__main__':
             
             for redshift in np.arange(galaxy_redshift, args.max_redshift, args.step_size):
                 scale_factor = redshift/galaxy_redshift
-                filename_scale = iauname + '_{0}.png'.format(scale_factor)  # save output image with scale_factor appended
+                filename_scale = iauname + '_{0}.jpeg'.format(scale_factor)  # save output image with scale_factor appended
                 # file_loc = os.path.join('/share/nas/walml/repos/understanding_galaxies', output_dir_name[1], filename)
                 scaled_file_loc = os.path.join(save_dir, filename_scale)
                 if not os.path.isfile(scaled_file_loc):
                     _, _, img_scaled = creating_image_functions.photon_counts_from_FITS(img, scale_factor) # Second input is scale factor, changed in parser
-                    creating_image_functions.make_png_from_corrected_fits(
+                    creating_image_functions.make_jpg_from_corrected_fits(
                         img=img_scaled,
-                        png_loc=scaled_file_loc,
-                        png_size=424)
+                        loc=scaled_file_loc,
+                        size=424)
                 else:
                     logging.info('Skipping {}, already exists'.format(scaled_file_loc))
                 
