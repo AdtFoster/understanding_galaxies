@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    tf.get_logger().setLevel('ERROR')
+    # tf.get_logger().setLevel('ERROR')
     logging.basicConfig(level=logging.INFO)
 
     # useful to avoid errors on small GPU
@@ -40,9 +40,6 @@ if __name__ == '__main__':
     all_image_paths = predict_on_dataset.paths_in_folder(Path(args.image_dir), file_format=file_format, recursive=False)
     assert len(all_image_paths) > 0
     logging.info('Example path: {}'.format(all_image_paths[0]))
-
-    # TEMP
-    all_image_paths = all_image_paths[:1000000]  # 1m
 
     requested_img_size_after_loading = 300  # 300 for paper, from tfrecord or from png (png will be resized when loaded, before preprocessing)
     batch_size = args.batch_size  # 128 for paper, you'll need a very good GPU. 8 for debugging, 64 for RTX 2070, 256 for A100
@@ -82,7 +79,7 @@ if __name__ == '__main__':
     )
 
     png_batch_size = 10000
-    png_start_index = 0
+    png_start_index = 1000000
     n_samples = 1
     while png_start_index < len(all_image_paths):
         
