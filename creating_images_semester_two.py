@@ -40,7 +40,15 @@ if __name__ == '__main__':
         catalog_loc = 'nsa_v1_0_1_mag_cols.parquet'
         ml_safe_loc = 'dr5_ortho_v2_labelled_catalog.parquet'
 
-    df = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift'])
+    df = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift', 'petroth50', 'petroth90'])
+    # calculate what size (in pixels) the .fits should be, ignoring the max-512 lower limit
+    zoomed_pixscale = min(df['petroth50'] * 0.04, df['petroth90'] * 0.02)
+    historical_size = 424
+    arcsecs = historical_size * zoomed_pixscale
+    native_pixscale = 0.262
+    pixel_extent = np.ceil(arcsecs / native_pixscale).astype(int)
+    df['native_pixel_extent'] = pixel_extent
+
     ml_safe = pd.read_parquet(ml_safe_loc, columns=['id_str'])
     # ml_safe['iauname'] = ml_safe['id_str'].apply(lambda x: os.path.basename(x).replace('.jpeg', '').replace('.jpeg', ''))
     logging.info(ml_safe['id_str'])
@@ -111,6 +119,7 @@ if __name__ == '__main__':
                         img=img_scaled,
                         jpeg_loc=scaled_file_loc,
                         jpeg_size=424,
+                        native_size=galaxy['native_pixel_extent'],
                         scale_factor=scale_factor)
                 else:
                     logging.info('Skipping {}, already exists'.format(scaled_file_loc))
