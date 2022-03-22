@@ -22,7 +22,7 @@ PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
 # TODO crank it up
 FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native
 
-SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled_debug
+SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled_with_resizing
 PREDICTIONS_DIR=/share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions
 
 # PREDICTIONS_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies/results/latest_scaled_predictions
@@ -69,12 +69,12 @@ DELTA_MASS=1.0
 MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
 # TODO specify DELTA_MASS
 
-# $PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
-#     --fits-dir $FITS_DIR \
-#     --save-dir $SCALED_IMG_DIR \
-#     --max-redshift $MAX_Z \
-#     --step-size $STEP_SIZE \
-#     --gals-to-sim $GALS_TO_SIM
+$PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
+    --fits-dir $FITS_DIR \
+    --save-dir $SCALED_IMG_DIR \
+    --max-redshift $MAX_Z \
+    --step-size $STEP_SIZE \
+    --gals-to-sim $GALS_TO_SIM
 
 #  $PYTHON $THIS_REPO_DIR/make_predictions.py \
 #      --batch-size 256 \
@@ -83,10 +83,10 @@ MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
 #      --save-dir $PREDICTIONS_DIR
 
 #  load predictions in convenient dataframe
-$PYTHON $THIS_REPO_DIR/create_dataframe.py \
-   --predictions-dir $PREDICTIONS_DIR \
-   --max-allow-z $MAX_ALLOW_Z \
-   --min-allow-z $MIN_ALLOW_Z 
+# $PYTHON $THIS_REPO_DIR/create_dataframe.py \
+#    --predictions-dir $PREDICTIONS_DIR \
+#    --max-allow-z $MAX_ALLOW_Z \
+#    --min-allow-z $MIN_ALLOW_Z 
 
 # # apply debiasing method, to each galaxy, by sampling nearby galaxies
 # $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
