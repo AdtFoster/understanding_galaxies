@@ -1,84 +1,71 @@
-from itertools import count
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
-import logging
 
-from zoobot.tensorflow.predictions import load_predictions
+def main():
+    return
 
 def file_reader(file_name):
-    prediction_df = load_predictions.hdf5s_to_prediction_df(file_name)
-    return prediction_df
+    input_file=open(file_name, 'r', encoding='utf-8-sig')
 
+    data_array=csv.DictReader(input_file)
 
-# def file_reader_old(file_name):
-#     # TODO replace with hdf5 reader
-#     # reads the csv of ml output concentrations, and converts the [[0, 2, 4]] format to np
-#     input_file=open(file_name, 'r', encoding='utf-8-sig')
+    smoothness=np.zeros((0, 4))
 
-#     rows = csv.DictReader(input_file)
+    for line in data_array:
 
-#     smoothness=np.zeros((0, 4))
-
-#     for line in rows: 
-
-#         smoothness_line = np.array((line['id_str'], line['smooth-or-featured-dr8_smooth_pred'], line['smooth-or-featured-dr8_featured-or-disk_pred'], line['smooth-or-featured-dr8_artifact_pred']))
-#         smoothness = np.vstack((smoothness, smoothness_line))
+        smoothness_line = np.array((line['image_loc'], line['smooth-or-featured_smooth_pred'], line['smooth-or-featured_featured-or-disk_pred'], line['smooth-or-featured_artifact_pred']))
+        smoothness = np.vstack((smoothness, smoothness_line))
     
-#     for i in range(np.size(smoothness, 0)):
-#         for j in range(np.size(smoothness, 1)):
-#             smoothness[i, j] = smoothness[i, j].replace('[', '')
-#             smoothness[i, j] = smoothness[i, j].replace(']', '')
+    for i in range(np.size(smoothness, 0)):
+        for j in range(np.size(smoothness, 1)):
+            smoothness[i, j] = smoothness[i, j].replace('[', '')
+            smoothness[i, j] = smoothness[i, j].replace(']', '')
     
-#     return smoothness
+    return smoothness
 
-# def file_reader_filtered_old(file_name):
-#     """
-#     file_name - str (name and csv file to read)
-#     #filter_columns - list (columns by whihc the intital data set will be selected)
-#     #data_columns - list (columns to be used for plotting)
-#     threshold_condition - float (value at which threshold cuttoff occurs)
-#     """
-#     input_file=open(file_name, 'r', encoding='utf-8-sig')
+def file_reader_filtered(file_name):
+    """
+    file_name - str (name and csv file to read)
+    #filter_columns - list (columns by whihc the intital data set will be selected)
+    #data_columns - list (columns to be used for plotting)
+    threshold_condition - float (value at which threshold cuttoff occurs)
+    """
+    input_file=open(file_name, 'r', encoding='utf-8-sig')
 
-#     data_array=csv.DictReader(input_file)
+    data_array=csv.DictReader(input_file)
 
-#     smoothness=np.zeros((0, 7))
+    smoothness=np.zeros((0, 7))
 
-#     for line in data_array:
+    for line in data_array:
         
-#         smoothness_line = np.array((line['id_str'], line['bar-dr8_strong_pred'], line['bar-dr8_weak_pred'], line['bar-dr8_no_pred'], line['smooth-or-featured-dr8_smooth_pred'], line['smooth-or-featured-dr8_featured-or-disk_pred'], line['smooth-or-featured-dr8_artifact_pred']))
-#         smoothness = np.vstack((smoothness, smoothness_line))
+        smoothness_line = np.array((line['image_loc'], line['bar_strong_pred'], line['bar_weak_pred'], line['bar_no_pred'], line['smooth-or-featured_smooth_pred'], line['smooth-or-featured_featured-or-disk_pred'], line['smooth-or-featured_artifact_pred']))
+        smoothness = np.vstack((smoothness, smoothness_line))
     
-#     for i in range(np.size(smoothness, 0)):
-#         for j in range(np.size(smoothness, 1)):
-#             smoothness[i, j] = smoothness[i, j].replace('[', '')
-#             smoothness[i, j] = smoothness[i, j].replace(']', '')
+    for i in range(np.size(smoothness, 0)):
+        for j in range(np.size(smoothness, 1)):
+            smoothness[i, j] = smoothness[i, j].replace('[', '')
+            smoothness[i, j] = smoothness[i, j].replace(']', '')
     
-#     return smoothness
+    return smoothness
 
-def prob_maker(df):
+def prob_maker(input_array):
     
-    count_cols = ['smooth-or-featured-dr5_smooth', 'smooth-or-featured-dr5_featured-or-disk', 'smooth-or-featured-dr5_artifact']
-    # cropped_input = df[count_cols].values.astype(float)
-    # empty_probabilities = np.empty((0, np.size(cropped_input, 1)))
-    # for line in cropped_input:
-    #     empty_row=np.empty((0, np.size(cropped_input, 1)))
-    #     for row in line:
+    cropped_input = input_array[:, 1:4].astype(float)
+    empty_probabilities = np.empty((0, np.size(cropped_input, 1)))
+    for line in cropped_input:
+        empty_row=np.empty((0, np.size(cropped_input, 1)))
+        for row in line:
 
-    #         smoothness_probability = row/sum(line)
-    #         empty_row = np.append(empty_row, smoothness_probability)
-    #     empty_probabilities = np.vstack((empty_probabilities, empty_row))
+            smoothness_probability = row/sum(line)
+            empty_row = np.append(empty_row, smoothness_probability)
+        empty_probabilities = np.vstack((empty_probabilities, empty_row))
     
-    # #empty_probabilities = np.vstack((prob_headers, empty_probabilities)) #Re-add names for columns
-    # empty_probabilities = np.hstack((input_array[:, 0:1], empty_probabilities)) #Re-add the iaunames for each row
-    # empty_probabilities = np.hstack((empty_probabilities, input_array[:, 4:9]))
+    #empty_probabilities = np.vstack((prob_headers, empty_probabilities)) #Re-add names for columns
+    empty_probabilities = np.hstack((input_array[:, 0:1], empty_probabilities)) #Re-add the iaunames for each row
+    empty_probabilities = np.hstack((empty_probabilities, input_array[:, 4:9]))
 
-    for count_col in count_cols:
-        prob_col = count_col + '_prob'
-        df[prob_col] = df[count_col] / df[count_cols].sum(axis=1)
-
-    return df
+    return empty_probabilities
 
 def prob_maker_filtered(input_array):
     """
@@ -211,26 +198,29 @@ def proportion_over_threshold_using_certain_total(input_array, threshold):
 
     return proportions
 
+def variance_from_beta(input_array):
+    """
+    5 column array [name, smooth, featured, artifct, redshift]
+    """
+    cropped_input = input_array[:, 1:4].astype(float) #seperates only the wanted inputs
+    empty_variance = np.empty((0, np.size(cropped_input, 1)))
+    for line in cropped_input:
+        empty_row=np.empty((0, np.size(cropped_input, 1)))
+        for row in line:
+            alpha = row
+            beta = sum(line) - row
 
-def get_dirichlet_variance(x, alpha_col):
-    alpha = x[alpha_col]
-    beta = x.sum() - alpha
-    numerator = (alpha * beta)
-    denominator = ((alpha + beta)**2) * (alpha + beta + 1)
-    smoothness_variance = numerator/denominator #calculation
-    return smoothness_variance
+            numerator = (alpha * beta)
+            denominator = ((alpha + beta)**2) * (alpha + beta + 1)
+            smoothness_variance = numerator/denominator #calculation
 
+            empty_row = np.append(empty_row, smoothness_variance)
+        empty_variance = np.vstack((empty_variance, empty_row))
 
-def variance_from_beta(df):
+    empty_variance = np.hstack((input_array[:, 0:1], empty_variance)) #Re-add the iaunames for each row
+    empty_variance = np.hstack((empty_variance, input_array[:, 4:9]))
 
-    count_cols = ['smooth-or-featured-dr5_smooth', 'smooth-or-featured-dr5_featured-or-disk', 'smooth-or-featured-dr5_artifact']
-
-    for count_col in count_cols:
-        var_col = count_col + '_var'
-        df[var_col] = df[count_cols].apply(lambda x: get_dirichlet_variance(x, count_col), axis=1)
-
-    return df
-
+    return empty_variance
 
 def gaussian_weightings(p, z, p_0, z_0, delta_p, delta_z):
     """
@@ -250,6 +240,16 @@ def mass_gaussian_weightings(mass, mass_0, delta_mass):
     mass_0 = np.log10(mass_0)
     #prefactor = (2*np.pi*((delta_z**2)+(delta_p)**2))**(-1/2)
     exponent = np.exp(-((((mass - mass_0)**2)/(2*(delta_mass**2)))))
+
+    gaussian_factor = exponent #prefactor 
+    return gaussian_factor
+
+def conc_gaussian_weightings(conc, conc_0, delta_conc):
+    """
+    
+    """
+    #prefactor = (2*np.pi*((delta_z**2)+(delta_p)**2))**(-1/2)
+    exponent = np.exp(-((((conc - conc_0)**2)/(2*(delta_conc**2)))))
 
     gaussian_factor = exponent #prefactor 
     return gaussian_factor
