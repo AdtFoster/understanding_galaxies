@@ -184,7 +184,7 @@ def save_carefully_resized_fig(jpeg_loc, native_image, target_size, scale_factor
     assert scale_factor >= 1.
 
     rescaled_pixels = np.round(original_native_pixels/scale_factor).astype(int)
-    logging.debug('Rescaling from {} to {} native pixels to mimic limited resolution'.format(original_native_pixels, rescaled_pixels))
+    logging.debug('Rescaling from {} to {} native pixels to mimic limited resolution (scale factor {})'.format(original_native_pixels, rescaled_pixels, scale_factor))
     rescaled_image_down = native_pil_image.resize((rescaled_pixels, rescaled_pixels), resample=Image.LANCZOS)
     # and now rescale it back up for consistent final pixel size in non-native pixels (for ML etc.)
     rescaled_image_up = rescaled_image_down.resize((target_size, target_size), resample=Image.LANCZOS)
