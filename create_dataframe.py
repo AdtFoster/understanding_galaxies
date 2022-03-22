@@ -95,5 +95,7 @@ if __name__ == '__main__':
     # df = pd.concat([df[subset], arr], axis=1)
     first_mag_cut = frf.prob_maker(first_mag_cut)
     first_mag_cut = frf.variance_from_beta(first_mag_cut)
-    
-    first_mag_cut.to_csv('output_csvs/full_data_1m_without_resizing.csv', index=False)
+
+    save_loc = 'output_csvs/full_data_1m_without_resizing.csv'
+    first_mag_cut.to_csv(save_loc, index=False)
+    logging.info('Saved to {}'.format(save_loc))
