@@ -99,3 +99,4 @@ if __name__ == '__main__':
     save_loc = 'output_csvs/full_data_1m_without_resizing.csv'
     first_mag_cut.to_csv(save_loc, index=False)
     logging.info('Saved to {}'.format(save_loc))
+    # rsync -av walml@galahad.ast.man.ac.uk:/share/nas2/walml/repos/understanding_galaxies/output_csvs/full_data*.csv /home/walml/repos/understanding_galaxies/output_csvs
