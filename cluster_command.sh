@@ -132,5 +132,16 @@ $PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
 #     --morphology $MORPHOLOGY \
 #     --max-z $MAX_Z
 
+# # bamford_plots
+# $PYTHON $THIS_REPO_DIR/bamford_plots.py \
+#     --update-interval $UPDATE_INTERVAL \
+#     --threshold-val $THRESHOLD_VAL \
+#     --delta-z $DELTA_Z \
+#     --delta-p $DELTA_P \
+#     --delta-mag $DELTA_MAG \
+#     --delta-mass $DELTA_MASS \
+#     --delta-conc $DELTA_CONC \
+#     --rounding $ROUNDING
+
 # Testing that the shell script works (Leave this hashed out)
 #$PYTHON $THIS_REPO_DIR/test.py \
