@@ -74,7 +74,7 @@ $PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
     --save-dir $SCALED_IMG_DIR \
     --max-redshift $MAX_Z \
     --step-size $STEP_SIZE \
-    --gals-to-sim $GALS_TO_SIM
+    --max-gals-to-sim $GALS_TO_SIM
 
 #  $PYTHON $THIS_REPO_DIR/make_predictions.py \
 #      --batch-size 256 \
