@@ -79,7 +79,7 @@ if __name__ == '__main__':
     )
 
     png_batch_size = 10000
-    png_start_index = 2000000
+    png_start_index = 0
     n_samples = 1
     while png_start_index < len(all_image_paths):
         

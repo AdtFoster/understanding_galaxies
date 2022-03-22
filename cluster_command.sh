@@ -73,17 +73,17 @@ MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
 #     --max-redshift $MAX_Z \
 #     --step-size $STEP_SIZE
 
- $PYTHON $THIS_REPO_DIR/make_predictions.py \
-     --batch-size 256 \
-     --image-dir $SCALED_IMG_DIR \
-     --checkpoint-loc /share/nas2/walml/repos/gz-decals-classifiers/results/tensorflow/all_campaigns_ortho_v2_train_only_m0/checkpoint \
-     --save-dir $PREDICTIONS_DIR
+#  $PYTHON $THIS_REPO_DIR/make_predictions.py \
+#      --batch-size 256 \
+#      --image-dir $SCALED_IMG_DIR \
+#      --checkpoint-loc /share/nas2/walml/repos/gz-decals-classifiers/results/tensorflow/all_campaigns_ortho_v2_train_only_m0/checkpoint \
+#      --save-dir $PREDICTIONS_DIR
 
-# #  load predictions in convenient dataframe
-# $PYTHON $THIS_REPO_DIR/create_dataframe.py \
-#    --predictions-dir $PREDICTIONS_DIR \
-#    --max-allow-z $MAX_ALLOW_Z \
-#    --min-allow-z $MIN_ALLOW_Z 
+#  load predictions in convenient dataframe
+$PYTHON $THIS_REPO_DIR/create_dataframe.py \
+   --predictions-dir $PREDICTIONS_DIR \
+   --max-allow-z $MAX_ALLOW_Z \
+   --min-allow-z $MIN_ALLOW_Z 
 
 # # apply debiasing method, to each galaxy, by sampling nearby galaxies
 # $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
