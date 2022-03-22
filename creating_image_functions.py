@@ -180,7 +180,7 @@ def save_carefully_resized_fig(jpeg_loc, native_image, target_size, scale_factor
     # scale factor here is a proxy for distance, as scale factor prop. to distance
     # can therefore use scale factor as denominator for change in num. pixels
     native_pil_image = Image.fromarray(np.uint8(native_image * 255.), mode='RGB')
-    original_native_pixels = native_pil_image.shape[0]  # e.g. 200 pixels at 2.62 arcsec/pixel
+    original_native_pixels = native_pil_image.size[0]  # e.g. 200 pixels at 2.62 arcsec/pixel
     assert scale_factor >= 1.
     rescaled_pixel = np.round(original_native_pixels/scale_factor).astype(int)
     logging.debug('Rescaling from {} to {} native pixels to mimic limited resolution')
