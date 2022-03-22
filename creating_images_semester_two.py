@@ -72,7 +72,7 @@ if __name__ == '__main__':
     filenames = list(df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir)))
     if args.max_gals_to_sim is not None:
         logging.warning('Restricting to {} galaxies of {}'.format(args.max_gals_to_sim, len(filenames)))
-        filenames = filenames[:args.gals_to_sim] 
+        filenames = filenames[:args.max_gals_to_sim] 
     logging.info('Filenames: {}'.format(len(filenames)))
     logging.info('Example filename: {}'.format(filenames[0]))
 
