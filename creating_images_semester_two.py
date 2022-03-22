@@ -85,7 +85,7 @@ if __name__ == '__main__':
     logging.info('Filenames: {}'.format(len(filenames)))
     logging.info('Example filename: {}'.format(filenames[0]))
 
-    for original_loc in filenames[:10000]:
+    for original_loc in filenames[:10000]: #need to change 10000 to iterate over the full set of gals
 
         try:
             img, hdr = fits.getdata(original_loc, 0, header=True) #Extract FITs data
@@ -113,15 +113,19 @@ if __name__ == '__main__':
                 # file_loc = os.path.join('/share/nas/walml/repos/understanding_galaxies', output_dir_name[1], filename)
                 scaled_file_loc = os.path.join(save_dir, filename_scale)
                 if not os.path.isfile(scaled_file_loc):
-                    # scale_factor arg will adjust the observed brightness
-                    _, _, img_scaled = creating_image_functions.photon_counts_from_FITS(img, scale_factor) # Second input is scale factor, changed in parser
+                    #resample the image to account for cahnge in angular resolution
                     # scale factor arg will cause image to be downsampled w/ distance, then upsampled back to original size, to mimc limited resolution
+                    resampled_img = creating_image_functions.resampling(
+                                        img=img, 
+                                        scale_factor=scale_factor, 
+                                        native_size=galaxy['native_pixel_extent'])
+
+                    # scale_factor arg will adjust the observed brightness
+                    _, _, img_scaled = creating_image_functions.photon_counts_from_FITS(resampled_img, scale_factor) # Second input is scale factor, changed in parser
                     creating_image_functions.make_jpeg_from_corrected_fits(
                         img=img_scaled,
                         jpeg_loc=scaled_file_loc,
-                        jpeg_size=424,
-                        native_size=galaxy['native_pixel_extent'],
-                        scale_factor=scale_factor)
+                        jpeg_size=424)
                 else:
                     logging.info('Skipping {}, already exists'.format(scaled_file_loc))
                 

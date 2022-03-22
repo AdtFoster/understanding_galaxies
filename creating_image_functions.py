@@ -1,6 +1,6 @@
 import os
 import logging
-
+from skimage.transform import resize
 from PIL import Image
 import numpy as np
 
@@ -140,7 +140,31 @@ def poisson_noise(photon_count, x, size):
     #photon_with_poisson += np.random.poisson(5e12, (3, size, size))
     return photon_with_poisson
 
-def make_jpeg_from_corrected_fits(img, jpeg_loc, jpeg_size, native_size, scale_factor):
+def resampling(img, scale_factor, native_size):
+    """
+    Take a FITS file and return a numpy array of the resampled image
+    """
+    #find the original and target pixel widths
+    original_size = img.shape[1]
+    rescaled_pixels = np.round(original_size/scale_factor).astype(int)
+
+    logging.debug('image is size {}, expected {} (max 512)'.format(original_size, native_size))
+    assert (original_size == native_size) or (original_size == 512)  # should either match, or max out at 512
+    # original_native_pixels = original_size  # e.g. 200 pixels at 2.62 arcsec/pixel - no, not quite right as there is a max of 512 pixels
+    # precalculate and pass in as arg instead    
+    assert scale_factor >= 1.
+
+    #rescaled_pixels = np.round(native_size/scale_factor).astype(int)
+    if rescaled_pixels < original_size:
+        logging.debug('Rescaling from {} to {} native pixels to mimic limited resolution (scale factor {})'.format(original_size, rescaled_pixels, scale_factor))
+        rescaled_image_down = resize(img, (3, rescaled_pixels, rescaled_pixels), anti_aliasing=True)
+    else:
+        logging.debug('Rescaled pixels {} above original size {} (due to max saved size of 512) - skipping resize'.format(rescaled_pixels, original_size))
+        rescaled_image_down = img.copy()
+
+    return rescaled_image_down
+
+def make_jpeg_from_corrected_fits(img, jpeg_loc, jpeg_size):
     '''
     Create jpg from multi-band fits
     Args:
@@ -165,10 +189,10 @@ def make_jpeg_from_corrected_fits(img, jpeg_loc, jpeg_size, native_size, scale_f
             arcsinh=1.,
             scales=_scales,
             desaturate=True)
-    save_carefully_resized_fig(jpeg_loc, rgbimg, target_size=jpeg_size, native_size=native_size, scale_factor=scale_factor)
+    save_carefully_resized_fig(jpeg_loc, rgbimg, target_size=jpeg_size)
 
 
-def save_carefully_resized_fig(jpeg_loc, native_image, target_size, native_size, scale_factor):
+def save_carefully_resized_fig(jpeg_loc, native_image, target_size):
     """
     # TODO
     Args:
@@ -180,22 +204,9 @@ def save_carefully_resized_fig(jpeg_loc, native_image, target_size, native_size,
     # scale factor here is a proxy for distance, as scale factor prop. to distance
     # can therefore use scale factor as denominator for change in num. pixels
     native_pil_image = Image.fromarray(np.uint8(native_image * 255.), mode='RGB')
-    original_size = native_pil_image.size[0]
-    logging.debug('image is size {}, expected {} (max 512)'.format(original_size, native_size))
-    assert (original_size == native_size) or (original_size == 512)  # should either match, or max out at 512
-    # original_native_pixels = original_size  # e.g. 200 pixels at 2.62 arcsec/pixel - no, not quite right as there is a max of 512 pixels
-    # precalculate and pass in as arg instead    
-    assert scale_factor >= 1.
-
-    rescaled_pixels = np.round(native_size/scale_factor).astype(int)
-    if rescaled_pixels < original_size:
-        logging.debug('Rescaling from {} to {} native pixels to mimic limited resolution (scale factor {})'.format(original_size, rescaled_pixels, scale_factor))
-        rescaled_image_down = native_pil_image.resize((rescaled_pixels, rescaled_pixels), resample=Image.LANCZOS)
-    else:
-        logging.debug('Rescaled pixels {} above original size {} (due to max saved size of 512) - skipping resize'.format(rescaled_pixels, original_size))
-        rescaled_image_down = native_pil_image.copy()
+    
     # and now rescale it back up for consistent final pixel size in non-native pixels (for ML etc.)
-    rescaled_image_up = rescaled_image_down.resize((target_size, target_size), resample=Image.LANCZOS)
+    rescaled_image_up = native_pil_image.resize((target_size, target_size), resample=Image.LANCZOS)
     rescaled_image_up = rescaled_image_up.transpose(Image.FLIP_TOP_BOTTOM)  # to align with north/east
     rescaled_image_up.save(jpeg_loc, quality=80)
     #nearest_image.save(png_loc, path = Path(os.getcwd() + '/Images'))
