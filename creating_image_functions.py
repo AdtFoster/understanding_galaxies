@@ -180,7 +180,7 @@ def save_carefully_resized_fig(jpeg_loc, native_image, target_size, native_size,
     # scale factor here is a proxy for distance, as scale factor prop. to distance
     # can therefore use scale factor as denominator for change in num. pixels
     native_pil_image = Image.fromarray(np.uint8(native_image * 255.), mode='RGB')
-    original_size = native_pil_image.size()[0]
+    original_size = native_pil_image.size[0]
     logging.debug('image is size {}, expected {} (max 512)'.format(original_size, native_size))
     assert (original_size == native_size) or (original_size == 512)  # should either match, or max out at 512
     # original_native_pixels = original_size  # e.g. 200 pixels at 2.62 arcsec/pixel - no, not quite right as there is a max of 512 pixels
