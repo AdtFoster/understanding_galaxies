@@ -7,7 +7,7 @@
 #SBATCH --time=23:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --exclusive   # only one task per node
-#SBATCH --dependency=afterok:35584
+#SBATCH --dependency=afterok:35583
  
 pwd; hostname; date
 
