@@ -138,7 +138,7 @@ def poisson_noise(photon_count, x, size):
     #photon_with_poisson += np.random.poisson(5e12, (3, size, size))
     return photon_with_poisson
 
-def make_jpg_from_corrected_fits(img, loc, size):
+def make_jpeg_from_corrected_fits(img, jpeg_loc, jpeg_size, scale_factor):
     '''
     Create jpg from multi-band fits
     Args:
@@ -163,10 +163,10 @@ def make_jpg_from_corrected_fits(img, loc, size):
             arcsinh=1.,
             scales=_scales,
             desaturate=True)
-    save_carefully_resized_jpg(loc, rgbimg, target_size=size)
+    save_carefully_resized_fig(jpeg_loc, rgbimg, target_size=jpeg_size, scale_factor=scale_factor)
 
 
-def save_carefully_resized_jpg(loc, native_image, target_size):
+def save_carefully_resized_fig(jpeg_loc, native_image, target_size, scale_factor):
     """
     # TODO
     Args:
@@ -175,11 +175,15 @@ def save_carefully_resized_jpg(loc, native_image, target_size):
         target_size ():
     Returns:
     """
+    rescaled_pixel = np.round(424/scale_factor).astype(int)
+
     native_pil_image = Image.fromarray(np.uint8(native_image * 255.), mode='RGB')
     nearest_image = native_pil_image.resize(size=(target_size, target_size), resample=Image.LANCZOS)
-    nearest_image = nearest_image.transpose(Image.FLIP_TOP_BOTTOM)  # to align with north/east
-    nearest_image.save(loc, quality=80)
-    #nearest_image.save(loc, path = Path(os.getcwd() + '/Images'))
+    rescaled_image_down = nearest_image.resize((rescaled_pixel, rescaled_pixel), resample=Image.LANCZOS)
+    rescaled_image_up = rescaled_image_down.resize((target_size, target_size), resample=Image.LANCZOS)
+    rescaled_image_up = rescaled_image_up.transpose(Image.FLIP_TOP_BOTTOM)  # to align with north/east
+    rescaled_image_up.save(jpeg_loc, quality=80)
+    #nearest_image.save(png_loc, path = Path(os.getcwd() + '/Images'))
 
 def dr2_style_rgb(imgs, bands, mnmx=None, arcsinh=None, scales=None, desaturate=False):
     '''

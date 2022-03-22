@@ -27,7 +27,8 @@ if __name__ == '__main__':
     parser.add_argument('--save-dir', dest='save_dir', type=str)
     parser.add_argument('--max-redshift', dest='max_redshift', default = 0.2, type=float)
     parser.add_argument('--step-size', dest='step_size', default = 0.004, type=float)
-    
+    parser.add_arguemnt('--gals-to-sim', dest='gals_to_sim', default=10, type=int)
+
     args = parser.parse_args()
     
     
@@ -41,7 +42,7 @@ if __name__ == '__main__':
 
     df = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift'])
     ml_safe = pd.read_parquet(ml_safe_loc, columns=['id_str'])
-    # ml_safe['iauname'] = ml_safe['id_str'].apply(lambda x: os.path.basename(x).replace('.jpeg', '').replace('.png', ''))
+    # ml_safe['iauname'] = ml_safe['id_str'].apply(lambda x: os.path.basename(x).replace('.jpeg', '').replace('.jpeg', ''))
     logging.info(ml_safe['id_str'])
     df = df[df['iauname'].isin(ml_safe['id_str'])].reset_index(drop=True)  # filter to only galaxies with good images
     assert len(df) > 0
@@ -68,7 +69,7 @@ if __name__ == '__main__':
     df = df.query('redshift < 0.055')
 
     # TODO refactor out max galaxies
-    filenames = list(df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir)))
+    filenames = list(df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir)))[:args.gals_to_sim] 
     logging.info('Filenames: {}'.format(len(filenames)))
     logging.info('Example filename: {}'.format(filenames[0]))
 
@@ -100,10 +101,11 @@ if __name__ == '__main__':
                 scaled_file_loc = os.path.join(save_dir, filename_scale)
                 if not os.path.isfile(scaled_file_loc):
                     _, _, img_scaled = creating_image_functions.photon_counts_from_FITS(img, scale_factor) # Second input is scale factor, changed in parser
-                    creating_image_functions.make_jpg_from_corrected_fits(
+                    creating_image_functions.make_jpeg_from_corrected_fits(
                         img=img_scaled,
-                        loc=scaled_file_loc,
-                        size=424)
+                        jpeg_loc=scaled_file_loc,
+                        jpeg_size=424,
+                        scale_factor=scale_factor)
                 else:
                     logging.info('Skipping {}, already exists'.format(scaled_file_loc))
                 

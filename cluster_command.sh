@@ -31,6 +31,8 @@ PREDICTIONS_DIR=/share/nas2/walml/repos/understanding_galaxies/results/latest_sc
 MIN_GAL=0
 MAX_GAL=10
 
+GALS_TO_SIM=10
+
 MIN_GAL_SQUID=0
 MAX_GAL_SQUID=5
 
@@ -71,7 +73,8 @@ MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
 #     --fits-dir $FITS_DIR \
 #     --save-dir $SCALED_IMG_DIR \
 #     --max-redshift $MAX_Z \
-#     --step-size $STEP_SIZE
+#     --step-size $STEP_SIZE \
+#     --gals-to-sim $GALS_TO_SIM
 
 #  $PYTHON $THIS_REPO_DIR/make_predictions.py \
 #      --batch-size 256 \
