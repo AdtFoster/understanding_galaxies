@@ -182,10 +182,10 @@ def save_carefully_resized_fig(jpeg_loc, native_image, target_size, scale_factor
     native_pil_image = Image.fromarray(np.uint8(native_image * 255.), mode='RGB')
     original_native_pixels = native_pil_image.size[0]  # e.g. 200 pixels at 2.62 arcsec/pixel
     assert scale_factor >= 1.
+    
     rescaled_pixel = np.round(original_native_pixels/scale_factor).astype(int)
     logging.debug('Rescaling from {} to {} native pixels to mimic limited resolution')
-    # nearest_image = native_pil_image.resize(size=(target_size, target_size), resample=Image.LANCZOS)
-    rescaled_image_down = original_native_pixels.resize((rescaled_pixel, rescaled_pixel), resample=Image.LANCZOS)
+    rescaled_image_down = native_pil_image.resize((rescaled_pixel, rescaled_pixel), resample=Image.LANCZOS)
     # and now rescale it back up for consistent final pixel size in non-native pixels (for ML etc.)
     rescaled_image_up = rescaled_image_down.resize((target_size, target_size), resample=Image.LANCZOS)
     rescaled_image_up = rescaled_image_up.transpose(Image.FLIP_TOP_BOTTOM)  # to align with north/east
