@@ -66,7 +66,7 @@ if __name__ == '__main__':
     # filenames = list(filenames)[:5]
 
     logging.info('Galaxies with good images: {}'.format(len(df)))
-    df = df.query('redshift < 0.055')
+    df = df.query('redshift < 0.015').query('redshift < 0.055')
 
     # TODO refactor out max galaxies
     filenames = list(df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir)))

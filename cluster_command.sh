@@ -29,7 +29,7 @@ PREDICTIONS_DIR=/share/nas2/walml/repos/understanding_galaxies/results/latest_sc
 
 # TODO crank it up
 MIN_GAL=0
-MAX_GAL=10
+MAX_GAL=100
 
 GALS_TO_SIM=10
 
