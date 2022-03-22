@@ -29,6 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('--delta-p', dest='delta_p', type=float)
     parser.add_argument('--delta-mag', dest='delta_mag', type=float)
     parser.add_argument('--delta-mass', dest='delta_mass', type=float)
+    parser.add_argument('--delta-conc', dest='delta_conc', type=float)
 
     args = parser.parse_args()
     
@@ -39,6 +40,7 @@ if __name__ == '__main__':
     delta_p = args.delta_p #sets height of smaple box - Default optimised = 0.016
     delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
     delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
+    delta_conc = args.delta_conc #Vary to find better base value - Default optimised = 0.5
     
     full_data = pd.read_csv('output_csvs/full_data.csv')
     assert len(full_data) > 0
@@ -81,6 +83,7 @@ if __name__ == '__main__':
         pred_z = gal_min_z['redshift'].values[0]
         test_mag = gal_max_z['elpetro_absmag_r'].values[0]
         test_mass = gal_max_z['elpetro_mass'].values[0]
+        test_conc = gal_max_z['concentration'].values[0]
                         
         #identify the 3 prob variables for the simulated image (could function)
         test_p_smooth = gal_max_z['smooth-or-featured-dr5_smooth_prob'].values[0] #converts prob at max z to useable float format
@@ -199,12 +202,14 @@ if __name__ == '__main__':
             gaussian_z_variable = closest_vals['redshift'].values[0]
             gaussian_mag_variable = closest_vals['elpetro_absmag_r'].values[0]
             gaussian_mass_variable = closest_vals['elpetro_mass'].values[0]
+            gaussian_conc_variable = closest_vals['concentration'].values[0]
 
             proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_smooth, test_z, delta_p/2, delta_z/2)
             mag_weight = frf.gaussian_weightings(gaussian_mag_variable, 0, test_mag, 0, delta_mag, 1)
             mass_weight = frf.mass_gaussian_weightings(gaussian_mass_variable, test_mass, delta_mass)
+            conc_weight = frf.conc_gaussian_weightings(gaussian_conc_variable, test_conc, delta_conc)
                         
-            weight = proximity_weight * mag_weight * mass_weight
+            weight = proximity_weight * mag_weight * mass_weight * conc_weight
                         
             #print('mag_weight is:', mag_weight, '\nprox_wieght is:', proximity_weight, '\nTotal Weight is:', weight)
                         
@@ -246,12 +251,14 @@ if __name__ == '__main__':
             gaussian_z_variable = closest_vals['redshift'].values[0]
             gaussian_mag_variable = closest_vals['elpetro_absmag_r'].values[0]
             gaussian_mass_variable = closest_vals['elpetro_mass'].values[0]
-                        
-            proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_featured, test_z, delta_p/2, delta_z/2)
+            gaussian_conc_variable = closest_vals['concentration'].values[0]
+
+            proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_smooth, test_z, delta_p/2, delta_z/2)
             mag_weight = frf.gaussian_weightings(gaussian_mag_variable, 0, test_mag, 0, delta_mag, 1)
             mass_weight = frf.mass_gaussian_weightings(gaussian_mass_variable, test_mass, delta_mass)
+            conc_weight = frf.conc_gaussian_weightings(gaussian_conc_variable, test_conc, delta_conc)
                         
-            weight = proximity_weight * mag_weight * mass_weight
+            weight = proximity_weight * mag_weight * mass_weight * conc_weight
                         
             #print('mag_weight is:', mag_weight, '\nprox_wieght is:', proximity_weight, '\nTotal Weight is:', weight)
                         
@@ -293,12 +300,14 @@ if __name__ == '__main__':
             gaussian_z_variable = closest_vals['redshift'].values[0]
             gaussian_mag_variable = closest_vals['elpetro_absmag_r'].values[0]
             gaussian_mass_variable = closest_vals['elpetro_mass'].values[0]
-                        
-            proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_artifact, test_z, delta_p/2, delta_z/2)
+            gaussian_conc_variable = closest_vals['concentration'].values[0]
+
+            proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_smooth, test_z, delta_p/2, delta_z/2)
             mag_weight = frf.gaussian_weightings(gaussian_mag_variable, 0, test_mag, 0, delta_mag, 1)
             mass_weight = frf.mass_gaussian_weightings(gaussian_mass_variable, test_mass, delta_mass)
+            conc_weight = frf.conc_gaussian_weightings(gaussian_conc_variable, test_conc, delta_conc)
                         
-            weight = proximity_weight * mag_weight * mass_weight
+            weight = proximity_weight * mag_weight * mass_weight * conc_weight
                         
             #print('mag_weight is:', mag_weight, '\nprox_wieght is:', proximity_weight, '\nTotal Weight is:', weight)
                         
