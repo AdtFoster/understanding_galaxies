@@ -44,6 +44,7 @@ if __name__ == '__main__':
     # calculate what size (in pixels) the .fits should be, ignoring the max-512 lower limit
     possible_scales = np.stack((df['petro_th50'] * 0.04, df['petro_th90'] * 0.02), axis=1)
     zoomed_pixscale = np.min(possible_scales, axis=1)
+    zoomed_pixscale = np.where(zoomed_pixscale < 0.1, zoomed_pixscale, 0.1)  # apply min pixscale of 0.1
     historical_size = 424
     arcsecs = historical_size * zoomed_pixscale
     native_pixscale = 0.262
