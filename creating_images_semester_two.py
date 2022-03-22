@@ -27,7 +27,7 @@ if __name__ == '__main__':
     parser.add_argument('--save-dir', dest='save_dir', type=str)
     parser.add_argument('--max-redshift', dest='max_redshift', default = 0.2, type=float)
     parser.add_argument('--step-size', dest='step_size', default = 0.004, type=float)
-    parser.add_arguemnt('--gals-to-sim', dest='gals_to_sim', default=10, type=int)
+    parser.add_argument('--max-gals-to-sim', dest='max_gals_to_sim', default=None, type=int)
 
     args = parser.parse_args()
     
@@ -69,7 +69,10 @@ if __name__ == '__main__':
     df = df.query('redshift < 0.055')
 
     # TODO refactor out max galaxies
-    filenames = list(df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir)))[:args.gals_to_sim] 
+    filenames = list(df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir)))
+    if args.max_gals_to_sim is not None:
+        logging.warning('Restricting to {} galaxies of {}'.format(args.max_gals_to_sim, len(filenames)))
+        filenames = filenames[:args.gals_to_sim] 
     logging.info('Filenames: {}'.format(len(filenames)))
     logging.info('Example filename: {}'.format(filenames[0]))
 
