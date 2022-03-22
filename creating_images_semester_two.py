@@ -40,9 +40,9 @@ if __name__ == '__main__':
         catalog_loc = 'nsa_v1_0_1_mag_cols.parquet'
         ml_safe_loc = 'dr5_ortho_v2_labelled_catalog.parquet'
 
-    df = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift', 'petroth50', 'petroth90'])
+    df = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift', 'petro_th50', 'petro_th90'])
     # calculate what size (in pixels) the .fits should be, ignoring the max-512 lower limit
-    zoomed_pixscale = min(df['petroth50'] * 0.04, df['petroth90'] * 0.02)
+    zoomed_pixscale = min(df['petro_th50'] * 0.04, df['petro_th90'] * 0.02)
     historical_size = 424
     arcsecs = historical_size * zoomed_pixscale
     native_pixscale = 0.262
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     # filenames = list(filenames)[:5]
 
     logging.info('Galaxies with good images: {}'.format(len(df)))
-    df = df.query('redshift > 0.025').query('redshift < 0.055')
+    df = df.query('redshift > 0.015').query('redshift < 0.055')
 
     # TODO refactor out max galaxies
     filenames = list(df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir)))
