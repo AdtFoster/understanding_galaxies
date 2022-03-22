@@ -42,7 +42,8 @@ if __name__ == '__main__':
 
     df = pd.read_parquet(catalog_loc, columns= ['iauname', 'redshift', 'petro_th50', 'petro_th90'])
     # calculate what size (in pixels) the .fits should be, ignoring the max-512 lower limit
-    zoomed_pixscale = min(df['petro_th50'] * 0.04, df['petro_th90'] * 0.02)
+    possible_scales = np.concatenate((df['petro_th50'] * 0.04, df['petro_th90'] * 0.02), axis=1)
+    zoomed_pixscale = np.min(possible_scales, axis=1)
     historical_size = 424
     arcsecs = historical_size * zoomed_pixscale
     native_pixscale = 0.262
