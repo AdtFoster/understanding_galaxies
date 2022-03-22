@@ -86,7 +86,7 @@ if __name__ == '__main__':
     logging.info('Filenames: {}'.format(len(filenames)))
     logging.info('Example filename: {}'.format(filenames[0]))
 
-    for original_loc in filenames[30000:40000]: #need to change 10000 to iterate over the full set of gals
+    for original_loc in filenames[40000:50000]: #need to change 10000 to iterate over the full set of gals
 
         try:
             img, hdr = fits.getdata(original_loc, 0, header=True) #Extract FITs data
