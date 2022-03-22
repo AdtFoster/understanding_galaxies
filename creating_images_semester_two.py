@@ -20,7 +20,7 @@ def iauname_to_filename(iauname, base_dir):
 
 if __name__ == '__main__':
 
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--fits-dir', dest='fits_dir', type=str)
@@ -31,7 +31,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    # TODO
     
     if os.path.isdir('/share/nas2'):
         catalog_loc = '/share/nas2/walml/repos/gz-decals-classifiers/data/catalogs/nsa_v1_0_1_mag_cols.parquet'
@@ -66,11 +65,15 @@ if __name__ == '__main__':
     # logging.info(filenames)
     # filenames = list(filenames)[:5]
 
+    logging.info('Galaxies with good images: {}'.format(len(df)))
+    df = df.query('redshift < 0.055')
+
+    # TODO refactor out max galaxies
     filenames = list(df['iauname'].apply(lambda x: iauname_to_filename(x, base_dir=fits_dir)))[:args.gals_to_sim] 
     logging.info('Filenames: {}'.format(len(filenames)))
     logging.info('Example filename: {}'.format(filenames[0]))
 
-    for original_loc in filenames:
+    for original_loc in filenames:  # [50000:]
 
         try:
             img, hdr = fits.getdata(original_loc, 0, header=True) #Extract FITs data

@@ -140,10 +140,10 @@ def poisson_noise(photon_count, x, size):
 
 def make_jpeg_from_corrected_fits(img, jpeg_loc, jpeg_size, scale_factor):
     '''
-    Create png from multi-band fits
+    Create jpg from multi-band fits
     Args:
-        fits_loc (str): location of .fits to create png from
-        png_loc (str): location to save png
+        img
+        loc (str): location to save jpg
     Returns:
         None
     '''
@@ -170,7 +170,7 @@ def save_carefully_resized_fig(jpeg_loc, native_image, target_size, scale_factor
     """
     # TODO
     Args:
-        png_loc ():
+        loc ():
         native_image ():
         target_size ():
     Returns:
@@ -182,7 +182,7 @@ def save_carefully_resized_fig(jpeg_loc, native_image, target_size, scale_factor
     rescaled_image_down = nearest_image.resize((rescaled_pixel, rescaled_pixel), resample=Image.LANCZOS)
     rescaled_image_up = rescaled_image_down.resize((target_size, target_size), resample=Image.LANCZOS)
     rescaled_image_up = rescaled_image_up.transpose(Image.FLIP_TOP_BOTTOM)  # to align with north/east
-    rescaled_image_up.save(jpeg_loc)
+    rescaled_image_up.save(jpeg_loc, quality=80)
     #nearest_image.save(png_loc, path = Path(os.getcwd() + '/Images'))
 
 def dr2_style_rgb(imgs, bands, mnmx=None, arcsinh=None, scales=None, desaturate=False):

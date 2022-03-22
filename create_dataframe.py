@@ -96,4 +96,4 @@ if __name__ == '__main__':
     first_mag_cut = frf.prob_maker(first_mag_cut)
     first_mag_cut = frf.variance_from_beta(first_mag_cut)
     
-    first_mag_cut.to_csv('output_csvs/full_data.csv', index=False)
+    first_mag_cut.to_csv('output_csvs/full_data_1m_without_resizing.csv', index=False)
