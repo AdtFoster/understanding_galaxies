@@ -20,7 +20,7 @@ def iauname_to_filename(iauname, base_dir):
 
 if __name__ == '__main__':
 
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(message)s')
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--fits-dir', dest='fits_dir', type=str)
@@ -90,6 +90,7 @@ if __name__ == '__main__':
 
             iauname = os.path.basename(original_loc).replace('.fits','')
             logging.debug(iauname)
+            logging.info('Making images for {}'.format(iauname))
 
             galaxy = df.query(f'iauname == "{iauname}"').squeeze()
             logging.debug(galaxy)
@@ -103,7 +104,9 @@ if __name__ == '__main__':
                 # file_loc = os.path.join('/share/nas/walml/repos/understanding_galaxies', output_dir_name[1], filename)
                 scaled_file_loc = os.path.join(save_dir, filename_scale)
                 if not os.path.isfile(scaled_file_loc):
+                    # scale_factor arg will adjust the observed brightness
                     _, _, img_scaled = creating_image_functions.photon_counts_from_FITS(img, scale_factor) # Second input is scale factor, changed in parser
+                    # scale factor arg will cause image to be downsampled w/ distance, then upsampled back to original size, to mimc limited resolution
                     creating_image_functions.make_jpeg_from_corrected_fits(
                         img=img_scaled,
                         jpeg_loc=scaled_file_loc,
@@ -112,6 +115,6 @@ if __name__ == '__main__':
                 else:
                     logging.info('Skipping {}, already exists'.format(scaled_file_loc))
                 
-            logging.info('Made images for {}'.format(iauname))
+            
 
     logging.info('Successfully made images - exiting')

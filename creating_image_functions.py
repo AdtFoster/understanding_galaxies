@@ -1,6 +1,8 @@
+import os
+import logging
+
 from PIL import Image
 import numpy as np
-import os
 
 
 def photon_counts_from_FITS(imgs, scale_factor=1, bands='grz'):
@@ -175,15 +177,21 @@ def save_carefully_resized_fig(jpeg_loc, native_image, target_size, scale_factor
         target_size ():
     Returns:
     """
-    rescaled_pixel = np.round(424/scale_factor).astype(int)
-
+    # scale factor here is a proxy for distance, as scale factor prop. to distance
+    # can therefore use scale factor as denominator for change in num. pixels
     native_pil_image = Image.fromarray(np.uint8(native_image * 255.), mode='RGB')
-    nearest_image = native_pil_image.resize(size=(target_size, target_size), resample=Image.LANCZOS)
-    rescaled_image_down = nearest_image.resize((rescaled_pixel, rescaled_pixel), resample=Image.LANCZOS)
+    original_native_pixels = native_pil_image.shape[0]  # e.g. 200 pixels at 2.62 arcsec/pixel
+    assert scale_factor >= 1.
+    rescaled_pixel = np.round(original_native_pixels/scale_factor).astype(int)
+    logging.debug('Rescaling from {} to {} native pixels to mimic limited resolution')
+    # nearest_image = native_pil_image.resize(size=(target_size, target_size), resample=Image.LANCZOS)
+    rescaled_image_down = original_native_pixels.resize((rescaled_pixel, rescaled_pixel), resample=Image.LANCZOS)
+    # and now rescale it back up for consistent final pixel size in non-native pixels (for ML etc.)
     rescaled_image_up = rescaled_image_down.resize((target_size, target_size), resample=Image.LANCZOS)
     rescaled_image_up = rescaled_image_up.transpose(Image.FLIP_TOP_BOTTOM)  # to align with north/east
     rescaled_image_up.save(jpeg_loc, quality=80)
     #nearest_image.save(png_loc, path = Path(os.getcwd() + '/Images'))
+
 
 def dr2_style_rgb(imgs, bands, mnmx=None, arcsinh=None, scales=None, desaturate=False):
     '''
