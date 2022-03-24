@@ -27,13 +27,15 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    full_data = pd.read_csv('full_data_1m_without_resizing.csv') #index_col=0
+    full_data = pd.read_csv('full_data_1m_with_resizing.csv') #index_col=0
+    full_data = full_data.sort_values(by = 'redshift')
+    full_data['elpetro_mass'] = np.log10(full_data['elpetro_mass'])
     
-    delta_z = args.delta_z #sets width of sample box - Default optimised = 0.008
-    delta_p = args.delta_p #sets height of smaple box - Default optimised = 0.016
-    delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
-    delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
-    delta_conc = args.delta_conc #Vary to find better base value - Default optimised = 0.5
+    #delta_z = args.delta_z #sets width of sample box - Default optimised = 0.008
+    #delta_p = args.delta_p #sets height of smaple box - Default optimised = 0.016
+    #delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
+    #delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 1.0
+    #delta_conc = args.delta_conc #Vary to find better base value - Default optimised = 0.1
     
     rounding = args.rounding
     cut_threshold = args.thrshold_val
@@ -56,7 +58,6 @@ if __name__ == '__main__':
                         'smoothness_cut_20_21_{0}_graph_redshift_certain_classification_extended_data_remade.png'.format(cut_threshold),
                         'smoothness_cut_21_24_{0}_graph_redshift_certain_classification_extended_data_remade.png'.format(cut_threshold)]
     
-    print("Hello")
     i = 0
     for cut in [first_mag_cut, second_mag_cut, third_mag_cut]:
         #full_data_array[:, 4]=np.round(full_data_array[:, 4].astype(float), 2) #rounds the redshift values to 2 dp for binning
@@ -98,22 +99,26 @@ if __name__ == '__main__':
             count_featured = [] #list for each weighted mean prediction (featured prediction)
             count_artifact = [] #list for each weighted mean prediction (artifact prediction)
             
-            for i in np.arange(0, len(cut), len(cut)/10):
+            cut_names = pd.unique(full_data['iauname'])
+            
+            for i in np.arange(0, len(cut_names), len(cut_names)/10):
+                
                 logging.info('Extracting test sample')
                 # Remove the test sample
-                test_sample_names = pd.unique(full_data['iauname'])[np.floor(i):np.floor(i+len(cut)/10)] 
+                test_sample_names = pd.unique(full_data['iauname'])[int(np.floor(i)):int(np.floor(i+len(cut_names)/10))] 
                 assert len(test_sample_names) > 0
                 
                 test_sample = full_data[full_data['iauname'].isin(test_sample_names)].reset_index(drop=True)
                 
-                full_data = full_data[~full_data['iauname'].isin(test_sample_names)].reset_index(drop=True)
+                full_data_no_test = full_data[~full_data['iauname'].isin(test_sample_names)].reset_index(drop=True)
                 
                 logging.info('Beginning predictions on {} galaxies'.format(len(test_sample_names)))
                 #If we want to operate over multiple galaxies, start a for loop here
                 test_gal_number = 0 #count number of gals which have been processed
                 skipped_gal = 0        
             
-                for test_name in test_sample_names: 
+                for test_name in test_sample_names:
+                    
                     if (test_gal_number % update_interval == 0):
                         logging.info('completed {0} of {1} galaxy debias predictions'.format(test_gal_number, len(test_sample_names))) #prints progress every {number} galaxy debias predictions
                     
@@ -148,27 +153,59 @@ if __name__ == '__main__':
                     lower_p_smooth = test_p_smooth - delta_p #sets lower p box limit for smooth
                     lower_p_featured = test_p_featured - delta_p #sets lower p box limit for featured
                     lower_p_artifact = test_p_artifact - delta_p #sets lower p box limit for artifact
+                    
+                    #Sets values for magnitude
+                    upper_mag = test_mag + delta_mag #sets upper box mag limit
+                    lower_mag = test_mag - delta_mag #sets lower box mag limit
+                    
+                    #Sets values for mass
+                    upper_mass = test_mass + delta_mass #sets upper box mass limit
+                    lower_mass = test_mass - delta_mass #sets lower box mass limit
+                    
+                    #Sets values for conc
+                    upper_conc = test_conc + delta_conc #sets upper box mass limit
+                    lower_conc = test_conc - delta_conc #sets lower box mass limit
                 
                     #sub sample for each morphology
-                    immediate_sub_sample_smooth = full_data[
-                                        (full_data['redshift'].astype(float) <= upper_z) &
-                                        (full_data['redshift'].astype(float) >= lower_z) &
-                                        (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) >= lower_p_smooth) &
-                                        (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) <= upper_p_smooth)
+                    immediate_sub_sample_smooth = full_data_no_test[
+                                        (full_data_no_test['redshift'].astype(float) <= upper_z) &
+                                        (full_data_no_test['redshift'].astype(float) >= lower_z) &
+                                        (full_data_no_test['smooth-or-featured-dr5_smooth_prob'].astype(float) >= lower_p_smooth) &
+                                        (full_data_no_test['smooth-or-featured-dr5_smooth_prob'].astype(float) <= upper_p_smooth) &
+                                        (full_data_no_test['elpetro_absmag_r'].astype(float) <= upper_mag) &
+                                        (full_data_no_test['elpetro_absmag_r'].astype(float) >= lower_mag) &
+                                        (full_data_no_test['elpetro_mass'].astype(float) <= upper_mass) &
+                                        (full_data_no_test['elpetro_mass'].astype(float) >= lower_mass) &
+                                        (full_data_no_test['concentration'].astype(float) <= upper_conc) &
+                                        (full_data_no_test['concentration'].astype(float) >= lower_conc)
                                         ] #samples galaxies within box limits
                     
-                    immediate_sub_sample_featured = full_data[
-                                        (full_data['redshift'].astype(float) <= upper_z) &
-                                        (full_data['redshift'].astype(float) >= lower_z) &
-                                        (full_data['smooth-or-featured-dr5_featured-or-disk_prob'].astype(float) >= lower_p_featured) &
-                                        (full_data['smooth-or-featured-dr5_featured-or-disk_prob'].astype(float) <= upper_p_featured)
+                    immediate_sub_sample_featured = full_data_no_test[
+                                        (full_data_no_test['redshift'].astype(float) <= upper_z) &
+                                        (full_data_no_test['redshift'].astype(float) >= lower_z) &
+                                        (full_data_no_test['smooth-or-featured-dr5_featured-or-disk_prob'].astype(float) >= lower_p_featured) &
+                                        (full_data_no_test['smooth-or-featured-dr5_featured-or-disk_prob'].astype(float) <= upper_p_featured) &
+                                        (full_data_no_test['elpetro_absmag_r'].astype(float) <= upper_mag) &
+                                        (full_data_no_test['elpetro_absmag_r'].astype(float) >= lower_mag) &
+                                        (full_data_no_test['elpetro_mass'].astype(float) <= upper_mass) &
+                                        (full_data_no_test['elpetro_mass'].astype(float) >= lower_mass) &
+                                        (full_data_no_test['concentration'].astype(float) <= upper_conc) &
+                                        (full_data_no_test['concentration'].astype(float) >= lower_conc)
                                         ] #samples galaxies within box limits
-                    immediate_sub_sample_artifact = full_data[
-                                        (full_data['redshift'].astype(float) <= upper_z) &
-                                        (full_data['redshift'].astype(float) >= lower_z) &
-                                        (full_data['smooth-or-featured-dr5_artifact_prob'].astype(float) >= lower_p_artifact) &
-                                        (full_data['smooth-or-featured-dr5_artifact_prob'].astype(float) <= upper_p_artifact)
+                    immediate_sub_sample_artifact = full_data_no_test[
+                                        (full_data_no_test['redshift'].astype(float) <= upper_z) &
+                                        (full_data_no_test['redshift'].astype(float) >= lower_z) &
+                                        (full_data_no_test['smooth-or-featured-dr5_artifact_prob'].astype(float) >= lower_p_artifact) &
+                                        (full_data_no_test['smooth-or-featured-dr5_artifact_prob'].astype(float) <= upper_p_artifact) &
+                                        (full_data_no_test['elpetro_absmag_r'].astype(float) <= upper_mag) &
+                                        (full_data_no_test['elpetro_absmag_r'].astype(float) >= lower_mag) &
+                                        (full_data_no_test['elpetro_mass'].astype(float) <= upper_mass) &
+                                        (full_data_no_test['elpetro_mass'].astype(float) >= lower_mass) &
+                                        (full_data_no_test['concentration'].astype(float) <= upper_conc) &
+                                        (full_data_no_test['concentration'].astype(float) >= lower_conc)
                                         ] #samples galaxies within box limits
+                    
+                    print(len(immediate_sub_sample_smooth), len(immediate_sub_sample_featured), len(immediate_sub_sample_artifact))
                     
                     #requires at least 10 nearby galaxies for debiasing
                     if len(immediate_sub_sample_smooth)<10:
@@ -186,9 +223,9 @@ if __name__ == '__main__':
                     galaxy_names_in_box_featured = pd.unique(immediate_sub_sample_featured['iauname']) #names of subset galaxies for featured
                     galaxy_names_in_box_artifact = pd.unique(immediate_sub_sample_artifact['iauname']) #names of subset galaxies for artifact
                 
-                    sim_sub_set_smooth = full_data[full_data['iauname'].isin(galaxy_names_in_box_smooth)]
-                    sim_sub_set_featured = full_data[full_data['iauname'].isin(galaxy_names_in_box_featured)]
-                    sim_sub_set_artifact = full_data[full_data['iauname'].isin(galaxy_names_in_box_artifact)]
+                    sim_sub_set_smooth = full_data_no_test[full_data_no_test['iauname'].isin(galaxy_names_in_box_smooth)]
+                    sim_sub_set_featured = full_data_no_test[full_data_no_test['iauname'].isin(galaxy_names_in_box_featured)]
+                    sim_sub_set_artifact = full_data_no_test[full_data_no_test['iauname'].isin(galaxy_names_in_box_artifact)]
                     
                     """
                     The key elements in paly here are the 3 actual_p variables (_smooth, _featured and _artifact) which give the non simulated

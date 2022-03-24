@@ -34,7 +34,7 @@ if __name__ == '__main__':
     """
     List the images to make predictions on.
     """
-    file_format = 'png'
+    file_format = 'jpeg'
 
     # utility function to easily list the images in a folder.
     all_image_paths = predict_on_dataset.paths_in_folder(Path(args.image_dir), file_format=file_format, recursive=False)
@@ -48,6 +48,7 @@ if __name__ == '__main__':
 
     assert len(all_image_paths) > 0
     assert os.path.isfile(all_image_paths[0])
+    logging.info('Total images to predict on: {}'.format(len(all_image_paths)))
 
  
     """

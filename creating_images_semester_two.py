@@ -20,7 +20,7 @@ def iauname_to_filename(iauname, base_dir):
 
 if __name__ == '__main__':
 
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(message)s')
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--fits-dir', dest='fits_dir', type=str)
@@ -44,8 +44,9 @@ if __name__ == '__main__':
     # calculate what size (in pixels) the .fits should be, ignoring the max-512 lower limit
     possible_scales = np.stack((df['petro_th50'] * 0.04, df['petro_th90'] * 0.02), axis=1)
     zoomed_pixscale = np.min(possible_scales, axis=1)
+    clipped_pixscale = np.where(zoomed_pixscale < 0.1, 0.1, zoomed_pixscale)  # apply min pixscale of 0.1
     historical_size = 424
-    arcsecs = historical_size * zoomed_pixscale
+    arcsecs = historical_size * clipped_pixscale
     native_pixscale = 0.262
     pixel_extent = np.ceil(arcsecs / native_pixscale).astype(int)
     df['native_pixel_extent'] = pixel_extent
@@ -85,7 +86,7 @@ if __name__ == '__main__':
     logging.info('Filenames: {}'.format(len(filenames)))
     logging.info('Example filename: {}'.format(filenames[0]))
 
-    for original_loc in filenames[:10000]: #need to change 10000 to iterate over the full set of gals
+    for original_loc in filenames[50000:]: #need to change 10000 to iterate over the full set of gals
 
         try:
             img, hdr = fits.getdata(original_loc, 0, header=True) #Extract FITs data
