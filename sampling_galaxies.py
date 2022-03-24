@@ -213,7 +213,7 @@ if __name__ == '__main__':
                 Change x_val, sd and weights
                 """
                 
-                for percent in range(10,95,5):
+                for percent in range(10,95,10):
                 
                     x_val = prediction_list
                     sd = np.sqrt(sd_list)
@@ -224,19 +224,19 @@ if __name__ == '__main__':
                     width_val = np.zeros(0)
                     allowed_val = np.zeros((0,2))
                     
-                    x_range = np.arange (0,1,0.001)
+                    x_range = np.arange (0,1,0.002)
                     for x in x_range:
                     
                         a = frf.kernal_create(x, x_val, sd, weights)
                         kern_sum_val = np.append(kern_sum_val, a)
-                        area_kern_sum_val = np.append(area_kern_sum_val, a * 0.001)
+                        area_kern_sum_val = np.append(area_kern_sum_val, a * 0.002)
                     
                     area_norm = np.sum(area_kern_sum_val)
                     norm_kern_sum = kern_sum_val/area_norm
                     
                     for x in x_range:
                     
-                        temp_array = np.array([[x, norm_kern_sum[int(x*1000)]]])
+                        temp_array = np.array([[x, norm_kern_sum[int(x*500)]]])
                         allowed_val = np.vstack((allowed_val, temp_array))
                     
                     allowed_val = allowed_val[allowed_val[:, 1].argsort()]
@@ -249,7 +249,7 @@ if __name__ == '__main__':
                     width_val = np.append(width_val, allowed_val[0,0])
                     
                     for i in range(len(allowed_val)-1):
-                        if (bool((allowed_val[i+1,0] - allowed_val[i,0])<0.0015)  != bool((allowed_val[i,0]- allowed_val[i-1,0])<0.0015)):
+                        if (bool((allowed_val[i+1,0] - allowed_val[i,0])<0.0025)  != bool((allowed_val[i,0]- allowed_val[i-1,0])<0.0025)):
                             width_val = np.append(width_val, allowed_val[i,0])
                     
                     width_val = np.append(width_val, allowed_val[len(allowed_val)-1,0])
@@ -265,7 +265,7 @@ if __name__ == '__main__':
                         if (abs(actual_p-midrange)<=width_range/2):
             
                             if percent == percent:
-                                count_array[int((percent-10)/5),1] +=1
+                                count_array[int((percent-10)/10),1] +=1
 
                     
                 number_of_galaxies +=1
@@ -275,7 +275,7 @@ if __name__ == '__main__':
                 
         error_array = []
         
-        for x in range(10,95,5):
+        for x in range(10,95,10):
             a = [x,(number_of_galaxies * x / 100)]
             error_array.append(a)
         error_array = np.asarray(error_array)
