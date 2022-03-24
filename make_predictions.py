@@ -49,7 +49,6 @@ if __name__ == '__main__':
     assert len(all_image_paths) > 0
     assert os.path.isfile(all_image_paths[0])
     logging.info('Total images to predict on: {}'.format(len(all_image_paths)))
-    # exit()
 
  
     """
@@ -79,7 +78,7 @@ if __name__ == '__main__':
     )
 
     png_batch_size = 10000
-    png_start_index = 450000
+    png_start_index = 0
     n_samples = 1
     while png_start_index < len(all_image_paths):
         
