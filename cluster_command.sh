@@ -115,7 +115,7 @@ MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
 #   --max-allow-z $MAX_ALLOW_Z \
 #   --min-allow-z $MIN_ALLOW_Z 
 
-# # apply debiasing method, to each galaxy, by sampling nearby galaxies
+# apply debiasing method, to each galaxy, by sampling nearby galaxies
  $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
     --max-gal $MAX_GAL \
     --min-gal $MIN_GAL \
@@ -133,10 +133,10 @@ MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
     --step-delta-mass $STEP_DELTA_MASS \
     --min-delta-conc $MIN_DELTA_CONC \
     --max-delta-conc $MAX_DELTA_CONC \
-    --step-delta-conc $STEP_DELTA_CONC
-    --initial-delta-p $INITIAL_DELTA_P
-    --initial-delta-mag $INITIAL_DELTA_MAG
-    --initial-delta-mass $INITIAL_DELTA_MASS
+    --step-delta-conc $STEP_DELTA_CONC \
+    --initial-delta-p $INITIAL_DELTA_P \
+    --initial-delta-mag $INITIAL_DELTA_MAG \
+    --initial-delta-mass $INITIAL_DELTA_MASS \
     --initial-delta-conc $INITIAL_DELTA_CONC
     
 # $PYTHON $THIS_REPO_DIR/plotting.py

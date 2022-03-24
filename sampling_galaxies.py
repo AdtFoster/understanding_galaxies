@@ -85,7 +85,7 @@ if __name__ == '__main__':
     count = 0
     
     def optimise (delta_z, delta_p, delta_mag, delta_mass, delta_conc, standard_deviation_array, residual_array, count_array_perm, error_array_perm, count):
-        logging.info('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(delta_z, delta_p, delta_mag, delta_mass, delta_conc))
+        logging.info('Current working deltas: {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(delta_z, delta_p, delta_mag, delta_mass, delta_conc))
         
         number_of_galaxies = 0
         count_array = []
@@ -143,6 +143,7 @@ if __name__ == '__main__':
             
             #find unique galaxy names within catchment area
             galaxy_names_in_box = pd.unique(immediate_sub_sample['iauname'])
+            logging.info('The number of unique similar galaxies:')
             logging.info(len(galaxy_names_in_box))
             if len(galaxy_names_in_box) > 10: #could change 10 to variable?
                 # begin debiasing
@@ -303,16 +304,13 @@ if __name__ == '__main__':
         sst = np.sum((count_array[:,1] - y_mean)**2)
         r_sqr = 1 - (ssr/sst)
         temp = [delta_z, delta_p, delta_mag, delta_mass, delta_conc, standard_deviation, pearson, r_sqr, sum_value]
+        logging.info('[delta_z, delta_p, delta_mag, delta_mass, delta_conc, standard_deviation, pearson, r_sqr, sum_value]:')
         logging.info(temp)
         residual_array = np.vstack((residual_array,difference_array))
         count_array_perm = np.vstack((count_array_perm,count_array))
         error_array_perm = np.vstack((error_array_perm, error_array))
         standard_deviation_array = np.vstack((standard_deviation_array,temp))
         return residual_array, count_array_perm, error_array_perm, standard_deviation_array
-        
-        count +=1
-
-        logging.info(count)
     
     logging.info('Beginning predictions')
     
