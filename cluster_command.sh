@@ -10,26 +10,24 @@
  
 pwd; hostname; date
 
-nvidia-smi
+#nvidia-smi
 
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/share/apps/cudnn_8_1_0/cuda/lib64
-
-THIS_REPO_DIR=/share/nas2/walml/repos/understanding_galaxies
-#THIS_REPO_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies
-PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
-#PYTHON=/Users/adamfoster/opt/anaconda3/envs/ZooBot/bin/python
+#export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/share/apps/cudnn_8_1_0/cuda/lib64
 
 # TODO crank it up
-FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native
+#THIS_REPO_DIR=/share/nas2/walml/repos/understanding_galaxies
+#PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
+#FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native    
+#SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled_with_resizing
+#PREDICTIONS_DIR=/share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions
 
-SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled_with_resizing
-PREDICTIONS_DIR=/share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions
-
-# PREDICTIONS_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies/results/latest_scaled_predictions
+THIS_REPO_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies
+PYTHON=/Users/adamfoster/opt/anaconda3/envs/ZooBot/bin/python
+PREDICTIONS_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies/results/latest_scaled_predictions
 
 # TODO crank it up
 MIN_GAL=0
-MAX_GAL=100
+MAX_GAL=10
 
 GALS_TO_SIM=10
 
@@ -58,22 +56,23 @@ MIN_DELTA_MASS=1.4
 MAX_DELTA_MASS=1.5
 STEP_DELTA_MASS=0.1
 
-UPDATE_INTERVAL=50
+UPDATE_INTERVAL=1
 THRESHOLD_VAL=0.8
 
 DELTA_Z=0.006
 DELTA_P=0.016
 DELTA_MAG=0.5
 DELTA_MASS=1.0
+DELTA_CONC=0.1
 
 MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
 # TODO specify DELTA_MASS
 
-$PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
-    --fits-dir $FITS_DIR \
-    --save-dir $SCALED_IMG_DIR \
-    --max-redshift $MAX_Z \
-    --step-size $STEP_SIZE
+#$PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
+#    --fits-dir $FITS_DIR \
+#    --save-dir $SCALED_IMG_DIR \
+#    --max-redshift $MAX_Z \
+#    --step-size $STEP_SIZE
     # --max-gals-to-sim $GALS_TO_SIM
 
 #  $PYTHON $THIS_REPO_DIR/make_predictions.py \
@@ -107,16 +106,17 @@ $PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
     
 # $PYTHON $THIS_REPO_DIR/plotting.py
 
-# $PYTHON $THIS_REPO_DIR/conf_matrix_new.py \
-#     --min-gal $MIN_GAL \
-#     --max-gal $MAX_GAL \
-#     --update-interval $UPDATE_INTERVAL \
-#     --pred-z $PRED_Z \
-#     --threshold-val $THRESHOLD_VAL \
-#     --delta-z $DELTA_Z \
-#     --delta-p $DELTA_P \
-#     --delta-mag $DELTA_MAG \
-#     --delta-mass $DELTA_MASS
+ $PYTHON $THIS_REPO_DIR/conf_matrix_new.py \
+     --min-gal $MIN_GAL \
+     --max-gal $MAX_GAL \
+     --update-interval $UPDATE_INTERVAL \
+     --pred-z $PRED_Z \
+     --threshold-val $THRESHOLD_VAL \
+     --delta-z $DELTA_Z \
+     --delta-p $DELTA_P \
+     --delta-mag $DELTA_MAG \
+     --delta-mass $DELTA_MASS \
+     --delta-conc $DELTA_CONC
 
 # # evolution tracks
 # # TODO DELTA_MASS needs specifying above
