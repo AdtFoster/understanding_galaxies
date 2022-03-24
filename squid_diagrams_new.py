@@ -177,7 +177,10 @@ if __name__ == '__main__':
         
 
         plt.figure(figsize=(10,6))
-        plt.suptitle('{3} Morphology Near Test Value Parameters z={0:.3f} p={1:.3f} with N={2} Galaxies. % = {4}\n'.format(test_z, test_p, len(galaxy_names_in_box), test_name, percent), fontsize=20, wrap=True)
+        if len(galaxy_names_in_box)>250:
+            plt.suptitle('{3} Morphology Near Test Value Parameters z={0:.3f} p={1:.3f} with N={2} (capped at 250 on graph) Galaxies. % = {4}\n'.format(test_z, test_p, len(galaxy_names_in_box), test_name, percent), fontsize=18, wrap=True)
+        else:
+            plt.suptitle('{3} Morphology Near Test Value Parameters z={0:.3f} p={1:.3f} with N={2} Galaxies. % = {4}\n'.format(test_z, test_p, len(galaxy_names_in_box), test_name, percent), fontsize=18, wrap=True)
 
         #Manipulate the weight list to turn into usable alphas
         weight_list_np = np.array(weight_list)
@@ -192,7 +195,7 @@ if __name__ == '__main__':
         plt.subplot(121)
         weight_index=0
         
-        for galaxy in galaxy_names_in_box:
+        for galaxy in galaxy_names_in_box[0:250]: #hard cap on max number of lines
             galaxy_data = sim_sub_set.query(f'iauname == "{galaxy}"').reset_index(drop=True)
             x_data = np.asarray(galaxy_data['redshift']).astype(float)
             y_data = np.asarray(galaxy_data[f'smooth-or-featured-dr5_{morphology}_prob']).astype(float)
@@ -201,9 +204,9 @@ if __name__ == '__main__':
             plt.errorbar(x_data, y_data, marker ='x', color='gray', alpha=norm_alphas_per_gal[weight_index])
             weight_index+=1
 
-        plt.errorbar(pred_z, weighted_mean, weighted_std, marker ='x', color = 'red', alpha=1, label='Weighted mean = {0:.3f}\nWeighted std = {1:.3f}\nTarget redshift = {2:.3f}\nActual liklihood = {3:.3f}'.format(weighted_mean, weighted_std, pred_z, actual_p)) #plotting average weighted by 2D gaussian
-        plt.errorbar(pred_z, actual_p, marker = 'v', alpha = 0.75,  color = 'black', label='Actual Test prediction for new redshift')
-        plt.errorbar(test_z, test_p, marker = 's', alpha = 0.75,  color = 'black', label='Original redshift prediction')
+        plt.errorbar(pred_z, weighted_mean, weighted_std, marker ='x', color = 'red', alpha=1, zorder=10, label='Weighted mean = {0:.3f}\nWeighted std = {1:.3f}\nTarget redshift = {2:.3f}\nActual liklihood = {3:.3f}'.format(weighted_mean, weighted_std, pred_z, actual_p)) #plotting average weighted by 2D gaussian
+        plt.errorbar(pred_z, actual_p, marker = 'v', alpha = 0.75,  color = 'black', zorder=10, label='Actual Test prediction for new redshift')
+        plt.errorbar(test_z, test_p, marker = 's', alpha = 0.75,  color = 'black', zorder=10, label='Original redshift prediction')
         plt.xlabel('Redshift', fontsize=15)
         plt.ylabel(f'Prediction of {morphology} Liklihood', fontsize=15)
         plt.xlim([0, max_z])
