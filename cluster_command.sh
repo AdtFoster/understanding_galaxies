@@ -1,13 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=understand                       # Job name
 #SBATCH --output=understand_%A.log 
-#SBATCH --mem=0   
-#SBATCH -c 24                                       # Job memory request
+#SBATCH --mem=70gb   
+#SBATCH -c 16                                       # Job memory request
 #SBATCH --no-requeue                                    # Do not resubmit a failed job
 #SBATCH --time=23:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --exclusive   # only one task per node
-#SBATCH --dependency=afterok:35583
  
 pwd; hostname; date
 
