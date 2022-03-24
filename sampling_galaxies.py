@@ -63,6 +63,8 @@ if __name__ == '__main__':
     initial_delta_mass = args.initial_delta_mass
     initial_delta_conc = args.initial_delta_conc   
     
+    logging.info('Beginning sampling galaxies for optimum parameters')
+
     # created by create_dataframe.py
     full_data = pd.read_csv('full_data_1m_with_resizing.csv') #index_col=0
     full_data['elpetro_mass'] = np.log10(full_data['elpetro_mass'])

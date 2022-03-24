@@ -13,8 +13,8 @@ import argparse
 
 
 if __name__ == '__main__':
-    print('Begin \n')
-    
+    logging.basicConfig(level=logging.INFO)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--update-interval', dest='update_interval', type=int)
     parser.add_argument('--threshold-val', dest='threshold_val', type=float)
@@ -27,18 +27,20 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    full_data = pd.read_csv('full_data_1m_with_resizing.csv') #index_col=0
+    logging.info('MORPHOLOGY WITH REDSHIFT CODE COMMENCING')
+    
+    full_data = pd.read_csv('output_csvs/full_data_1m_with_resizing.csv') #index_col=0
     full_data = full_data.sort_values(by = 'redshift')
     full_data['elpetro_mass'] = np.log10(full_data['elpetro_mass'])
     
-    #delta_z = args.delta_z #sets width of sample box - Default optimised = 0.008
-    #delta_p = args.delta_p #sets height of smaple box - Default optimised = 0.016
-    #delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
-    #delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 1.0
-    #delta_conc = args.delta_conc #Vary to find better base value - Default optimised = 0.1
+    delta_z = args.delta_z #sets width of sample box - Default optimised = 0.008
+    delta_p = args.delta_p #sets height of smaple box - Default optimised = 0.016
+    delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
+    delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 1.0
+    delta_conc = args.delta_conc #Vary to find better base value - Default optimised = 0.1
     
     rounding = args.rounding
-    cut_threshold = args.thrshold_val
+    cut_threshold = args.threshold_val
     update_interval = args.update_interval
     
     full_data_array_first_cut=np.zeros((0, 9))
@@ -47,8 +49,11 @@ if __name__ == '__main__':
     proportions_by_redshift_by_cut = []
     
     first_mag_cut = full_data[(full_data["elpetro_absmag_r"] < -18 ) & (full_data["elpetro_absmag_r"] >= -20)]
+    first_mag_cut['redshift'] = np.round(first_mag_cut["redshift"] * (1/rounding))/(1/rounding)
     second_mag_cut = full_data[(full_data["elpetro_absmag_r"] < -20 ) & (full_data["elpetro_absmag_r"] >= -21)]
+    second_mag_cut['redshift'] = np.round(second_mag_cut["redshift"] * (1/rounding))/(1/rounding)
     third_mag_cut = full_data[(full_data["elpetro_absmag_r"] < -21 ) & (full_data["elpetro_absmag_r"] >= -24)]
+    third_mag_cut['redshift'] = np.round(third_mag_cut["redshift"] * (1/rounding))/(1/rounding)
     
     figure_mag_lims = ['-18 to -20',
                         '-20 to -21',
@@ -61,14 +66,13 @@ if __name__ == '__main__':
     i = 0
     for cut in [first_mag_cut, second_mag_cut, third_mag_cut]:
         #full_data_array[:, 4]=np.round(full_data_array[:, 4].astype(float), 2) #rounds the redshift values to 2 dp for binning
-        cut["redshift"] = np.round(cut["redshift"] * (1/rounding))/(1/rounding)
     
         cut = cut.sort_values(by = "redshift").reset_index(drop = True)#sorts all data based on ascending redshift
         
         df = pd.DataFrame(columns=['redshift','smooth','featured','artifact'])
         for redshift in np.arange(cut["redshift"].min(), 0.12+rounding, rounding):
             
-            redshift = np.round(redshift * (1/rounding))/(1/rounding)
+            redshift = np.round(redshift * (1/rounding))/(1/rounding) #necessary?
             df_temp = cut[cut["redshift"] == redshift]
             confident_smooth = df_temp[(df_temp["smooth-or-featured-dr5_smooth_prob"] > cut_threshold)].count()[0]
             confident_featured = df_temp[(df_temp["smooth-or-featured-dr5_featured-or-disk_prob"] > cut_threshold)].count()[0]
@@ -80,7 +84,7 @@ if __name__ == '__main__':
         frf.error_bar_smoothness_3(df['redshift'].values, df['smooth'].values, df['featured'].values, df['artifact'].values, save_name=figure_save_names[i], title='Galaxy Morphology with Redshift for Magnitudes {0}'.format(figure_mag_lims[i]), xlabel='Redshift', ylabel='Proportion of expected predictions', ylimits=[0, 1], xlimits=[0, 0.12])
         i+=1
     
-    print("Original plots plotted")
+    logging.info("Original plots plotted")
     
     figure_save_names = ['smoothness_cut_18_20_{0}_graph_redshift_certain_classification_extended_data_remade_debiased.png'.format(cut_threshold), 
                         'smoothness_cut_20_21_{0}_graph_redshift_certain_classification_extended_data_remade_debiased.png'.format(cut_threshold),
@@ -205,7 +209,6 @@ if __name__ == '__main__':
                                         (full_data_no_test['concentration'].astype(float) >= lower_conc)
                                         ] #samples galaxies within box limits
                     
-                    print(len(immediate_sub_sample_smooth), len(immediate_sub_sample_featured), len(immediate_sub_sample_artifact))
                     
                     #requires at least 10 nearby galaxies for debiasing
                     if len(immediate_sub_sample_smooth)<10:
@@ -331,7 +334,7 @@ if __name__ == '__main__':
                         gaussian_mass_variable = closest_vals['elpetro_mass'].values[0]
                         gaussian_conc_variable = closest_vals['concentration'].values[0]
                 
-                        proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_smooth, test_z, delta_p/2, delta_z/2)
+                        proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_featured, test_z, delta_p/2, delta_z/2)
                         mag_weight = frf.gaussian_weightings(gaussian_mag_variable, 0, test_mag, 0, delta_mag, 1)
                         mass_weight = frf.mass_gaussian_weightings(gaussian_mass_variable, test_mass, delta_mass)
                         conc_weight = frf.conc_gaussian_weightings(gaussian_conc_variable, test_conc, delta_conc)
@@ -380,7 +383,7 @@ if __name__ == '__main__':
                         gaussian_mass_variable = closest_vals['elpetro_mass'].values[0]
                         gaussian_conc_variable = closest_vals['concentration'].values[0]
                 
-                        proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_smooth, test_z, delta_p/2, delta_z/2)
+                        proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_artifact, test_z, delta_p/2, delta_z/2)
                         mag_weight = frf.gaussian_weightings(gaussian_mag_variable, 0, test_mag, 0, delta_mag, 1)
                         mass_weight = frf.mass_gaussian_weightings(gaussian_mass_variable, test_mass, delta_mass)
                         conc_weight = frf.conc_gaussian_weightings(gaussian_conc_variable, test_conc, delta_conc)
@@ -448,6 +451,6 @@ if __name__ == '__main__':
             
         frf.error_bar_smoothness_3(df['redshift'].values, df['smooth'].values, df['featured'].values, df['artifact'].values, save_name=figure_save_names[i], title='Galaxy Morphology with Redshift for Magnitudes {0}'.format(figure_mag_lims[i]), xlabel='Redshift', ylabel='Proportion of expected predictions', ylimits=[0, 1], xlimits=[0, 0.12])
         j += 1
-        print("new cut")
+        logging.info("new cut")
         
-    print('\n end')
+    logging.info('\n MORPHOLOGY WITH REDSHIFT CODE COMPLETE')
