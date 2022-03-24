@@ -59,9 +59,9 @@ if __name__ == '__main__':
                         '-20 to -21',
                         '-21 to -24']
     
-    figure_save_names = ['smoothness_cut_18_20_{0}_graph_redshift_certain_classification_extended_data_remade.png'.format(cut_threshold), 
-                        'smoothness_cut_20_21_{0}_graph_redshift_certain_classification_extended_data_remade.png'.format(cut_threshold),
-                        'smoothness_cut_21_24_{0}_graph_redshift_certain_classification_extended_data_remade.png'.format(cut_threshold)]
+    figure_save_names = ['other_plots/smoothness_cut_18_20_{0}_graph_redshift_certain_classification_extended_data_remade.png'.format(cut_threshold), 
+                        'other_plots/smoothness_cut_20_21_{0}_graph_redshift_certain_classification_extended_data_remade.png'.format(cut_threshold),
+                        'other_plots/smoothness_cut_21_24_{0}_graph_redshift_certain_classification_extended_data_remade.png'.format(cut_threshold)]
     
     i = 0
     for cut in [first_mag_cut, second_mag_cut, third_mag_cut]:
@@ -86,9 +86,9 @@ if __name__ == '__main__':
     
     logging.info("Original plots plotted")
     
-    figure_save_names = ['smoothness_cut_18_20_{0}_graph_redshift_certain_classification_extended_data_remade_debiased.png'.format(cut_threshold), 
-                        'smoothness_cut_20_21_{0}_graph_redshift_certain_classification_extended_data_remade_debiased.png'.format(cut_threshold),
-                        'smoothness_cut_21_24_{0}_graph_redshift_certain_classification_extended_data_remade_debiased.png'.format(cut_threshold)]
+    figure_save_names = ['other_plots/smoothness_cut_18_20_{0}_graph_redshift_certain_classification_extended_data_remade_debiased.png'.format(cut_threshold), 
+                        'other_plots/smoothness_cut_20_21_{0}_graph_redshift_certain_classification_extended_data_remade_debiased.png'.format(cut_threshold),
+                        'other_plotssmoothness_cut_21_24_{0}_graph_redshift_certain_classification_extended_data_remade_debiased.png'.format(cut_threshold)]
     
     j = 0
     for cut in [first_mag_cut, second_mag_cut, third_mag_cut]:
