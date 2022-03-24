@@ -42,7 +42,8 @@ if __name__ == '__main__':
     delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
     delta_conc = args.delta_conc #Vary to find better base value - Default optimised = 0.5
     
-    full_data = pd.read_csv('output_csvs/full_data.csv')
+    full_data = pd.read_csv('output_csvs/full_data_1m_with_resizing.csv')
+    #full_data = pd.read_csv('output_csvs/full_data.csv')
     assert len(full_data) > 0
     
     logging.info('Extracting test sample')
@@ -253,7 +254,7 @@ if __name__ == '__main__':
             gaussian_mass_variable = closest_vals['elpetro_mass'].values[0]
             gaussian_conc_variable = closest_vals['concentration'].values[0]
 
-            proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_smooth, test_z, delta_p/2, delta_z/2)
+            proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_featured, test_z, delta_p/2, delta_z/2)
             mag_weight = frf.gaussian_weightings(gaussian_mag_variable, 0, test_mag, 0, delta_mag, 1)
             mass_weight = frf.mass_gaussian_weightings(gaussian_mass_variable, test_mass, delta_mass)
             conc_weight = frf.conc_gaussian_weightings(gaussian_conc_variable, test_conc, delta_conc)
@@ -302,13 +303,14 @@ if __name__ == '__main__':
             gaussian_mass_variable = closest_vals['elpetro_mass'].values[0]
             gaussian_conc_variable = closest_vals['concentration'].values[0]
 
-            proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_smooth, test_z, delta_p/2, delta_z/2)
+            proximity_weight = frf.gaussian_weightings(gaussain_p_variable, gaussian_z_variable, test_p_artifact, test_z, delta_p/2, delta_z/2)
             mag_weight = frf.gaussian_weightings(gaussian_mag_variable, 0, test_mag, 0, delta_mag, 1)
             mass_weight = frf.mass_gaussian_weightings(gaussian_mass_variable, test_mass, delta_mass)
             conc_weight = frf.conc_gaussian_weightings(gaussian_conc_variable, test_conc, delta_conc)
                         
             weight = proximity_weight * mag_weight * mass_weight * conc_weight
-                        
+            logging.info(proximity_weight)
+
             #print('mag_weight is:', mag_weight, '\nprox_wieght is:', proximity_weight, '\nTotal Weight is:', weight)
                         
             prediction_list_artifact.append(grad_corrected_prediction)
@@ -428,8 +430,6 @@ if __name__ == '__main__':
     predicted = dominant_morphology_predicted #list of predicted vals in order of prediction
     simulated = dominant_morphology_simulated
     
-    logging.info(expected)
-    logging.info(predicted)
     results = confusion_matrix(expected, predicted, labels=morphology_names) #converting inputs into confusion matrix format (debiased on x-axis (top) and true on y-axis (side))
     results = results[0:4, 0:4] #(remove the NULL column for debiased prediction as it will never be filled) changed to include to avoid confusion about the diagonal - mike request
     comparison_results = confusion_matrix(expected, simulated, labels=morphology_names) #converting inputs into confusion matrix format (debiased on x-axis (top) and true on y-axis (side))
