@@ -11,20 +11,20 @@
  
 pwd; hostname; date
 
-#nvidia-smi
+nvidia-smi
 
-#export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/share/apps/cudnn_8_1_0/cuda/lib64
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/share/apps/cudnn_8_1_0/cuda/lib64
 
 # TODO crank it up
-#THIS_REPO_DIR=/share/nas2/walml/repos/understanding_galaxies
-#PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
-#FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native    
-#SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled_with_resizing
-#PREDICTIONS_DIR=/share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions
+THIS_REPO_DIR=/share/nas2/walml/repos/understanding_galaxies
+PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
+FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native    
+SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled_with_resizing
+PREDICTIONS_DIR=/share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions
 
-THIS_REPO_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies
-PYTHON=/Users/adamfoster/opt/anaconda3/envs/ZooBot/bin/python
-PREDICTIONS_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies/results/latest_scaled_predictions
+#THIS_REPO_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies
+#PYTHON=/Users/adamfoster/opt/anaconda3/envs/ZooBot/bin/python
+#PREDICTIONS_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies/results/latest_scaled_predictions
 
 # TODO crank it up
 
