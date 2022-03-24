@@ -48,6 +48,8 @@ if __name__ == '__main__':
 
     assert len(all_image_paths) > 0
     assert os.path.isfile(all_image_paths[0])
+    logging.info('Total images to predict on: {}'.format(len(all_image_paths)))
+    exit()
 
  
     """
