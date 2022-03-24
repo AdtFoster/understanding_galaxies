@@ -89,7 +89,7 @@ if __name__ == '__main__':
         
         number_of_galaxies = 0
         count_array = []
-        for x in range(10,95,5):
+        for x in range(10,95,10):
             b = [x,0]
             count_array.append(b)
         count_array = np.asarray(count_array)
