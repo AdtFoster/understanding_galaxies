@@ -198,7 +198,7 @@ if __name__ == '__main__':
             y_data = np.asarray(galaxy_data[f'smooth-or-featured-dr5_{morphology}_prob']).astype(float)
             y_err = np.sqrt(np.asarray(galaxy_data[f'smooth-or-featured-dr5_{morphology}_var']).astype(float))
             
-            plt.errorbar(x_data, y_data, marker ='x', alpha=norm_alphas_per_gal[weight_index])
+            plt.errorbar(x_data, y_data, marker ='x', color='gray', alpha=norm_alphas_per_gal[weight_index])
             weight_index+=1
 
         plt.errorbar(pred_z, weighted_mean, weighted_std, marker ='x', color = 'red', alpha=1, label='Weighted mean = {0:.3f}\nWeighted std = {1:.3f}\nTarget redshift = {2:.3f}\nActual liklihood = {3:.3f}'.format(weighted_mean, weighted_std, pred_z, actual_p)) #plotting average weighted by 2D gaussian
