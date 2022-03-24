@@ -52,7 +52,7 @@ if __name__ == '__main__':
     count_array = []
 
     # The data
-    full_data = pd.read_csv('full_data_1m_with_resizing.csv') #index_col=0
+    full_data = pd.read_csv('output_csvs/full_data_1m_with_resizing.csv') #index_col=0
     full_data['elpetro_mass'] = np.log10(full_data['elpetro_mass'])
     
     #form a numpy array of the first [min_gal:max_gal] galaxy names
@@ -285,4 +285,4 @@ if __name__ == '__main__':
         plt.close()
 
     plt.close('all')
-    print('End')
+    logging.info('Finished producing squid diagrams')

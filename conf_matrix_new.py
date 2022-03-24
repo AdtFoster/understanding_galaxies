@@ -42,7 +42,10 @@ if __name__ == '__main__':
     delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
     delta_conc = args.delta_conc #Vary to find better base value - Default optimised = 0.5
     
+    logging.info('CONFUSION MATRIX CODE COMMENCING')
+
     full_data = pd.read_csv('output_csvs/full_data_1m_with_resizing.csv')
+    full_data['elpetro_mass'] = np.log10(full_data['elpetro_mass'])
     #full_data = pd.read_csv('output_csvs/full_data.csv')
     assert len(full_data) > 0
     
@@ -121,7 +124,6 @@ if __name__ == '__main__':
         upper_conc = test_conc + delta_conc #sets upper box mass limit
         lower_conc = test_conc - delta_conc #sets lower box mass limit
     
-
         #sub sample for each morphology
         immediate_sub_sample_smooth = full_data[
                             (full_data['redshift'].astype(float) <= upper_z) &
@@ -148,6 +150,7 @@ if __name__ == '__main__':
                             (full_data['concentration'].astype(float) <= upper_conc) &
                             (full_data['concentration'].astype(float) >= lower_conc) 
                             ] #samples galaxies within box limits
+
         immediate_sub_sample_artifact = full_data[
                             (full_data['redshift'].astype(float) <= upper_z) &
                             (full_data['redshift'].astype(float) >= lower_z) &
@@ -340,7 +343,6 @@ if __name__ == '__main__':
             conc_weight = frf.conc_gaussian_weightings(gaussian_conc_variable, test_conc, delta_conc)
                         
             weight = proximity_weight * mag_weight * mass_weight * conc_weight
-            logging.info(proximity_weight)
 
             #print('mag_weight is:', mag_weight, '\nprox_wieght is:', proximity_weight, '\nTotal Weight is:', weight)
                         

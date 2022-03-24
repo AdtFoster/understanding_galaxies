@@ -27,47 +27,74 @@ PYTHON=/Users/adamfoster/opt/anaconda3/envs/ZooBot/bin/python
 PREDICTIONS_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies/results/latest_scaled_predictions
 
 # TODO crank it up
-MIN_GAL=0
-MAX_GAL=10
 
+#Test sample of galaxies to debias for parameter optimisation
+MIN_GAL=0
+MAX_GAL=500
+
+#Sets the galaxies to be debiased for conf matrix
+MIN_GAL_MATRIX=0
+MAX_GAL_MATRIX=1000
+
+#hard cap on number of gals being simulated
 GALS_TO_SIM=10
 
+#galaxies to plot squid graphs for
 MIN_GAL_SQUID=0
-MAX_GAL_SQUID=5
+MAX_GAL_SQUID=10
 
+#accepeted percentage area under pdf 
 PERCENT=66
 
+#decimal to round to
+ROUNDING=0.005
+
+#sets target z, maximum sim z and step size up to max_z
 PRED_Z=0.03
 MAX_Z=0.12
 STEP_SIZE=0.004 #could prob make a lot smaller (0.005?)
 
+#cut on which unsimulated galaxies to select (only those with low redshifts)
 MIN_ALLOW_Z=0.02
 MAX_ALLOW_Z=0.05
 
-MIN_DELTA_Z=0.014
+#sets of max and min hyperparams with step sizes for selecting optimum
+MIN_DELTA_Z=0.005
 MAX_DELTA_Z=0.015
 STEP_DELTA_Z=0.001
-MIN_DELTA_P=0.023
-MAX_DELTA_P=0.024
+MIN_DELTA_P=0.010
+MAX_DELTA_P=0.020
 STEP_DELTA_P=0.001
-MIN_DELTA_MAG=1.2
-MAX_DELTA_MAG=1.3
+MIN_DELTA_MAG=0.5
+MAX_DELTA_MAG=1.5
 STEP_DELTA_MAG=0.1
-MIN_DELTA_MASS=1.4
+MIN_DELTA_MASS=0.5
 MAX_DELTA_MASS=1.5
 STEP_DELTA_MASS=0.1
+MIN_DELTA_CONC=0.05
+MAX_DELTA_CONC=0.15
+STEP_DELTA_CONC=0.01
 
-UPDATE_INTERVAL=1
+#number of gals iterated per update and threshold for confident prediction
+UPDATE_INTERVAL=50
 THRESHOLD_VAL=0.8
 
+#N-D box dimensions
 DELTA_Z=0.006
 DELTA_P=0.016
 DELTA_MAG=0.5
 DELTA_MASS=1.0
 DELTA_CONC=0.1
 
+#Sets the initial constraints wehn tuning hyperparams
+INITIAL_DELTA_P=0.016
+INITIAL_DELTA_MAG=0.5
+INITIAL_DELTA_MASS=1.0
+INITIAL_DELTA_CONC=0.1
+
+#define which morphology squid diagrams to produce
 MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
-# TODO specify DELTA_MASS
+
 
 #$PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
 #    --fits-dir $FITS_DIR \
@@ -76,34 +103,41 @@ MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
 #    --step-size $STEP_SIZE \
 #    --max-gals-to-sim $GALS_TO_SIM
 
- $PYTHON $THIS_REPO_DIR/make_predictions.py \
-     --batch-size 256 \
-     --image-dir $SCALED_IMG_DIR \
-     --checkpoint-loc /share/nas2/walml/repos/gz-decals-classifiers/results/tensorflow/all_campaigns_ortho_v2_train_only_m0/checkpoint \
-     --save-dir $PREDICTIONS_DIR
+#$PYTHON $THIS_REPO_DIR/make_predictions.py \
+#     --batch-size 256 \
+#     --image-dir $SCALED_IMG_DIR \
+#     --checkpoint-loc /share/nas2/walml/repos/gz-decals-classifiers/results/tensorflow/all_campaigns_ortho_v2_train_only_m0/checkpoint \
+#     --save-dir $PREDICTIONS_DIR
 
 #  load predictions in convenient dataframe
-$PYTHON $THIS_REPO_DIR/create_dataframe.py \
-   --predictions-dir $PREDICTIONS_DIR \
-   --max-allow-z $MAX_ALLOW_Z \
-   --min-allow-z $MIN_ALLOW_Z 
+#$PYTHON $THIS_REPO_DIR/create_dataframe.py \
+#   --predictions-dir $PREDICTIONS_DIR \
+#   --max-allow-z $MAX_ALLOW_Z \
+#   --min-allow-z $MIN_ALLOW_Z 
 
 # # apply debiasing method, to each galaxy, by sampling nearby galaxies
-# $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
-#    --max-gal $MAX_GAL \
-#    --min-gal $MIN_GAL \
-#    --min-delta-z $MIN_DELTA_Z \
-#    --max-delta-z $MAX_DELTA_Z \
-#    --step-delta-z $STEP_DELTA_Z \
-#    --min-delta-p $MIN_DELTA_P \
-#    --max-delta-p $MAX_DELTA_P \
-#    --step-delta-p $STEP_DELTA_P \
-#    --min-delta-mag $MIN_DELTA_MAG \
-#    --max-delta-mag $MAX_DELTA_MAG \
-#    --step-delta-mag $STEP_DELTA_MAG \
-#    --min-delta-mass $MIN_DELTA_MASS \
-#    --max-delta-mass $MAX_DELTA_MASS \
-#    --step-delta-mass $STEP_DELTA_MASS
+ $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
+    --max-gal $MAX_GAL \
+    --min-gal $MIN_GAL \
+    --min-delta-z $MIN_DELTA_Z \
+    --max-delta-z $MAX_DELTA_Z \
+    --step-delta-z $STEP_DELTA_Z \
+    --min-delta-p $MIN_DELTA_P \
+    --max-delta-p $MAX_DELTA_P \
+    --step-delta-p $STEP_DELTA_P \
+    --min-delta-mag $MIN_DELTA_MAG \
+    --max-delta-mag $MAX_DELTA_MAG \
+    --step-delta-mag $STEP_DELTA_MAG \
+    --min-delta-mass $MIN_DELTA_MASS \
+    --max-delta-mass $MAX_DELTA_MASS \
+    --step-delta-mass $STEP_DELTA_MASS \
+    --min-delta-conc $MIN_DELTA_CONC \
+    --max-delta-conc $MAX_DELTA_CONC \
+    --step-delta-conc $STEP_DELTA_CONC
+    --initial-delta-p $INITIAL_DELTA_P
+    --initial-delta-mag $INITIAL_DELTA_MAG
+    --initial-delta-mass $INITIAL_DELTA_MASS
+    --initial-delta-conc $INITIAL_DELTA_CONC
     
 # $PYTHON $THIS_REPO_DIR/plotting.py
 
@@ -121,28 +155,29 @@ $PYTHON $THIS_REPO_DIR/create_dataframe.py \
 
 # # evolution tracks
 # # TODO DELTA_MASS needs specifying above
-# $PYTHON $THIS_REPO_DIR/squid_diagrams_new.py \
-#     --min-gal $MIN_GAL_SQUID \
-#     --max-gal $MAX_GAL_SQUID \
-#     --delta-z $DELTA_Z \
-#     --delta-p $DELTA_P \
-#     --delta-mag $DELTA_MAG \
-#     --delta-mass $DELTA_MASS \
-#     --min-z $PRED_Z \
-#     --percent $PERCENT \
-#     --morphology $MORPHOLOGY \
-#     --max-z $MAX_Z
+ $PYTHON $THIS_REPO_DIR/squid_diagrams_new.py \
+     --min-gal $MIN_GAL_SQUID \
+     --max-gal $MAX_GAL_SQUID \
+     --delta-z $DELTA_Z \
+     --delta-p $DELTA_P \
+     --delta-mag $DELTA_MAG \
+     --delta-mass $DELTA_MASS \
+     --min-z $PRED_Z \
+     --percent $PERCENT \
+     --morphology $MORPHOLOGY \
+     --max-z $MAX_Z \
+     --delta-conc $DELTA_CONC
 
 # # bamford_plots
-# $PYTHON $THIS_REPO_DIR/bamford_plots.py \
-#     --update-interval $UPDATE_INTERVAL \
-#     --threshold-val $THRESHOLD_VAL \
-#     --delta-z $DELTA_Z \
-#     --delta-p $DELTA_P \
-#     --delta-mag $DELTA_MAG \
-#     --delta-mass $DELTA_MASS \
-#     --delta-conc $DELTA_CONC \
-#     --rounding $ROUNDING
+ $PYTHON $THIS_REPO_DIR/bamford_plots.py \
+     --update-interval $UPDATE_INTERVAL \
+     --threshold-val $THRESHOLD_VAL \
+     --delta-z $DELTA_Z \
+     --delta-p $DELTA_P \
+     --delta-mag $DELTA_MAG \
+     --delta-mass $DELTA_MASS \
+     --delta-conc $DELTA_CONC \
+     --rounding $ROUNDING
 
 # Testing that the shell script works (Leave this hashed out)
 #$PYTHON $THIS_REPO_DIR/test.py \

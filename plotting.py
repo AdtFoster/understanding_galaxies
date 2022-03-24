@@ -17,16 +17,16 @@ if __name__ == '__main__':
     
     logging.info('Beginning plotting')
 
-    count_array_perm = pd.read_csv('count_array_perm.csv', index_col=0)
+    count_array_perm = pd.read_csv('output_csvs/count_array_perm.csv', index_col=0)
     count_array_perm = count_array_perm.to_numpy()
     
-    error_array_perm = pd.read_csv('error_array_perm.csv', index_col=0)
+    error_array_perm = pd.read_csv('output_csvs/error_array_perm.csv', index_col=0)
     error_array_perm = error_array_perm.to_numpy()
     
-    residual_array = pd.read_csv('residual_array.csv', index_col=0)
+    residual_array = pd.read_csv('output_csvs/residual_array.csv', index_col=0)
     residual_array = residual_array.to_numpy()
     
-    standard_deviation_array = pd.read_csv('standard_deviation_array.csv', index_col=0)
+    standard_deviation_array = pd.read_csv('output_csvs/standard_deviation_array.csv', index_col=0)
     standard_deviation_array = standard_deviation_array.to_numpy()
     
     count = int(len(count_array_perm[:,0])/17)
