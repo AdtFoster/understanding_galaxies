@@ -246,8 +246,6 @@ def mass_gaussian_weightings(mass, mass_0, delta_mass):
     """
     
     """
-    mass = np.log10(mass)
-    mass_0 = np.log10(mass_0)
     #prefactor = (2*np.pi*((delta_z**2)+(delta_p)**2))**(-1/2)
     exponent = np.exp(-((((mass - mass_0)**2)/(2*(delta_mass**2)))))
 
