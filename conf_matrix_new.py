@@ -406,7 +406,7 @@ if __name__ == '__main__':
     
     logging.info('{0} predictions complete, {1} galaxies skipped, plotting matrix'.format(test_gal_number, skipped_gal))
     
-    morphology_names = ['smooth', 'featured', 'artifact', 'NULL'] #add NULL to morphology names
+    morphology_names = ['smooth', 'featured', 'artifact', 'unclassified'] 
     threshold_p = args.threshold_val
     
         #normalising the de-biased predictions
@@ -425,7 +425,7 @@ if __name__ == '__main__':
         elif actual_p_list_artifact[i]>=threshold_p:
             dominant_morphology_expected.append("artifact")
         else:
-            dominant_morphology_expected.append("NULL") 
+            dominant_morphology_expected.append("unclassified") 
     
     dominant_morphology_predicted = []
     for i in range(len(weighted_means_list_smooth)):
@@ -436,7 +436,7 @@ if __name__ == '__main__':
         elif weighted_means_list_artifact_norm[i]>=threshold_p:
             dominant_morphology_predicted.append("artifact")
         else:
-            dominant_morphology_predicted.append("NULL")
+            dominant_morphology_predicted.append("unclassified")
 
     dominant_morphology_simulated = []
     for i in range(len(test_p_list_smooth)):
@@ -447,12 +447,12 @@ if __name__ == '__main__':
         elif test_p_list_artifact[i]>=threshold_p:
             dominant_morphology_simulated.append("artifact") 
         else:
-            dominant_morphology_simulated.append("NULL")  
+            dominant_morphology_simulated.append("unclassified")  
     
-    confident_locs = np.argwhere(np.asarray(dominant_morphology_predicted)!='NULL') #find arguements for confident debiased predictions
+    confident_locs = np.argwhere(np.asarray(dominant_morphology_predicted)!='unclassified') #find arguements for confident debiased predictions
     logging.info(confident_locs)
     if len(confident_locs) == 0:
-        raise ValueError(f'No confident (i.e. non-NULL i.e. with predicted debiased p > {threshold_p} found - cannot make CMs or metrics')
+        raise ValueError(f'No confident (i.e. non-unclassified i.e. with predicted debiased p > {threshold_p} found - cannot make CMs or metrics')
     
     dominant_morphology_expected = np.asarray(dominant_morphology_expected)[confident_locs] #remove non-confident debiased predictions from expected list
     dominant_morphology_predicted = np.asarray(dominant_morphology_predicted)[confident_locs] #remove non-confident debiased predictions from predicted list
@@ -464,7 +464,7 @@ if __name__ == '__main__':
     simulated = dominant_morphology_simulated
     
     results = confusion_matrix(expected, predicted, labels=morphology_names) #converting inputs into confusion matrix format (debiased on x-axis (top) and true on y-axis (side))
-    results = results[0:4, 0:4] #(remove the NULL column for debiased prediction as it will never be filled) changed to include to avoid confusion about the diagonal - mike request
+    results = results[0:4, 0:4] #(remove the unclassified column for debiased prediction as it will never be filled) changed to include to avoid confusion about the diagonal - mike request
     comparison_results = confusion_matrix(expected, simulated, labels=morphology_names) #converting inputs into confusion matrix format (debiased on x-axis (top) and true on y-axis (side))
     
     #find the precision, recall and f1 scores
@@ -481,8 +481,8 @@ if __name__ == '__main__':
     accuracy_comp = np.trace(comparison_results) / np.sum(comparison_results)
     
     #calculate kappa accuracies
-    kappa_results = cohen_kappa_score(expected, predicted, labels=['smooth', 'featured', 'artifact', 'NULL'])
-    kappa_comp = cohen_kappa_score(expected, simulated, labels=['smooth', 'featured', 'artifact', 'NULL'])
+    kappa_results = cohen_kappa_score(expected, predicted, labels=['smooth', 'featured', 'artifact', 'unclassified'])
+    kappa_comp = cohen_kappa_score(expected, simulated, labels=['smooth', 'featured', 'artifact', 'unclassified'])
 
     #table the precision, rcall, f1 and accuracy
     table_of_scores_results = pd.DataFrame((precision_results, recall_results, f1_results)).T
@@ -510,13 +510,14 @@ if __name__ == '__main__':
     plot_1 = plt.figure(figsize=(10,6))
    
     sb.heatmap(dataframe_results, annot=True, fmt='d', annot_kws={'fontsize':10}, cmap=sb.cubehelix_palette(as_cmap=True, reverse=True)) #plotting heatmap for use as confusion matrix plot (annot shows the number within the box)
-    
+    sb.set(font_scale=1.5)
+
     #sb.heatmap(dataframe_results, annot=True, cmap=sb.color_palette("YlOrBr_r", as_cmap=True)) #plotting heatmap for use as confusion matrix plot (annot shows the number within the box)
     #sb.cubehelix_palette(start=.5, rot=-.75, reverse=True, as_cmap=True)
     
     plt.title('Comparative predictions with de-biasing method (N={0} with {1} above p={2})'.format(len(test_sample_names) - skipped_gal, len(predicted), threshold_p), fontsize=20, wrap=True)
-    plt.xlabel('De-biased high redshift prediction (Predicted)', fontsize = 15) # x-axis label with fontsize 15
-    plt.ylabel('Non-simulated (low redshift) prediction (Actual)', fontsize = 15) # y-axis label with fontsize 15
+    plt.xlabel('De-biased high redshift prediction (Predicted)', fontsize = 16) # x-axis label with fontsize 15
+    plt.ylabel('Non-simulated (low redshift) prediction (Actual)', fontsize = 16) # y-axis label with fontsize 15
     plt.savefig('matrix_plots/De_biased_predictions_confusion_matrix.jpeg')
     plt.close()
     
@@ -524,11 +525,12 @@ if __name__ == '__main__':
     #plot the non de-biased matrix
     plot_2 = plt.figure(figsize=(10,6))
    
-    sb.heatmap(dataframe_comparative_results, annot=True, fmt='d', annot_kws={'fontsize':10}, cmap=sb.cubehelix_palette(as_cmap=True, reverse=True)) #plotting heatmap for use as confusion matrix plot (annot shows the number within the box)
-    
+    sb.heatmap(dataframe_comparative_results, annot=True, fmt='d', annot_kws={'fontsize':14}, cmap=sb.cubehelix_palette(as_cmap=True, reverse=True)) #plotting heatmap for use as confusion matrix plot (annot shows the number within the box)
+    sb.set(font_scale=1.5)
+
     plt.title('Comparative predictions with non de-biasing method (N={0:} with {1} above p={2})'.format(len(test_sample_names) - skipped_gal, len(simulated), threshold_p), fontsize=20, wrap=True)
-    plt.xlabel('High redshift prediction (Prediction)', fontsize = 15) # x-axis label with fontsize 15
-    plt.ylabel('Non-simulated (low redshift) prediction (Actual)', fontsize = 15) # y-axis label with fontsize 15
+    plt.xlabel('High redshift prediction (Prediction)', fontsize = 16) # x-axis label with fontsize 15
+    plt.ylabel('Non-simulated (low redshift) prediction (Actual)', fontsize = 16) # y-axis label with fontsize 15
     plt.savefig('matrix_plots/Non_de_biased_predictions_confusion_matrix.jpeg')
     plt.close()
 
