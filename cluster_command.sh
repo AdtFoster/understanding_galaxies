@@ -138,7 +138,7 @@ MORPHOLOGY='smooth' #smooth, featured-or-disk, artifact
     --initial-delta-mass $INITIAL_DELTA_MASS \
     --initial-delta-conc $INITIAL_DELTA_CONC
     
-# $PYTHON $THIS_REPO_DIR/plotting.py
+ $PYTHON $THIS_REPO_DIR/plotting.py
 
  $PYTHON $THIS_REPO_DIR/conf_matrix_new.py \
      --min-gal $MIN_GAL \
