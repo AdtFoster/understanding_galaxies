@@ -37,7 +37,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    
     min_gal = args.min_gal
     max_gal = args.max_gal
     delta_z = args.delta_z #sets width of sample box - Default optimised = 0.008
@@ -53,7 +52,8 @@ if __name__ == '__main__':
     count_array = []
 
     # The data
-    full_data = pd.read_csv('output_csvs/full_data.csv') #index_col=0
+    full_data = pd.read_csv('full_data_1m_with_resizing.csv') #index_col=0
+    full_data['elpetro_mass'] = np.log10(full_data['elpetro_mass'])
     
     #form a numpy array of the first [min_gal:max_gal] galaxy names
     test_sample_names = pd.unique(full_data['iauname'])[min_gal:max_gal] 
@@ -83,12 +83,30 @@ if __name__ == '__main__':
         lower_z = test_z - delta_z
         upper_p = test_p + delta_p
         lower_p =test_p - delta_p
+        
+        #Sets values for magnitude
+        upper_mag = test_mag + delta_mag #sets upper box mag limit
+        lower_mag = test_mag - delta_mag #sets lower box mag limit
+        
+        #Sets values for mass
+        upper_mass = test_mass + delta_mass #sets upper box mass limit
+        lower_mass = test_mass - delta_mass #sets lower box mass limit
+        
+        #Sets values for conc
+        upper_conc = test_conc + delta_conc #sets upper box mass limit
+        lower_conc = test_conc - delta_conc #sets lower box mass limit
 
         immediate_sub_sample = full_data[
                             (full_data['redshift'].astype(float) < upper_z) &
                             (full_data['redshift'].astype(float) >= lower_z) &
                             (full_data[f'smooth-or-featured-dr5_{morphology}_prob'].astype(float) >= lower_p) &
-                            (full_data[f'smooth-or-featured-dr5_{morphology}_prob'].astype(float) <= upper_p)
+                            (full_data[f'smooth-or-featured-dr5_{morphology}_prob'].astype(float) <= upper_p) &
+                            (full_data['elpetro_absmag_r'].astype(float) <= upper_mag) &
+                            (full_data['elpetro_absmag_r'].astype(float) >= lower_mag) &
+                            (full_data['elpetro_mass'].astype(float) <= upper_mass) &
+                            (full_data['elpetro_mass'].astype(float) >= lower_mass) &
+                            (full_data['concentration'].astype(float) <= upper_conc) &
+                            (full_data['concentration'].astype(float) >= lower_conc)
                             ]
 
         galaxy_names_in_box = pd.unique(immediate_sub_sample['iauname'])

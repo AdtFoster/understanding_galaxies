@@ -56,7 +56,8 @@ if __name__ == '__main__':
     step_delta_conc = args.step_delta_conc
     
     # created by create_dataframe.py
-    full_data = pd.read_csv('output_csvs/full_data.csv') #index_col=0
+    full_data = pd.read_csv('full_data_1m_with_resizing.csv') #index_col=0
+    full_data['elpetro_mass'] = np.log10(full_data['elpetro_mass'])
     
     #form a numpy array of the first [min_gal:max_gal] galaxy names
     test_sample_names = pd.unique(full_data['iauname'])[min_gal:max_gal] 
@@ -73,6 +74,7 @@ if __name__ == '__main__':
     
     count = 0
     
+    
     logging.info('Beginning predictions')
     # try many options for box size
     for delta_z in np.arange(min_delta_z,max_delta_z,step_delta_z):
@@ -81,6 +83,7 @@ if __name__ == '__main__':
                 for delta_mass in np.arange(min_delta_mass,max_delta_mass,step_delta_mass):
                     for delta_conc in np.arange(min_delta_conc,max_delta_conc,step_delta_conc):
                         logging.info('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(delta_z, delta_p, delta_mag, delta_mass, delta_conc))
+                        print('{:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(delta_z, delta_p, delta_mag, delta_mass, delta_conc))
                         
                         number_of_galaxies = 0
                         count_array = []
@@ -109,17 +112,36 @@ if __name__ == '__main__':
                             lower_z = test_z - delta_z
                             upper_p = test_p + delta_p
                             lower_p = test_p - delta_p
+                            
+                            #Sets values for magnitude
+                            upper_mag = test_mag + delta_mag #sets upper box mag limit
+                            lower_mag = test_mag - delta_mag #sets lower box mag limit
+                            
+                            #Sets values for mass
+                            upper_mass = test_mass + delta_mass #sets upper box mass limit
+                            lower_mass = test_mass - delta_mass #sets lower box mass limit
+                            
+                            #Sets values for conc
+                            upper_conc = test_conc + delta_conc #sets upper box mass limit
+                            lower_conc = test_conc - delta_conc #sets lower box mass limit
     
                             immediate_sub_sample = full_data[
                                 (full_data['redshift'].astype(float) < upper_z) &
                                 (full_data['redshift'].astype(float) >= lower_z) &
                                 (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) >= lower_p) &
-                                (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) <= upper_p)
+                                (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) <= upper_p) &
+                                (full_data['elpetro_absmag_r'].astype(float) <= upper_mag) &
+                                (full_data['elpetro_absmag_r'].astype(float) >= lower_mag) &
+                                (full_data['elpetro_mass'].astype(float) <= upper_mass) &
+                                (full_data['elpetro_mass'].astype(float) >= lower_mass) &
+                                (full_data['concentration'].astype(float) <= upper_conc) &
+                                (full_data['concentration'].astype(float) >= lower_conc)
                                 ]
                                 # mag and mass are extra weightings, don't change num galaxies in the box
                             
                             #find unique galaxy names within catchment area
                             galaxy_names_in_box = pd.unique(immediate_sub_sample['iauname'])
+                            print(len(galaxy_names_in_box))
                             if len(galaxy_names_in_box) > 10: #could change 10 to variable?
                                 # begin debiasing
     
@@ -197,6 +219,7 @@ if __name__ == '__main__':
                                 """
                                 
                                 for percent in range(10,95, 5):
+                                    print(percent)
                                 
                                     x_val = prediction_list
                                     sd = np.sqrt(sd_list)
@@ -302,7 +325,6 @@ if __name__ == '__main__':
                         logging.info(count)
 
             
-    
     standard_deviation_array = pd.DataFrame(standard_deviation_array)
     standard_deviation_array = standard_deviation_array.sort_values(by=4)
     standard_deviation_array = standard_deviation_array.to_numpy()

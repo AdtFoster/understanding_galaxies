@@ -107,26 +107,57 @@ if __name__ == '__main__':
         lower_p_smooth = test_p_smooth - delta_p #sets lower p box limit for smooth
         lower_p_featured = test_p_featured - delta_p #sets lower p box limit for featured
         lower_p_artifact = test_p_artifact - delta_p #sets lower p box limit for artifact
+        
+        #Sets values for magnitude
+        upper_mag = test_mag + delta_mag #sets upper box mag limit
+        lower_mag = test_mag - delta_mag #sets lower box mag limit
+        
+        #Sets values for mass
+        upper_mass = test_mass + delta_mass #sets upper box mass limit
+        lower_mass = test_mass - delta_mass #sets lower box mass limit
+        
+        #Sets values for conc
+        upper_conc = test_conc + delta_conc #sets upper box mass limit
+        lower_conc = test_conc - delta_conc #sets lower box mass limit
+    
 
         #sub sample for each morphology
         immediate_sub_sample_smooth = full_data[
                             (full_data['redshift'].astype(float) <= upper_z) &
                             (full_data['redshift'].astype(float) >= lower_z) &
                             (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) >= lower_p_smooth) &
-                            (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) <= upper_p_smooth)
+                            (full_data['smooth-or-featured-dr5_smooth_prob'].astype(float) <= upper_p_smooth) &
+                            (full_data['elpetro_absmag_r'].astype(float) <= upper_mag) &
+                            (full_data['elpetro_absmag_r'].astype(float) >= lower_mag) &
+                            (full_data['elpetro_mass'].astype(float) <= upper_mass) &
+                            (full_data['elpetro_mass'].astype(float) >= lower_mass) &
+                            (full_data['concentration'].astype(float) <= upper_conc) &
+                            (full_data['concentration'].astype(float) >= lower_conc)
                             ] #samples galaxies within box limits
         
         immediate_sub_sample_featured = full_data[
                             (full_data['redshift'].astype(float) <= upper_z) &
                             (full_data['redshift'].astype(float) >= lower_z) &
                             (full_data['smooth-or-featured-dr5_featured-or-disk_prob'].astype(float) >= lower_p_featured) &
-                            (full_data['smooth-or-featured-dr5_featured-or-disk_prob'].astype(float) <= upper_p_featured)
+                            (full_data['smooth-or-featured-dr5_featured-or-disk_prob'].astype(float) <= upper_p_featured) &
+                            (full_data['elpetro_absmag_r'].astype(float) <= upper_mag) &
+                            (full_data['elpetro_absmag_r'].astype(float) >= lower_mag) &
+                            (full_data['elpetro_mass'].astype(float) <= upper_mass) &
+                            (full_data['elpetro_mass'].astype(float) >= lower_mass) &
+                            (full_data['concentration'].astype(float) <= upper_conc) &
+                            (full_data['concentration'].astype(float) >= lower_conc) 
                             ] #samples galaxies within box limits
         immediate_sub_sample_artifact = full_data[
                             (full_data['redshift'].astype(float) <= upper_z) &
                             (full_data['redshift'].astype(float) >= lower_z) &
                             (full_data['smooth-or-featured-dr5_artifact_prob'].astype(float) >= lower_p_artifact) &
-                            (full_data['smooth-or-featured-dr5_artifact_prob'].astype(float) <= upper_p_artifact)
+                            (full_data['smooth-or-featured-dr5_artifact_prob'].astype(float) <= upper_p_artifact) &
+                            (full_data['elpetro_absmag_r'].astype(float) <= upper_mag) &
+                            (full_data['elpetro_absmag_r'].astype(float) >= lower_mag) &
+                            (full_data['elpetro_mass'].astype(float) <= upper_mass) &
+                            (full_data['elpetro_mass'].astype(float) >= lower_mass) &
+                            (full_data['concentration'].astype(float) <= upper_conc) &
+                            (full_data['concentration'].astype(float) >= lower_conc)
                             ] #samples galaxies within box limits
         
         #requires at least 10 nearby galaxies for debiasing
