@@ -29,7 +29,7 @@ PREDICTIONS_DIR=/share/nas2/walml/repos/understanding_galaxies/results/latest_sc
 
 #Test sample of galaxies to debias for parameter optimisation
 MIN_GAL=0
-MAX_GAL=50
+MAX_GAL=250
 
 #Sets the galaxies to be debiased for conf matrix
 MIN_GAL_MATRIX=0
@@ -40,7 +40,7 @@ GALS_TO_SIM=10
 
 #galaxies to plot squid graphs for
 MIN_GAL_SQUID=0
-MAX_GAL_SQUID=1
+MAX_GAL_SQUID=10
 
 #accepeted percentage area under pdf 
 PERCENT=66
@@ -60,19 +60,19 @@ MAX_ALLOW_Z=0.05
 #sets of max and min hyperparams with step sizes for selecting optimum
 MIN_DELTA_Z=0.005
 MAX_DELTA_Z=0.015
-STEP_DELTA_Z=0.004
+STEP_DELTA_Z=0.002
 MIN_DELTA_P=0.010
 MAX_DELTA_P=0.020
-STEP_DELTA_P=0.004
+STEP_DELTA_P=0.002
 MIN_DELTA_MAG=0.5
 MAX_DELTA_MAG=1.5
-STEP_DELTA_MAG=0.4
+STEP_DELTA_MAG=0.2
 MIN_DELTA_MASS=0.5
 MAX_DELTA_MASS=1.5
-STEP_DELTA_MASS=0.4
+STEP_DELTA_MASS=0.2
 MIN_DELTA_CONC=0.05
 MAX_DELTA_CONC=0.15
-STEP_DELTA_CONC=0.04
+STEP_DELTA_CONC=0.02
 
 #number of gals iterated per update and threshold for confident prediction
 UPDATE_INTERVAL=50
