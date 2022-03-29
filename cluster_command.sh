@@ -4,7 +4,7 @@
 #SBATCH --mem=70gb   
 #SBATCH -c 16                                       # Job memory request
 #SBATCH --no-requeue                                    # Do not resubmit a failed job
-#SBATCH --time=23:00:00                                # Time limit hrs:min:sec
+#SBATCH --time=02:23:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --exclusive   # only one task per node
  
