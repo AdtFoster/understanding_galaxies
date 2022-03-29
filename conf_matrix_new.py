@@ -449,7 +449,13 @@ if __name__ == '__main__':
         else:
             dominant_morphology_simulated.append("unclassified")  
     
-    confident_locs = np.argwhere(np.asarray(dominant_morphology_predicted)!='unclassified') #find arguements for confident debiased predictions
+    confident_locs_smooth = np.argwhere(np.asarray(weighted_means_list_smooth_norm) > 0.7) #find arguements for confident debiased predictions (predictions > 0.7)
+    confident_locs_featured = np.argwhere(np.asarray(weighted_means_list_featured_norm) > 0.7) #find arguements for confident debiased predictions (predictions > 0.7)
+    confident_locs_artifact = np.argwhere(np.asarray(weighted_means_list_artifact_norm) > 0.7) #find arguements for confident debiased predictions (predictions > 0.7)
+
+    confident_locs=np.vstack((confident_locs_smooth, confident_locs_featured))
+    confident_locs=np.vstack((confident_locs, confident_locs_artifact))
+
     logging.info(confident_locs)
     if len(confident_locs) == 0:
         raise ValueError(f'No confident (i.e. non-unclassified i.e. with predicted debiased p > {threshold_p} found - cannot make CMs or metrics')
