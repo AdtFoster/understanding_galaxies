@@ -521,7 +521,7 @@ if __name__ == '__main__':
     #sb.heatmap(dataframe_results, annot=True, cmap=sb.color_palette("YlOrBr_r", as_cmap=True)) #plotting heatmap for use as confusion matrix plot (annot shows the number within the box)
     #sb.cubehelix_palette(start=.5, rot=-.75, reverse=True, as_cmap=True)
     
-    plt.title('Comparative predictions with de-biasing method (N={0} with {1} above p={2})'.format(len(test_sample_names) - skipped_gal, len(predicted), threshold_p), fontsize=20, wrap=True)
+    plt.title('Comparative predictions with de-biasing method (N={0} with {1} above p={2})'.format(len(test_sample_names) - skipped_gal, len(predicted), 0.7), fontsize=20, wrap=True)
     plt.xlabel('De-biased high redshift prediction (Predicted)', fontsize = 16) # x-axis label with fontsize 15
     plt.ylabel('Non-simulated (low redshift) prediction (Actual)', fontsize = 16) # y-axis label with fontsize 15
     plt.savefig('matrix_plots/De_biased_predictions_confusion_matrix.jpeg')
@@ -534,7 +534,7 @@ if __name__ == '__main__':
     sb.heatmap(dataframe_comparative_results, annot=True, fmt='d', annot_kws={'fontsize':14}, cmap=sb.cubehelix_palette(as_cmap=True, reverse=True)) #plotting heatmap for use as confusion matrix plot (annot shows the number within the box)
     sb.set(font_scale=1.5)
 
-    plt.title('Comparative predictions with non de-biasing method (N={0:} with {1} above p={2})'.format(len(test_sample_names) - skipped_gal, len(simulated), threshold_p), fontsize=20, wrap=True)
+    plt.title('Comparative predictions with non de-biasing method (N={0:} with {1} above p={2})'.format(len(test_sample_names) - skipped_gal, len(simulated), 0.7), fontsize=20, wrap=True)
     plt.xlabel('High redshift prediction (Prediction)', fontsize = 16) # x-axis label with fontsize 15
     plt.ylabel('Non-simulated (low redshift) prediction (Actual)', fontsize = 16) # y-axis label with fontsize 15
     plt.savefig('matrix_plots/Non_de_biased_predictions_confusion_matrix.jpeg')
