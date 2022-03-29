@@ -253,7 +253,7 @@ if __name__ == '__main__':
                             width_val = np.append(width_val, allowed_val[i,0])
                     
                     width_val = np.append(width_val, allowed_val[len(allowed_val)-1,0])
-                    round_act_p = int(1000*round(actual_p,3))
+                    round_act_p = int(500*round(actual_p,3))
                     
                     sum_value += norm_kern_sum[round_act_p]
                     
