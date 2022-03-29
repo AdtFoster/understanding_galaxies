@@ -29,7 +29,7 @@ if __name__ == '__main__':
     standard_deviation_array = pd.read_csv('output_csvs/standard_deviation_array.csv', index_col=0)
     standard_deviation_array = standard_deviation_array.to_numpy()
     
-    count = int(len(count_array_perm[:,0])/17)
+    count = int(len(count_array_perm[:,0])/9)
     
     count_array_perm = np.split(count_array_perm, count)
     count_array_perm = np.asarray(count_array_perm)
