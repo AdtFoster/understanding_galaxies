@@ -35,6 +35,10 @@ MAX_GAL=250
 MIN_GAL_MATRIX=0
 MAX_GAL_MATRIX=1000
 
+#Sets the galaxies to be batched for each node when run in parallel (total of 23422 unique galaxies in full_data_1m_with_resizing)
+BATCH_GAL_MIN=0      #if running over multiple nodes, would increase as [0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500]
+BATCH_GAL_MAX=2500   #if running over multiple nodes, would increase as [2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500, :]
+
 #hard cap on number of gals being simulated
 GALS_TO_SIM=10
 
@@ -94,7 +98,6 @@ INITIAL_DELTA_CONC=0.1
 #define which morphology squid diagrams to produce
 MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
 
-
 #$PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
 #    --fits-dir $FITS_DIR \
 #    --save-dir $SCALED_IMG_DIR \
@@ -115,68 +118,79 @@ MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
 #   --min-allow-z $MIN_ALLOW_Z 
 
 # apply debiasing method, to each galaxy, by sampling nearby galaxies
- $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
-    --max-gal $MAX_GAL \
-    --min-gal $MIN_GAL \
-    --min-delta-z $MIN_DELTA_Z \
-    --max-delta-z $MAX_DELTA_Z \
-    --step-delta-z $STEP_DELTA_Z \
-    --min-delta-p $MIN_DELTA_P \
-    --max-delta-p $MAX_DELTA_P \
-    --step-delta-p $STEP_DELTA_P \
-    --min-delta-mag $MIN_DELTA_MAG \
-    --max-delta-mag $MAX_DELTA_MAG \
-    --step-delta-mag $STEP_DELTA_MAG \
-    --min-delta-mass $MIN_DELTA_MASS \
-    --max-delta-mass $MAX_DELTA_MASS \
-    --step-delta-mass $STEP_DELTA_MASS \
-    --min-delta-conc $MIN_DELTA_CONC \
-    --max-delta-conc $MAX_DELTA_CONC \
-    --step-delta-conc $STEP_DELTA_CONC \
-    --initial-delta-p $INITIAL_DELTA_P \
-    --initial-delta-mag $INITIAL_DELTA_MAG \
-    --initial-delta-mass $INITIAL_DELTA_MASS \
-    --initial-delta-conc $INITIAL_DELTA_CONC
+# $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
+#    --max-gal $MAX_GAL \
+#    --min-gal $MIN_GAL \
+#    --min-delta-z $MIN_DELTA_Z \
+#    --max-delta-z $MAX_DELTA_Z \
+#    --step-delta-z $STEP_DELTA_Z \
+#    --min-delta-p $MIN_DELTA_P \
+#    --max-delta-p $MAX_DELTA_P \
+#    --step-delta-p $STEP_DELTA_P \
+#    --min-delta-mag $MIN_DELTA_MAG \
+#    --max-delta-mag $MAX_DELTA_MAG \
+#    --step-delta-mag $STEP_DELTA_MAG \
+#    --min-delta-mass $MIN_DELTA_MASS \
+#    --max-delta-mass $MAX_DELTA_MASS \
+#    --step-delta-mass $STEP_DELTA_MASS \
+#    --min-delta-conc $MIN_DELTA_CONC \
+#    --max-delta-conc $MAX_DELTA_CONC \
+#    --step-delta-conc $STEP_DELTA_CONC \
+#    --initial-delta-p $INITIAL_DELTA_P \
+#    --initial-delta-mag $INITIAL_DELTA_MAG \
+#    --initial-delta-mass $INITIAL_DELTA_MASS \
+#    --initial-delta-conc $INITIAL_DELTA_CONC
     
- $PYTHON $THIS_REPO_DIR/plotting.py
+# $PYTHON $THIS_REPO_DIR/plotting.py
 
- $PYTHON $THIS_REPO_DIR/conf_matrix_new.py \
-     --min-gal $MIN_GAL_MATRIX \
-     --max-gal $MAX_GAL_MATRIX \
+ $PYTHON $THIS_REPO_DIR/debiasing_predictions.py \
+     --batch-gal-min $BATCH_GAL_MIN \
+     --batch-gal-max $BATCH_GAL_MAX \
      --update-interval $UPDATE_INTERVAL \
      --pred-z $PRED_Z \
-     --threshold-val $THRESHOLD_VAL \
      --delta-z $DELTA_Z \
      --delta-p $DELTA_P \
      --delta-mag $DELTA_MAG \
      --delta-mass $DELTA_MASS \
      --delta-conc $DELTA_CONC
+
+# $PYTHON $THIS_REPO_DIR/conf_matrix_new.py \
+#     --min-gal $MIN_GAL_MATRIX \
+#     --max-gal $MAX_GAL_MATRIX \
+#     --update-interval $UPDATE_INTERVAL \
+#     --pred-z $PRED_Z \
+#     --threshold-val $THRESHOLD_VAL \
+#     --delta-z $DELTA_Z \
+#     --delta-p $DELTA_P \
+#     --delta-mag $DELTA_MAG \
+#     --delta-mass $DELTA_MASS \
+#     --delta-conc $DELTA_CONC
 
 # # evolution tracks
 # # TODO DELTA_MASS needs specifying above
- $PYTHON $THIS_REPO_DIR/squid_diagrams_new.py \
-     --min-gal $MIN_GAL_SQUID \
-     --max-gal $MAX_GAL_SQUID \
-     --delta-z $DELTA_Z \
-     --delta-p $DELTA_P \
-     --delta-mag $DELTA_MAG \
-     --delta-mass $DELTA_MASS \
-     --min-z $PRED_Z \
-     --percent $PERCENT \
-     --morphology $MORPHOLOGY \
-     --max-z $MAX_Z \
-     --delta-conc $DELTA_CONC
+# $PYTHON $THIS_REPO_DIR/squid_diagrams_new.py \
+#     --min-gal $MIN_GAL_SQUID \
+#     --max-gal $MAX_GAL_SQUID \
+#     --delta-z $DELTA_Z \
+#     --delta-p $DELTA_P \
+#     --delta-mag $DELTA_MAG \
+#     --delta-mass $DELTA_MASS \
+#     --min-z $PRED_Z \
+#     --percent $PERCENT \
+#     --morphology $MORPHOLOGY \
+#     --max-z $MAX_Z \
+#     --delta-conc $DELTA_CONC
 
 # # bamford_plots
- $PYTHON $THIS_REPO_DIR/bamford_plots.py \
-     --update-interval $UPDATE_INTERVAL \
-     --threshold-val $THRESHOLD_VAL \
-     --delta-z $DELTA_Z \
-     --delta-p $DELTA_P \
-     --delta-mag $DELTA_MAG \
-     --delta-mass $DELTA_MASS \
-     --delta-conc $DELTA_CONC \
-     --rounding $ROUNDING
+# $PYTHON $THIS_REPO_DIR/bamford_plots.py \
+#     --update-interval $UPDATE_INTERVAL \
+#     --threshold-val $THRESHOLD_VAL \
+#     --delta-z $DELTA_Z \
+#     --delta-p $DELTA_P \
+#     --delta-mag $DELTA_MAG \
+#     --delta-mass $DELTA_MASS \
+#     --delta-conc $DELTA_CONC \
+#     --rounding $ROUNDING
 
 # Testing that the shell script works (Leave this hashed out)
 #$PYTHON $THIS_REPO_DIR/test.py \
