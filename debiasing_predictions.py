@@ -422,6 +422,6 @@ if __name__ == '__main__':
 
         batch_number+=1
 
-    df_cumulative.to_csv('output_csvs/debiased_predictions_{0}.csv'.format(args.batch_gal_min), header=df_cumulative.columns, index=False)
+    df_cumulative.to_csv('output_csvs/debiased_predictions_{0}_{1}.csv'.format(args.batch_gal_min, pred_z), header=df_cumulative.columns, index=False)
 
     
