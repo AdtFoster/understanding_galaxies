@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # Remove the test sample
 
     unique_gal_names=pd.unique(full_data['iauname'])
-    df_cumulative=pd.DataFrame(columns=['iauname', 'actual_smooth_pred', 'actual_featured_pred', 'actual_artifact_pred', 'sim_smooth_pred', 'sim_featured_pred', 'sim_artifact_pred', 'debiased_smooth_pred', 'debiased_featured_pred', 'debiased_artifact_pred'])
+    df_cumulative=pd.DataFrame(columns=['iauname', 'actual_smooth_pred', 'actual_featured_pred', 'actual_artifact_pred', 'sim_smooth_pred', 'sim_featured_pred', 'sim_artifact_pred', 'debiased_smooth_pred', 'debiased_featured_pred', 'debiased_artifact_pred', 'pred_z', 'magnitude'])
     batch_number=1
 
     for test_sample_names in np.array_split(pd.unique(full_data['iauname'])[args.batch_gal_min:args.batch_gal_max], max_batches): #batches the data into [max_batches] 
@@ -82,6 +82,9 @@ if __name__ == '__main__':
         test_p_list_smooth = [] #list for each test_p value per galaxy (smooth)
         test_p_list_featured = [] #list for each test_p value per galaxy (featured)
         test_p_list_artifact = [] #list for each test_p value per galaxy (artifact)
+        
+        magnitude_list = []
+        pred_z_list = []
         
         for test_name in test_sample_names:
             
@@ -404,6 +407,12 @@ if __name__ == '__main__':
             test_p_list_smooth.append(test_p_smooth)
             test_p_list_featured.append(test_p_featured)
             test_p_list_artifact.append(test_p_artifact)
+            
+            #list of magnitudes
+            magnitude_list.append(test_sample.query(f'iauname == "{test_name}"')['elpetro_absmag_r'][0])
+            
+            #list of pred z
+            pred_z_list.append(pred_z)
 
             #add 1 to galaxy counter for print statement at start of loop
             test_gal_number+=1
@@ -416,12 +425,10 @@ if __name__ == '__main__':
         weighted_means_list_artifact_norm = weighted_means_list_artifact / sum_of_morph_predictions
         weighted_means_list_featured_norm = weighted_means_list_featured / sum_of_morph_predictions
 
-        df=pd.DataFrame([test_sample_names, actual_p_list_smooth, actual_p_list_featured, actual_p_list_artifact, test_p_list_smooth, test_p_list_featured, test_p_list_artifact, weighted_means_list_smooth_norm, weighted_means_list_featured_norm, weighted_means_list_artifact_norm]).T
+        df=pd.DataFrame([test_sample_names, actual_p_list_smooth, actual_p_list_featured, actual_p_list_artifact, test_p_list_smooth, test_p_list_featured, test_p_list_artifact, weighted_means_list_smooth_norm, weighted_means_list_featured_norm, weighted_means_list_artifact_norm, pred_z, ]).T
         df.columns = df_cumulative.columns #rename the comulmns with correct headers
         df_cumulative=pd.concat([df_cumulative, df]) #concatonate the dataframes from each batch
 
         batch_number+=1
 
     df_cumulative.to_csv('output_csvs/debiased_predictions_{0}_{1}.csv'.format(args.batch_gal_min, pred_z), header=df_cumulative.columns, index=False)
-
-    
