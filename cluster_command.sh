@@ -7,7 +7,9 @@
 #SBATCH --time=72:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --exclusive   # only one task per node
- 
+#SBATCH --output=ring-pred_%A_%a.log
+#SBATCH --array=[0-40]
+
 pwd; hostname; date
 
 nvidia-smi
@@ -53,7 +55,8 @@ PERCENT=66
 ROUNDING=0.005
 
 #sets target z, maximum sim z and step size up to max_z
-PRED_Z=0.03
+#PRED_Z=0.03 
+PRED_Z = ($(seq 0.015 0.005 0.115)) #Should give values from 0.02 through to 0.12
 MAX_Z=0.12
 STEP_SIZE=0.004 #could prob make a lot smaller (0.005?)
 
@@ -83,11 +86,11 @@ UPDATE_INTERVAL=50
 THRESHOLD_VAL=0.8
 
 #N-D box dimensions
-DELTA_Z=0.006
+DELTA_Z=0.005
 DELTA_P=0.016
 DELTA_MAG=0.5
 DELTA_MASS=1.0
-DELTA_CONC=0.1
+DELTA_CONC=0.05
 
 #Sets the initial constraints wehn tuning hyperparams
 INITIAL_DELTA_P=0.016
@@ -97,6 +100,15 @@ INITIAL_DELTA_CONC=0.1
 
 #define which morphology squid diagrams to produce
 MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
+
+POSSIBLE_START_SNIPPETS=( $(seq -500 500 19500 ) ) #RANGE NEEDS TO BE ADJUSTED UP TO 25000
+POSSIBLE_END_SNIPPETS=( $(seq 0 500 20000 ) )
+START_SNIPPET=${POSSIBLE_START_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
+END_SNIPPET=${POSSIBLE_END_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
+
+echo Using start snippet $START_SNIPPET
+echo Using end snippet $END_SNIPPET
+echo Using pred_z $PRED_Z
 
 #$PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
 #    --fits-dir $FITS_DIR \
@@ -143,16 +155,16 @@ MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
     
 # $PYTHON $THIS_REPO_DIR/plotting.py
 
- $PYTHON $THIS_REPO_DIR/debiasing_predictions.py \
-     --batch-gal-min $BATCH_GAL_MIN \
-     --batch-gal-max $BATCH_GAL_MAX \
-     --update-interval $UPDATE_INTERVAL \
-     --pred-z $PRED_Z \
-     --delta-z $DELTA_Z \
-     --delta-p $DELTA_P \
-     --delta-mag $DELTA_MAG \
-     --delta-mass $DELTA_MASS \
-     --delta-conc $DELTA_CONC
+# $PYTHON $THIS_REPO_DIR/debiasing_predictions.py \
+#     --batch-gal-min $BATCH_GAL_MIN \
+#     --batch-gal-max $BATCH_GAL_MAX \
+#     --update-interval $UPDATE_INTERVAL \
+#     --pred-z $PRED_Z \
+#     --delta-z $DELTA_Z \
+#     --delta-p $DELTA_P \
+#     --delta-mag $DELTA_MAG \
+#     --delta-mass $DELTA_MASS \
+#     --delta-conc $DELTA_CONC
 
 # $PYTHON $THIS_REPO_DIR/conf_matrix_new.py \
 #     --min-gal $MIN_GAL_MATRIX \
