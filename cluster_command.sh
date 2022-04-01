@@ -7,7 +7,7 @@
 #SBATCH --time=72:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --exclusive   # only one task per node
-#SBATCH --array=[0-40]
+#SBATCH --array=[0-20]  # must match length of PRED_Z_ARRAY
 
 pwd; hostname; date
 
@@ -172,7 +172,6 @@ MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
 #     --delta-conc $DELTA_CONC
 
 # # evolution tracks
-# # TODO DELTA_MASS needs specifying above
 # $PYTHON $THIS_REPO_DIR/squid_diagrams_new.py \
 #     --min-gal $MIN_GAL_SQUID \
 #     --max-gal $MAX_GAL_SQUID \

@@ -11,6 +11,7 @@ import argparse
 
 import functions_for_redshifting_figures as frf
 
+
 if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO)
@@ -23,6 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('--delta-mag', dest='delta_mag', type=float)
     parser.add_argument('--delta-mass', dest='delta_mass', type=float)
     parser.add_argument('--delta-conc', dest='delta_conc', type=float)
+    parser.add_argument('--pred-z', dest='pred_z', type=float)
     
     args = parser.parse_args()
     
@@ -56,7 +58,7 @@ if __name__ == '__main__':
     
     count = 0
     
-    def optimise (delta_z, delta_p, delta_mag, delta_mass, delta_conc, standard_deviation_array, residual_array, count_array_perm, error_array_perm, count):
+    def optimise(delta_z, delta_p, delta_mag, delta_mass, delta_conc, standard_deviation_array, residual_array, count_array_perm, error_array_perm, count):
         logging.info('Current working deltas: {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(delta_z, delta_p, delta_mag, delta_mass, delta_conc))
         
         number_of_galaxies = 0
@@ -75,7 +77,10 @@ if __name__ == '__main__':
             gal_min_z = test_galaxy.loc[[test_galaxy['redshift'].astype(float).idxmin()]]
             test_z = gal_max_z['redshift'].values[0]
             test_p = gal_max_z['smooth-or-featured-dr5_smooth_prob'].values[0]
-            pred_z = gal_min_z['redshift'].values[0]
+
+            # pred_z = gal_min_z['redshift'].values[0]  # ADAM/JJ, CHANGED FROM ACTUAL Z
+            pred_z = args.pred_z
+
             actual_p = gal_min_z['smooth-or-featured-dr5_smooth_prob'].values[0]
             test_mag = gal_max_z['elpetro_absmag_r'].values[0]
             test_mass = gal_max_z['elpetro_mass'].values[0]
