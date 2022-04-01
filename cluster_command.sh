@@ -7,7 +7,7 @@
 #SBATCH --time=72:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --exclusive   # only one task per node
-#SBATCH --array=[0-3]
+#SBATCH --array=[0-40]
 
 pwd; hostname; date
 
