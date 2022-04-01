@@ -1,14 +1,13 @@
 #!/bin/bash
 #SBATCH --job-name=understand                       # Job name
-#SBATCH --output=understand_%A.log 
+#SBATCH --output=understand_%A_%a.log 
 #SBATCH --mem=40gb   
 #SBATCH -c 24                                      # Job memory request
 #SBATCH --no-requeue                                    # Do not resubmit a failed job
 #SBATCH --time=72:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --exclusive   # only one task per node
-#SBATCH --output=ring-pred_%A_%a.log
-#SBATCH --array=[0-40]
+#SBATCH --array=[0-3]
 
 pwd; hostname; date
 
@@ -56,9 +55,10 @@ ROUNDING=0.005
 
 #sets target z, maximum sim z and step size up to max_z
 #PRED_Z=0.03 
-PRED_Z = ($(seq 0.015 0.005 0.115)) #Should give values from 0.02 through to 0.12
+PRED_Z=($(seq 0.015 0.005 0.115)) #Should give values from 0.02 through to 0.12
 MAX_Z=0.12
-STEP_SIZE=0.004 #could prob make a lot smaller (0.005?)
+STEP_SIZE=0.004 # could prob make a lot smaller (0.005?)
+echo Using pred_z $PRED_Z
 
 #cut on which unsimulated galaxies to select (only those with low redshifts)
 MIN_ALLOW_Z=0.02
@@ -101,14 +101,6 @@ INITIAL_DELTA_CONC=0.1
 #define which morphology squid diagrams to produce
 MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
 
-POSSIBLE_START_SNIPPETS=( $(seq -500 500 19500 ) ) #RANGE NEEDS TO BE ADJUSTED UP TO 25000
-POSSIBLE_END_SNIPPETS=( $(seq 0 500 20000 ) )
-START_SNIPPET=${POSSIBLE_START_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
-END_SNIPPET=${POSSIBLE_END_SNIPPETS[$SLURM_ARRAY_TASK_ID]}
-
-echo Using start snippet $START_SNIPPET
-echo Using end snippet $END_SNIPPET
-echo Using pred_z $PRED_Z
 
 #$PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
 #    --fits-dir $FITS_DIR \
