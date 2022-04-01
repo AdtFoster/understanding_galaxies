@@ -55,7 +55,8 @@ ROUNDING=0.005
 
 #sets target z, maximum sim z and step size up to max_z
 #PRED_Z=0.03 
-PRED_Z=($(seq 0.015 0.005 0.115)) #Should give values from 0.02 through to 0.12
+PRED_Z_ARRAY=($(seq 0.015 0.005 0.115)) # Should give values from 0.02 through to 0.12
+PRED_Z=${PRED_Z_ARRAY[$SLURM_ARRAY_TASK_ID]}
 MAX_Z=0.12
 STEP_SIZE=0.004 # could prob make a lot smaller (0.005?)
 echo Using pred_z $PRED_Z
