@@ -37,7 +37,7 @@ if __name__ == '__main__':
     delta_mass = args.initial_delta_mass
     delta_conc = args.initial_delta_conc   
     
-    logging.info('Beginning sampling galaxies for optimum parameters')
+    logging.info('Beginning debiasing galaxies')
 
     # created by create_dataframe.py
     full_data = pd.read_csv('output_csvs/full_data_1m_with_resizing.csv') #index_col=0
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     count = 0
     
     def optimise(delta_z, delta_p, delta_mag, delta_mass, delta_conc, standard_deviation_array, residual_array, count_array_perm, error_array_perm, count):
-        logging.info('Current working deltas: {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(delta_z, delta_p, delta_mag, delta_mass, delta_conc))
+        logging.info('Using box size deltas: {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(delta_z, delta_p, delta_mag, delta_mass, delta_conc))
         
         number_of_galaxies = 0
         count_array = []
