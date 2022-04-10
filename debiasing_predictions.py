@@ -425,7 +425,7 @@ if __name__ == '__main__':
         weighted_means_list_artifact_norm = weighted_means_list_artifact / sum_of_morph_predictions
         weighted_means_list_featured_norm = weighted_means_list_featured / sum_of_morph_predictions
 
-        df=pd.DataFrame([test_sample_names, actual_p_list_smooth, actual_p_list_featured, actual_p_list_artifact, test_p_list_smooth, test_p_list_featured, test_p_list_artifact, weighted_means_list_smooth_norm, weighted_means_list_featured_norm, weighted_means_list_artifact_norm, pred_z, ]).T
+        df=pd.DataFrame([test_sample_names, actual_p_list_smooth, actual_p_list_featured, actual_p_list_artifact, test_p_list_smooth, test_p_list_featured, test_p_list_artifact, weighted_means_list_smooth_norm, weighted_means_list_featured_norm, weighted_means_list_artifact_norm, pred_z_list,magnitude_list ]).T
         df.columns = df_cumulative.columns #rename the comulmns with correct headers
         df_cumulative=pd.concat([df_cumulative, df]) #concatonate the dataframes from each batch
 
