@@ -27,7 +27,6 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--update-interval', dest='update_interval', type=int)
-    parser.add_argument('--pred-z', dest='pred_z', type=float)
     parser.add_argument('--delta-z', dest='delta_z', type=float)
     parser.add_argument('--delta-p', dest='delta_p', type=float)
     parser.add_argument('--delta-mag', dest='delta_mag', type=float)
@@ -44,7 +43,6 @@ if __name__ == '__main__':
     delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
     delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
     delta_conc = args.delta_conc #Vary to find better base value - Default optimised = 0.5
-    pred_z = args.pred_z
     max_batches=2
 
     logging.info('DEBIASING PREDICTIONS')
@@ -100,6 +98,7 @@ if __name__ == '__main__':
                 gal_max_z = test_galaxy.iloc[i]
                 gal_min_z = test_galaxy.loc[[test_galaxy['redshift'].astype(float).idxmin()]]
                 test_z = gal_max_z['redshift'].values[0]
+                pred_z = gal_min_z['redshift'].values[0]
                 test_mag = gal_max_z['elpetro_absmag_r'].values[0]
                 test_mass = gal_max_z['elpetro_mass'].values[0]
                 test_conc = gal_max_z['concentration'].values[0]
