@@ -38,8 +38,8 @@ MIN_GAL_MATRIX=0
 MAX_GAL_MATRIX=1000
 
 #Sets the galaxies to be batched for each node when run in parallel (total of 23422 unique galaxies in full_data_1m_with_resizing)
-BATCH_GAL_MIN=7500      #if running over multiple nodes, would increase as [0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500]
-BATCH_GAL_MAX=10000   #if running over multiple nodes, would increase as [2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500, :]
+BATCH_GAL_MIN=0      #if running over multiple nodes, would increase as [0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500]
+BATCH_GAL_MAX=25000   #if running over multiple nodes, would increase as [2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500, :]
 
 #hard cap on number of gals being simulated
 GALS_TO_SIM=10
