@@ -35,7 +35,6 @@ if __name__ == '__main__':
     parser.add_argument('--batch-gal-min', dest='batch_gal_min', type=int)
     parser.add_argument('--batch-gal-max', dest='batch_gal_max', type=int)
 
-
     args = parser.parse_args()
     
     delta_z = args.delta_z #sets width of sample box - Default optimised = 0.008
@@ -95,18 +94,18 @@ if __name__ == '__main__':
                 if (test_gal_number % args.update_interval == 0):
                     logging.info('completed {0} of {1} galaxy debias predictions'.format(test_gal_number, len(test_sample_names))) #prints progress every {number} galaxy debias predictions
             
-                gal_max_z = test_galaxy.iloc[i]
+                gal_max_z = test_galaxy.iloc[i] #selects the high z values based on redshift
                 gal_min_z = test_galaxy.loc[[test_galaxy['redshift'].astype(float).idxmin()]]
-                test_z = gal_max_z['redshift'].values[0]
+                test_z = gal_max_z['redshift']
                 pred_z = gal_min_z['redshift'].values[0]
-                test_mag = gal_max_z['elpetro_absmag_r'].values[0]
-                test_mass = gal_max_z['elpetro_mass'].values[0]
-                test_conc = gal_max_z['concentration'].values[0]
+                test_mag = gal_max_z['elpetro_absmag_r']
+                test_mass = gal_max_z['elpetro_mass']
+                test_conc = gal_max_z['concentration']
                                 
                 #identify the 3 prob variables for the simulated image (could function)
-                test_p_smooth = gal_max_z['smooth-or-featured-dr5_smooth_prob'].values[0] #converts prob at max z to useable float format
-                test_p_featured = gal_max_z['smooth-or-featured-dr5_featured-or-disk_prob'].values[0] #converts prob at max z to useable float format
-                test_p_artifact = gal_max_z['smooth-or-featured-dr5_artifact_prob'].values[0] #converts prob at max z to useable float format
+                test_p_smooth = gal_max_z['smooth-or-featured-dr5_smooth_prob'] #converts prob at max z to useable float format
+                test_p_featured = gal_max_z['smooth-or-featured-dr5_featured-or-disk_prob'] #converts prob at max z to useable float format
+                test_p_artifact = gal_max_z['smooth-or-featured-dr5_artifact_prob'] #converts prob at max z to useable float format
     
                 #identify the 3 prob variables for non-simulated image for comparison 
                 actual_p_smooth = gal_min_z['smooth-or-featured-dr5_smooth_prob'].values[0] #prob of smooth
@@ -435,4 +434,4 @@ if __name__ == '__main__':
 
         batch_number+=1
 
-    df_cumulative.to_csv('output_csvs/debiased_predictions_{0}.csv'.format(args.batch_gal_min), header=df_cumulative.columns, index=False)
+    df_cumulative.to_csv('output_csvs/bamford_predictions_{0}.csv'.format(args.batch_gal_min), header=df_cumulative.columns, index=False)
