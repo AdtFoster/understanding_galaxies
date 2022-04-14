@@ -7,7 +7,7 @@
 #SBATCH --time=72:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --exclusive   # only one task per node
-#SBATCH --array=[0-20]  # must match length of PRED_Z_ARRAY
+#SBATCH --array=[0-10]  # must match length of BATCH_GAL_MIN_ARRAY
 
 pwd; hostname; date
 
@@ -37,8 +37,10 @@ MIN_GAL_MATRIX=0
 MAX_GAL_MATRIX=1000
 
 #Sets the galaxies to be batched for each node when run in parallel (total of 23422 unique galaxies in full_data_1m_with_resizing)
-BATCH_GAL_MIN=0      #if running over multiple nodes, would increase as [0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500]
-BATCH_GAL_MAX=25000   #if running over multiple nodes, would increase as [2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500, :]
+BATCH_GAL_MIN_ARRAY=($(seq 0 2500 22500))     #if running over multiple nodes, should give values from 0 through to 22500 (first should be 0)
+BATCH_GAL_STEP=2500 #sets the difference between min and max gals
+BATCH_GAL_MIN=${BATCH_GAL_MIN_ARRAY[$SLURM_ARRAY_TASK_ID]}
+echo Using batch_gal_min $BATCH_GAL_MIN
 
 #hard cap on number of gals being simulated
 GALS_TO_SIM=10
@@ -54,12 +56,12 @@ PERCENT=66
 ROUNDING=0.005
 
 #sets target z, maximum sim z and step size up to max_z
-#PRED_Z=0.03 
-PRED_Z_ARRAY=($(seq 0.015 0.005 0.115)) # Should give values from 0.02 through to 0.12
-PRED_Z=${PRED_Z_ARRAY[$SLURM_ARRAY_TASK_ID]}
+PRED_Z=0.03 
+#PRED_Z_ARRAY=($(seq 0.015 0.005 0.115)) # Should give values from 0.02 through to 0.12
+#PRED_Z=${PRED_Z_ARRAY[$SLURM_ARRAY_TASK_ID]}
 MAX_Z=0.12
 STEP_SIZE=0.004 # could prob make a lot smaller (0.005?)
-echo Using pred_z $PRED_Z
+#echo Using pred_z $PRED_Z
 
 #cut on which unsimulated galaxies to select (only those with low redshifts)
 MIN_ALLOW_Z=0.02
@@ -101,7 +103,6 @@ INITIAL_DELTA_CONC=0.1
 
 #define which morphology squid diagrams to produce
 MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
-
 
 #$PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
 #    --fits-dir $FITS_DIR \
@@ -158,6 +159,16 @@ MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
 #     --delta-mag $DELTA_MAG \
 #     --delta-mass $DELTA_MASS \
 #     --delta-conc $DELTA_CONC
+
+$PYTHON $THIS_REPO_DIR/bamford_plot_predictions.py \
+    --batch-gal-min $BATCH_GAL_MIN \
+    --batch-gal-step $BATCH_GAL_STEP \
+    --update-interval $UPDATE_INTERVAL \
+    --delta-z $DELTA_Z \
+    --delta-p $DELTA_P \
+    --delta-mag $DELTA_MAG \
+    --delta-mass $DELTA_MASS \
+    --delta-conc $DELTA_CONC
 
 # $PYTHON $THIS_REPO_DIR/conf_matrix_new.py \
 #     --min-gal $MIN_GAL_MATRIX \

@@ -33,7 +33,7 @@ if __name__ == '__main__':
     parser.add_argument('--delta-mass', dest='delta_mass', type=float)
     parser.add_argument('--delta-conc', dest='delta_conc', type=float)
     parser.add_argument('--batch-gal-min', dest='batch_gal_min', type=int)
-    parser.add_argument('--batch-gal-max', dest='batch_gal_max', type=int)
+    parser.add_argument('--batch-gal-step', dest='batch_gal_step', type=int)
 
     args = parser.parse_args()
     
@@ -43,6 +43,10 @@ if __name__ == '__main__':
     delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
     delta_conc = args.delta_conc #Vary to find better base value - Default optimised = 0.5
     max_batches=2
+
+    gal_min = args.batch_gal_min #sets the lower index for sampling test galaxy names
+    gal_step = args.batch_gal_step #sets the range of indices being looked at
+    gal_max = gal_min + gal_step #sets the upper index for the test galaxy names
 
     logging.info('DEBIASING PREDICTIONS')
 
@@ -57,7 +61,7 @@ if __name__ == '__main__':
     df_cumulative=pd.DataFrame(columns=['iauname', 'actual_smooth_pred', 'actual_featured_pred', 'actual_artifact_pred', 'sim_smooth_pred', 'sim_featured_pred', 'sim_artifact_pred', 'debiased_smooth_pred', 'debiased_featured_pred', 'debiased_artifact_pred', 'max_z', 'magnitude'])
     batch_number=1
 
-    for test_sample_names in np.array_split(pd.unique(full_data['iauname'])[args.batch_gal_min:args.batch_gal_max], max_batches): #batches the data into [max_batches] 
+    for test_sample_names in np.array_split(pd.unique(full_data['iauname'])[gal_min:gal_max], max_batches): #batches the data into [max_batches] 
 
         assert len(test_sample_names) > 0
 
