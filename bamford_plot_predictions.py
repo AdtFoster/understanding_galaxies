@@ -416,7 +416,7 @@ if __name__ == '__main__':
                 test_p_list_artifact.append(test_p_artifact)
                 
                 #list of magnitudes
-                magnitude_list.append(test_sample.query(f'iauname == "{test_name}"')['elpetro_absmag_r'][0])
+                magnitude_list.append(test_sample.query(f'iauname == "{test_name}"')['elpetro_absmag_r'].iloc[0])
                 
                 #list of pred z
                 max_z_list.append(gal_max_z['redshift'])
