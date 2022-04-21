@@ -421,8 +421,8 @@ if __name__ == '__main__':
                 #list of pred z
                 max_z_list.append(gal_max_z['redshift'])
     
-                #add 1 to galaxy counter for print statement at start of loop
-                test_gal_number+=1
+            #add 1 to galaxy counter for print statement at start of loop
+            test_gal_number+=1
 
         logging.info('Batch {0} finished, {1} predictions complete, {2} galaxies skipped'.format(batch_number, test_gal_number, skipped_gal))
         #normalising the de-biased predictions
