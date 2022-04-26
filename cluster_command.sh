@@ -1,12 +1,10 @@
 #!/bin/bash
-#SBATCH --job-name=understand                       # Job name
-#SBATCH --output=understand_%A_%a.log 
-#SBATCH --mem=40gb   
-#SBATCH -c 24                                      # Job memory request
+#SBATCH --job-name=debug                       # Job name
+#SBATCH --output=debug_%A_%a.log 
+#SBATCH --mem=2gb  # needs to fit with 1 cpu per   
+#SBATCH -c 1                                      # Job memory request
 #SBATCH --no-requeue                                    # Do not resubmit a failed job
 #SBATCH --time=72:00:00                                # Time limit hrs:min:sec
-#SBATCH --constraint=A100 
-#SBATCH --exclusive   # only one task per node
 #SBATCH --array=[1-3]  # must match length of BATCH_GAL_MIN_ARRAY
 
 pwd; hostname; date
