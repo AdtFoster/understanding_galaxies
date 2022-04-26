@@ -42,7 +42,7 @@ if __name__ == '__main__':
     delta_mag = args.delta_mag #Vary to find better base value - Default optimised = 0.5
     delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
     delta_conc = args.delta_conc #Vary to find better base value - Default optimised = 0.5
-    max_batches=2
+    max_batches=1
 
     gal_min = args.batch_gal_min #sets the lower index for sampling test galaxy names
     gal_step = args.batch_gal_step #sets the range of indices being looked at
@@ -93,10 +93,10 @@ if __name__ == '__main__':
             
             test_galaxy = test_sample[test_sample['iauname'] == test_name]
             
+            if (test_gal_number % args.update_interval == 0):
+                logging.info('completed {0} of {1} galaxy debias predictions'.format(test_gal_number, len(test_sample_names))) #prints progress every {number} galaxy debias predictions
+
             for i in range(len(test_galaxy.index)):
-            
-                if (test_gal_number % args.update_interval == 0):
-                    logging.info('completed {0} of {1} galaxy debias predictions'.format(test_gal_number, len(test_sample_names))) #prints progress every {number} galaxy debias predictions
             
                 gal_max_z = test_galaxy.iloc[i] #selects the high z values based on redshift
                 gal_min_z = test_galaxy.loc[[test_galaxy['redshift'].astype(float).idxmin()]]
