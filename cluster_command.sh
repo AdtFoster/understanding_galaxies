@@ -84,7 +84,7 @@ MAX_DELTA_CONC=0.15
 STEP_DELTA_CONC=0.02
 
 #number of gals iterated per update and threshold for confident prediction
-UPDATE_INTERVAL=50
+UPDATE_INTERVAL=1
 THRESHOLD_VAL=0.8
 
 #N-D box dimensions

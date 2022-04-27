@@ -44,25 +44,29 @@ if __name__ == '__main__':
         plt.plot(count_array_perm[i,:,0],count_array_perm[i,:,1], linestyle = "-", alpha = 0.7) #label = "{0:.3f} {1:.3f} {2:.3f}".format(delta_z, delta_p, delta_mag),
     
     plt.plot(error_array_perm[0,:,0],error_array_perm[0,:,1], linestyle = "--", color = "purple") #label= 'Expected number',
-    plt.xlabel("Percentage", fontsize = 14)
-    plt.ylabel("Number of galaxies", fontsize = 14)
+    plt.xlabel("Percentage", fontsize = 15)
+    plt.ylabel("Number of galaxies", fontsize = 15)
     plt.xlim([0, 100])
     plt.ylim([0, error_array_perm[0,0,1]*10])
     #plt.legend()
-    plt.title("Number of galaxies with percentage", fontsize = 14, wrap = True)
+    plt.xticks(fontsize=15)
+    plt.yticks(fontsize=15)
+    plt.title("Number of galaxies with percentage", fontsize = 16, wrap = True)
     plt.savefig("other_plots/Total linear.png")
     plt.close()
     
     for i in range(len(residual_array[:,0,0])):
         plt.plot(residual_array[i,:,0],residual_array[i,:,1],linestyle = "-", alpha = 0.7)
     
-    plt.xlabel("Percentage", fontsize = 14)
-    plt.ylabel("Differnece", fontsize = 14, wrap = True)
+    plt.xlabel("Percentage", fontsize = 15)
+    plt.ylabel("Differnece", fontsize = 15, wrap = True)
     plt.xlim([0, 100])
     plt.ylim([np.min(residual_array[:,:,1])-0.5, np.max(residual_array[:,:,1])+0.5])
     plt.axhline(0, color='black')
+    plt.xticks(fontsize=15)
+    plt.yticks(fontsize=15)
     #plt.legend()
-    plt.title("Difference in galaxies from percentage", fontsize = 14, wrap = True)
+    plt.title("Difference in galaxies from percentage", fontsize = 16, wrap = True)
     plt.savefig("other_plots/Total linear residual.png")
     plt.close()
     
