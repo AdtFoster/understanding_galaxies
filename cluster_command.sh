@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name=debug                       # Job name
-#SBATCH --output=debug_%A_%a.log 
+#SBATCH --job-name=1cpu_debi                       # Job name
+#SBATCH --output=1cpu_debi_%A_%a.log 
 #SBATCH --mem=2gb  # needs to fit with 1 cpu per   
 #SBATCH -c 1                                      # Job memory request
 #SBATCH --no-requeue                                    # Do not resubmit a failed job
 #SBATCH --time=72:00:00                                # Time limit hrs:min:sec
-#SBATCH --array=[1-3]  # must match length of BATCH_GAL_MIN_ARRAY
+#SBATCH --array=[1-190]  # must match length of BATCH_GAL_MIN_ARRAY
 
 pwd; hostname; date
 
@@ -35,7 +35,8 @@ MIN_GAL_MATRIX=0
 MAX_GAL_MATRIX=1000
 
 #Sets the galaxies to be batched for each node when run in parallel (total of 23422 unique galaxies in full_data_1m_with_resizing)
-BATCH_GAL_MIN_ARRAY=($(seq 0 125 250)) #BATCH_GAL_MIN_ARRAY=($(seq 0 125 22500))     #if running over multiple nodes, should give values from 0 through to 22500 (first should be 0)
+#if running over multiple nodes, should give values from 0 through to 22500 (first should be 0)
+BATCH_GAL_MIN_ARRAY=($(seq 0 125 22500)) 
 BATCH_GAL_STEP=125 #BATCH_GAL_STEP=2500 #sets the difference between min and max gals
 BATCH_GAL_MIN=${BATCH_GAL_MIN_ARRAY[$SLURM_ARRAY_TASK_ID]}
 echo Using batch_gal_min $BATCH_GAL_MIN
