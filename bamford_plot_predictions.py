@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Apr 10 16:36:45 2022
-
 @author: JJ
 """
 
@@ -18,7 +17,6 @@ def appending_skipped_gals(weighted_means_list, actual_p_list, test_p_list, actu
     weighted_means_list.append(np.nan)
     actual_p_list.append(actual_p)
     test_p_list.append(test_p)
-
     return
 
 if __name__ == '__main__':
@@ -88,6 +86,7 @@ if __name__ == '__main__':
         
         magnitude_list = []
         max_z_list = []
+        name_list = []
         
         for test_name in test_sample_names:
             
@@ -187,18 +186,27 @@ if __name__ == '__main__':
                     appending_skipped_gals(weighted_means_list_smooth, actual_p_list_smooth, test_p_list_smooth, actual_p_smooth, test_p_smooth)
                     appending_skipped_gals(weighted_means_list_featured, actual_p_list_featured, test_p_list_featured, actual_p_featured, test_p_featured)
                     appending_skipped_gals(weighted_means_list_artifact, actual_p_list_artifact, test_p_list_artifact, actual_p_artifact, test_p_artifact)
+                    magnitude_list.append(gal_max_z['elpetro_absmag_r'])
+                    name_list.append(gal_max_z['iauname'])
+                    max_z_list.append(gal_max_z['redshift'])
                     continue
                 elif len(immediate_sub_sample_featured)<10:
                     skipped_gal+=1
                     appending_skipped_gals(weighted_means_list_smooth, actual_p_list_smooth, test_p_list_smooth, actual_p_smooth, test_p_smooth)
                     appending_skipped_gals(weighted_means_list_featured, actual_p_list_featured, test_p_list_featured, actual_p_featured, test_p_featured)
                     appending_skipped_gals(weighted_means_list_artifact, actual_p_list_artifact, test_p_list_artifact, actual_p_artifact, test_p_artifact)
+                    magnitude_list.append(gal_max_z['elpetro_absmag_r'])
+                    name_list.append(gal_max_z['iauname'])
+                    max_z_list.append(gal_max_z['redshift'])
                     continue
                 elif len(immediate_sub_sample_artifact)<10:
                     skipped_gal+=1
                     appending_skipped_gals(weighted_means_list_smooth, actual_p_list_smooth, test_p_list_smooth, actual_p_smooth, test_p_smooth)
                     appending_skipped_gals(weighted_means_list_featured, actual_p_list_featured, test_p_list_featured, actual_p_featured, test_p_featured)
                     appending_skipped_gals(weighted_means_list_artifact, actual_p_list_artifact, test_p_list_artifact, actual_p_artifact, test_p_artifact)
+                    magnitude_list.append(gal_max_z['elpetro_absmag_r'])
+                    name_list.append(gal_max_z['iauname'])
+                    max_z_list.append(gal_max_z['redshift'])
                     continue
                 
                 #unique names for each sub sample
@@ -416,7 +424,10 @@ if __name__ == '__main__':
                 test_p_list_artifact.append(test_p_artifact)
                 
                 #list of magnitudes
-                magnitude_list.append(test_sample.query(f'iauname == "{test_name}"')['elpetro_absmag_r'].iloc[0])
+                magnitude_list.append(gal_max_z['elpetro_absmag_r'])
+                
+                #list of galaxy names
+                name_list.append(gal_max_z['iauname'])
                 
                 #list of pred z
                 max_z_list.append(gal_max_z['redshift'])
@@ -432,7 +443,7 @@ if __name__ == '__main__':
         weighted_means_list_artifact_norm = weighted_means_list_artifact / sum_of_morph_predictions
         weighted_means_list_featured_norm = weighted_means_list_featured / sum_of_morph_predictions
 
-        df=pd.DataFrame([test_sample_names, actual_p_list_smooth, actual_p_list_featured, actual_p_list_artifact, test_p_list_smooth, test_p_list_featured, test_p_list_artifact, weighted_means_list_smooth_norm, weighted_means_list_featured_norm, weighted_means_list_artifact_norm, max_z_list,magnitude_list]).T
+        df=pd.DataFrame([name_list, actual_p_list_smooth, actual_p_list_featured, actual_p_list_artifact, test_p_list_smooth, test_p_list_featured, test_p_list_artifact, weighted_means_list_smooth_norm, weighted_means_list_featured_norm, weighted_means_list_artifact_norm, max_z_list,magnitude_list]).T
         df.columns = df_cumulative.columns #rename the comulmns with correct headers
         df_cumulative=pd.concat([df_cumulative, df]) #concatonate the dataframes from each batch
 
