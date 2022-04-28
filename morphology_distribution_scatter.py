@@ -49,6 +49,8 @@ if __name__ == '__main__':
     plt.ylabel('Featured Likelihood', fontsize = 16)
     plt.xlim((0, 1))
     plt.ylim((0, 1))
+    plt.xticks(fontsize=15)
+    plt.yticks(fontsize=15)
     plt.savefig('other_plots/morphology_distribution_nonsim.jpeg')
     plt.close()
 
@@ -62,6 +64,8 @@ if __name__ == '__main__':
     plt.ylabel('Featured Likelihood', fontsize = 16)
     plt.xlim((0, 1))
     plt.ylim((0, 1))
+    plt.xticks(fontsize=15)
+    plt.yticks(fontsize=15)
     plt.savefig('other_plots/morphology_distribution_sim.jpeg')
     plt.close()
 
@@ -75,6 +79,8 @@ if __name__ == '__main__':
     plt.ylabel('Featured Likelihood', fontsize = 16)
     plt.xlim((0, 1))
     plt.ylim((0, 1))
+    plt.xticks(fontsize=15)
+    plt.yticks(fontsize=15)
     plt.savefig('other_plots/morphology_distribution_debiased.jpeg')
     plt.close()
 
@@ -88,7 +94,9 @@ if __name__ == '__main__':
     plt.ylabel('Featured Likelihood', fontsize = 16)
     plt.xlim((0, 1))
     plt.ylim((0, 1))
-    plt.legend(fontsize=12, labelcolor=['r', 'b'])
+    plt.xticks(fontsize=15)
+    plt.yticks(fontsize=15)
+    plt.legend(fontsize=15, labelcolor=['r', 'b'])
     plt.savefig('other_plots/morphology_distribution_debiased_superimposed.jpeg')
     plt.close() 
 
