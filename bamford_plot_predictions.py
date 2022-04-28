@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Apr 10 16:36:45 2022
-@author: JJ
+@author: JJ Crowther and Adam Foster
 """
 
 import logging
@@ -384,35 +384,22 @@ if __name__ == '__main__':
                     sd_list_artifact.append(estimate_predictions['smooth-or-featured-dr5_artifact_var'].values[0])
                     weight_list_artifact.append(weight)
                     
-                #3 mean predictions
-                mean_prediction_smooth = np.mean(prediction_list_smooth)
-                mean_prediction_featured = np.mean(prediction_list_featured)
-                mean_prediction_artifact = np.mean(prediction_list_artifact)
-                
-                mean_std_smooth = np.std(prediction_list_smooth)
-                mean_std_featured = np.std(prediction_list_featured)
-                mean_std_artifact = np.std(prediction_list_artifact)
-                
-                #smooth
-                weighted_mean_numerator_smooth = np.sum(np.array(weight_list_smooth) * np.array(prediction_list_smooth))
-                weighted_mean_denominator_smooth = np.sum(np.array(weight_list_smooth))
-                weighted_mean_smooth = weighted_mean_numerator_smooth/weighted_mean_denominator_smooth #the weighted mean linear prediction using all sub set galaxies
-                
-                #featured
-                weighted_mean_numerator_featured = np.sum(np.array(weight_list_featured) * np.array(prediction_list_featured))
-                weighted_mean_denominator_featured = np.sum(np.array(weight_list_featured))
-                weighted_mean_featured = weighted_mean_numerator_featured/weighted_mean_denominator_featured #the weighted mean linear prediction using all sub set galaxies
-    
-                #artifact
-                weighted_mean_numerator_artifact = np.sum(np.array(weight_list_artifact) * np.array(prediction_list_artifact))
-                weighted_mean_denominator_artifact = np.sum(np.array(weight_list_artifact))
-                weighted_mean_artifact = weighted_mean_numerator_artifact/weighted_mean_denominator_artifact #the weighted mean linear prediction using all sub set galaxies
-    
+                normalised_weightings_smooth = weight_list_smooth / np.sum(weight_list_smooth)
+                normalised_weightings_featured = weight_list_featured / np.sum(weight_list_featured)
+                normalised_weightings_artifact = weight_list_artifact / np.sum(weight_list_artifact)
+
+                prediction_smooth = np.random.choice(prediction_list_smooth, p=normalised_weightings_smooth) #randomly sample possible predictions weighted
+                prediction_smooth = np.clip(prediction_smooth, 0, 1) #prevent predictions of above 1 or below 0 - should really be coded into earlier constraints on the system
+                prediction_featured = np.random.choice(prediction_list_featured, p=normalised_weightings_featured) #randomly sample possible predictions weighted
+                prediction_featured = np.clip(prediction_featured, 0, 1)#prevent predictions of above 1 or below 0
+                prediction_artifact = np.random.choice(prediction_list_artifact, p=normalised_weightings_artifact) #randomly sample possible predictions weighted
+                prediction_artifact = np.clip(prediction_artifact, 0, 1) #prevent predictions of above 1 or below 0
+
                 #store all the weighted means for each morphology as list
-                weighted_means_list_smooth.append(weighted_mean_smooth)
-                weighted_means_list_featured.append(weighted_mean_featured)
-                weighted_means_list_artifact.append(weighted_mean_artifact)
-    
+                weighted_means_list_smooth.append(prediction_smooth)
+                weighted_means_list_featured.append(prediction_featured)
+                weighted_means_list_artifact.append(prediction_artifact)
+        
                 #store all the true p vals for each morphology in list
                 actual_p_list_smooth.append(actual_p_smooth)
                 actual_p_list_featured.append(actual_p_featured)
@@ -443,7 +430,7 @@ if __name__ == '__main__':
         weighted_means_list_artifact_norm = weighted_means_list_artifact / sum_of_morph_predictions
         weighted_means_list_featured_norm = weighted_means_list_featured / sum_of_morph_predictions
 
-        df=pd.DataFrame([name_list, actual_p_list_smooth, actual_p_list_featured, actual_p_list_artifact, test_p_list_smooth, test_p_list_featured, test_p_list_artifact, weighted_means_list_smooth_norm, weighted_means_list_featured_norm, weighted_means_list_artifact_norm, max_z_list,magnitude_list]).T
+        df=pd.DataFrame([name_list, actual_p_list_smooth, actual_p_list_featured, actual_p_list_artifact, test_p_list_smooth, test_p_list_featured, test_p_list_artifact, weighted_means_list_smooth_norm, weighted_means_list_featured_norm, weighted_means_list_artifact_norm, max_z_list, magnitude_list]).T
         df.columns = df_cumulative.columns #rename the comulmns with correct headers
         df_cumulative=pd.concat([df_cumulative, df]) #concatonate the dataframes from each batch
 
