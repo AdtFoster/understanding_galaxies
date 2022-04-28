@@ -133,7 +133,7 @@ def error_bar_smoothness_3(x_data, y_data_smooth, y_data_featured, y_data_artifa
     plt.errorbar(x_data, y_data_smooth, marker='x', color='r', label='smooth')
     plt.errorbar(x_data, y_data_featured, marker='x', color='b', label='featured')
     plt.errorbar(x_data, y_data_artifact, marker='x', color='g', label='artifact')
-    plt.title(title)
+    plt.title(title, wrap=True)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.xlim(xlimits)
