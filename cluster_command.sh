@@ -5,7 +5,7 @@
 #SBATCH -c 1                                      # Job memory request
 #SBATCH --no-requeue                                    # Do not resubmit a failed job
 #SBATCH --time=72:00:00                                # Time limit hrs:min:sec
-#SBATCH --array=[1-2]%101  # must match length of BATCH_GAL_MIN_ARRAY
+#SBATCH --array=[1-200]  # must match length of BATCH_GAL_MIN_ARRAY
 
 pwd; hostname; date
 
