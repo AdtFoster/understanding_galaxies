@@ -5,7 +5,7 @@
 #SBATCH -c 1                                      # Job memory request
 #SBATCH --no-requeue                                    # Do not resubmit a failed job
 #SBATCH --time=72:00:00                                # Time limit hrs:min:sec
-#SBATCH --array=[1-199]  # must match length of BATCH_GAL_MIN_ARRAY
+#SBATCH --array=[1-2000]  # must match length of BATCH_GAL_MIN_ARRAY
 
 pwd; hostname; date
 
@@ -19,6 +19,7 @@ PYTHON=/share/nas2/walml/miniconda3/envs/zoobot/bin/python
 FITS_DIR=/share/nas2/walml/galaxy_zoo/decals/dr5/fits_native    
 SCALED_IMG_DIR=/share/nas2/walml/repos/understanding_galaxies/scaled_with_resizing
 PREDICTIONS_DIR=/share/nas2/walml/repos/understanding_galaxies/results/latest_scaled_predictions
+REAL_GALS=/share/nas2/walml/repos/understanding_galaxies/results/decals_dr5_auto_posteriors_first_q_only.parquet #should be correct file loc?
 
 #THIS_REPO_DIR=/Users/adamfoster/Documents/MPhysProject/understanding_galaxies
 #PYTHON=/Users/adamfoster/opt/anaconda3/envs/ZooBot/bin/python
@@ -34,9 +35,9 @@ MAX_GAL=250
 MIN_GAL_MATRIX=0
 MAX_GAL_MATRIX=1000
 
-#Sets the galaxies to be batched for each node when run in parallel (total of 23422 unique galaxies in full_data_1m_with_resizing)
+#Sets the galaxies to be batched for each node when run in parallel (total of 23432 unique galaxies in full_data_1m_with_resizing)
 #if running over multiple nodes, should give values from 0 through to 22500 (first should be 0 - starts at 1st index)
-BATCH_GAL_MIN_ARRAY=($(seq -125 125 23500)) 
+BATCH_GAL_MIN_ARRAY=($(seq -125 125 246500)) #max len is 23432 for simulations and 246408 for real observations
 BATCH_GAL_STEP=125 #BATCH_GAL_STEP=2500 #sets the difference between min and max gals
 BATCH_GAL_MIN=${BATCH_GAL_MIN_ARRAY[$SLURM_ARRAY_TASK_ID]}
 echo Using batch_gal_min $BATCH_GAL_MIN
@@ -63,8 +64,8 @@ STEP_SIZE=0.004 # could prob make a lot smaller (0.005?)
 #echo Using pred_z $PRED_Z
 
 #cut on which unsimulated galaxies to select (only those with low redshifts)
-MIN_ALLOW_Z=0.02
-MAX_ALLOW_Z=0.05
+MIN_ALLOW_Z=0.01
+MAX_ALLOW_Z=0.12
 
 #sets of max and min hyperparams with step sizes for selecting optimum
 MIN_DELTA_Z=0.005
@@ -84,7 +85,7 @@ MAX_DELTA_CONC=0.15
 STEP_DELTA_CONC=0.02
 
 #number of gals iterated per update and threshold for confident prediction
-UPDATE_INTERVAL=1
+UPDATE_INTERVAL=10
 THRESHOLD_VAL=0.8
 
 #N-D box dimensions
@@ -118,9 +119,14 @@ MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
 
 #  load predictions in convenient dataframe
 #$PYTHON $THIS_REPO_DIR/create_dataframe.py \
-#   --predictions-dir $PREDICTIONS_DIR \
+#   --predictions-dir $PREDICTIONS_DIR \ 
 #   --max-allow-z $MAX_ALLOW_Z \
 #   --min-allow-z $MIN_ALLOW_Z 
+
+$PYTHON $THIS_REPO_DIR/create_dataframe_realdata.py \
+    --predictions-dir $REAL_GALS \ #this needs to be the real data repository - doubl echeck
+    --max-allow-z $MAX_ALLOW_Z \
+    --min-allow-z $MIN_ALLOW_Z 
 
 # apply debiasing method, to each galaxy, by sampling nearby galaxies
 # $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
@@ -159,7 +165,17 @@ MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
 #     --delta-mass $DELTA_MASS \
 #     --delta-conc $DELTA_CONC
 
-$PYTHON $THIS_REPO_DIR/bamford_plot_predictions.py \
+#$PYTHON $THIS_REPO_DIR/bamford_plot_predictions.py \
+#    --batch-gal-min $BATCH_GAL_MIN \
+#    --batch-gal-step $BATCH_GAL_STEP \
+#    --update-interval $UPDATE_INTERVAL \
+#    --delta-z $DELTA_Z \
+#    --delta-p $DELTA_P \
+#    --delta-mag $DELTA_MAG \
+#    --delta-mass $DELTA_MASS \
+#    --delta-conc $DELTA_CONC
+
+    $PYTHON $THIS_REPO_DIR/bamford_plot_predictions_realdata.py \
     --batch-gal-min $BATCH_GAL_MIN \
     --batch-gal-step $BATCH_GAL_STEP \
     --update-interval $UPDATE_INTERVAL \
