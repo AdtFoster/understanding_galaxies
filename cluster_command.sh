@@ -5,7 +5,7 @@
 #SBATCH -c 1                                      # Job memory request
 #SBATCH --no-requeue                                    # Do not resubmit a failed job
 #SBATCH --time=72:00:00                                # Time limit hrs:min:sec
-#SBATCH --array=[1-200]  # must match length of BATCH_GAL_MIN_ARRAY
+#SBATCH --array=[1-200]%101  # must match length of BATCH_GAL_MIN_ARRAY
 
 pwd; hostname; date
 
@@ -37,7 +37,7 @@ MAX_GAL_MATRIX=1000
 
 #Sets the galaxies to be batched for each node when run in parallel (total of 23432 unique galaxies in full_data_1m_with_resizing)
 #if running over multiple nodes, should give values from 0 through to 22500 (first should be 0 - starts at 1st index)
-BATCH_GAL_MIN_ARRAY=($(seq -125 1250 246500)) #max len is 23432 for simulations and 246408 for real observations
+BATCH_GAL_MIN_ARRAY=($(seq -1250 1250 246500)) #max len is 23432 for simulations and 246408 for real observations
 BATCH_GAL_STEP=125 #BATCH_GAL_STEP=2500 #sets the difference between min and max gals
 BATCH_GAL_MIN=${BATCH_GAL_MIN_ARRAY[$SLURM_ARRAY_TASK_ID]}
 echo Using batch_gal_min $BATCH_GAL_MIN
