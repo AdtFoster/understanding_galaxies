@@ -5,7 +5,7 @@
 #SBATCH -c 1                                      # Job memory request
 #SBATCH --no-requeue                                    # Do not resubmit a failed job
 #SBATCH --time=72:00:00                                # Time limit hrs:min:sec
-#SBATCH --array=[1-200]%101  # must match length of BATCH_GAL_MIN_ARRAY
+#SBATCH --array=[1-2]%101  # must match length of BATCH_GAL_MIN_ARRAY
 
 pwd; hostname; date
 
@@ -123,8 +123,9 @@ MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
 #   --max-allow-z $MAX_ALLOW_Z \
 #   --min-allow-z $MIN_ALLOW_Z 
 
+# REAL_GALS needs to be the real data repository - doubl echeck
 $PYTHON $THIS_REPO_DIR/create_dataframe_realdata.py \
-    --predictions-dir $REAL_GALS \ #this needs to be the real data repository - doubl echeck
+    --predictions-dir $REAL_GALS \ 
     --max-allow-z $MAX_ALLOW_Z \
     --min-allow-z $MIN_ALLOW_Z 
 
