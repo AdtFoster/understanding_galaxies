@@ -104,13 +104,6 @@ INITIAL_DELTA_CONC=0.1
 #define which morphology squid diagrams to produce
 MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
 
-#$PYTHON $THIS_REPO_DIR/creating_images_semester_two.py \
-#    --fits-dir $FITS_DIR \
-#    --save-dir $SCALED_IMG_DIR \
-#    --max-redshift $MAX_Z \
-#    --step-size $STEP_SIZE \
-#    --max-gals-to-sim $GALS_TO_SIM
-
 #$PYTHON $THIS_REPO_DIR/make_predictions.py \
 #     --batch-size 256 \
 #     --image-dir $SCALED_IMG_DIR \
@@ -125,7 +118,7 @@ MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
 
 # REAL_GALS needs to be the real data repository - doubl echeck
 $PYTHON $THIS_REPO_DIR/create_dataframe_realdata.py \
-    --predictions-dir $REAL_GALS \ 
+    --predictions-dir $REAL_GALS \
     --max-allow-z $MAX_ALLOW_Z \
     --min-allow-z $MIN_ALLOW_Z 
 
