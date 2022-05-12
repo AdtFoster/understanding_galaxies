@@ -41,6 +41,7 @@ if __name__ == '__main__':
     delta_mass = args.delta_mass #Vary to find better base value - Default optimised = 0.5
     delta_conc = args.delta_conc #Vary to find better base value - Default optimised = 0.5
     max_batches=1
+    target_z = 0.05
 
     gal_min = args.batch_gal_min #sets the lower index for sampling test galaxy names
     gal_step = args.batch_gal_step #sets the range of indices being looked at
@@ -100,7 +101,7 @@ if __name__ == '__main__':
                 gal_max_z = test_galaxy.iloc[i] #selects the high z values based on redshift
                 gal_min_z = test_galaxy.loc[[test_galaxy['redshift'].astype(float).idxmin()]]
                 test_z = gal_max_z['redshift']
-                pred_z = gal_min_z['redshift'].values[0]
+                pred_z = target_z
                 test_mag = gal_max_z['elpetro_absmag_r']
                 test_mass = gal_max_z['elpetro_mass']
                 test_conc = gal_max_z['concentration']

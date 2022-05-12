@@ -37,7 +37,7 @@ MAX_GAL_MATRIX=1000
 
 #Sets the galaxies to be batched for each node when run in parallel (total of 23432 unique galaxies in full_data_1m_with_resizing)
 #if running over multiple nodes, should give values from 0 through to 22500 (first should be 0 - starts at 1st index)
-BATCH_GAL_MIN_ARRAY=($(seq -125 1250 246500)) #max len is 23432 for simulations and 246408 for real observations
+BATCH_GAL_MIN_ARRAY=($(seq -125 125 23500)) #max len is 23432 for simulations and 246408 for real observations
 BATCH_GAL_STEP=125 #BATCH_GAL_STEP=2500 #sets the difference between min and max gals
 BATCH_GAL_MIN=${BATCH_GAL_MIN_ARRAY[$SLURM_ARRAY_TASK_ID]}
 echo Using batch_gal_min $BATCH_GAL_MIN
@@ -123,10 +123,10 @@ MORPHOLOGY='featured-or-disk' #smooth, featured-or-disk, artifact
 #   --max-allow-z $MAX_ALLOW_Z \
 #   --min-allow-z $MIN_ALLOW_Z 
 
-$PYTHON $THIS_REPO_DIR/create_dataframe_realdata.py \
-    --predictions-dir $REAL_GALS \ #this needs to be the real data repository - doubl echeck
-    --max-allow-z $MAX_ALLOW_Z \
-    --min-allow-z $MIN_ALLOW_Z 
+#$PYTHON $THIS_REPO_DIR/create_dataframe_realdata.py \
+#    --predictions-dir $REAL_GALS \ #this needs to be the real data repository - doubl echeck
+#    --max-allow-z $MAX_ALLOW_Z \
+#    --min-allow-z $MIN_ALLOW_Z 
 
 # apply debiasing method, to each galaxy, by sampling nearby galaxies
 # $PYTHON $THIS_REPO_DIR/sampling_galaxies.py \
@@ -165,17 +165,7 @@ $PYTHON $THIS_REPO_DIR/create_dataframe_realdata.py \
 #     --delta-mass $DELTA_MASS \
 #     --delta-conc $DELTA_CONC
 
-#$PYTHON $THIS_REPO_DIR/bamford_plot_predictions.py \
-#    --batch-gal-min $BATCH_GAL_MIN \
-#    --batch-gal-step $BATCH_GAL_STEP \
-#    --update-interval $UPDATE_INTERVAL \
-#    --delta-z $DELTA_Z \
-#    --delta-p $DELTA_P \
-#    --delta-mag $DELTA_MAG \
-#    --delta-mass $DELTA_MASS \
-#    --delta-conc $DELTA_CONC
-
-    $PYTHON $THIS_REPO_DIR/bamford_plot_predictions_realdata.py \
+$PYTHON $THIS_REPO_DIR/bamford_plot_predictions.py \
     --batch-gal-min $BATCH_GAL_MIN \
     --batch-gal-step $BATCH_GAL_STEP \
     --update-interval $UPDATE_INTERVAL \
@@ -184,6 +174,16 @@ $PYTHON $THIS_REPO_DIR/create_dataframe_realdata.py \
     --delta-mag $DELTA_MAG \
     --delta-mass $DELTA_MASS \
     --delta-conc $DELTA_CONC
+
+#    $PYTHON $THIS_REPO_DIR/bamford_plot_predictions_realdata.py \
+#    --batch-gal-min $BATCH_GAL_MIN \
+#    --batch-gal-step $BATCH_GAL_STEP \
+#    --update-interval $UPDATE_INTERVAL \
+#    --delta-z $DELTA_Z \
+#    --delta-p $DELTA_P \
+#    --delta-mag $DELTA_MAG \
+#    --delta-mass $DELTA_MASS \
+#    --delta-conc $DELTA_CONC
 
 # $PYTHON $THIS_REPO_DIR/conf_matrix_new.py \
 #     --min-gal $MIN_GAL_MATRIX \
