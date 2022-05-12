@@ -437,4 +437,4 @@ if __name__ == '__main__':
 
         batch_number+=1
 
-    df_cumulative.to_csv('output_csvs/bamford_predictions_{0}.csv'.format(args.batch_gal_min), header=df_cumulative.columns, index=False)
+    df_cumulative.to_csv('larger_z_preds/bamford_predictions_{0}.csv'.format(args.batch_gal_min), header=df_cumulative.columns, index=False)
